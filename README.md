@@ -1,0 +1,1 @@
+WP Academic Standards
