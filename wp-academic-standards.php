@@ -38,6 +38,7 @@ define( 'WAS_ADMIN_PLUGIN_NAME', 'WP Academic Standards');
 define( 'WAS_VERSION', '0.0.1' );
 
 include_once(WAS_PATH.'includes/init.php');
+include_once(WAS_PATH.'includes/functions.php');
 
 register_activation_hook(__FILE__, 'was_create_table');
 function was_create_table()
