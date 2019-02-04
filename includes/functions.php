@@ -153,3 +153,11 @@ if (!function_exists('child_standard_notations')) {
         }
     }
 }
+
+if (!function_exists('was_display_loader')){
+    function was_display_loader(){
+        ?>
+        <div class="loader"><div class="loader-img"><div><img src="<?php echo OER_URL; ?>images/loading.gif" align="center" valign="middle" /></div></div></div>
+        <?php
+    }
+}
