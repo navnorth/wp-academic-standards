@@ -281,3 +281,13 @@ p.submit { margin-top:0; padding: 15px; }
 .oer-import-row .auto-width { width:85%; }
 #oer_local_resource_button.ui-button { padding:6px 10px; }
 .oer_snglfld .oer_fld #oer_resourceurl { width:92%; }
+/** Admin Standards Listing **/
+.was-standard-list li.core-standard {
+	padding: 10px;
+	border: 1px solid #cdcdcd;
+	background: #cdcdcd;
+}
+.was-standard-list .collapse {
+	padding:5px 25px;
+}
+/** end of Admin Standards Listing **/
