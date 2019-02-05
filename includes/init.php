@@ -2,8 +2,8 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 // Load Admin Scripts
-add_action( 'admin_enqueue_scripts' , 'load_admin_scripts' );
-function load_admin_scripts(){
+add_action( 'admin_enqueue_scripts' , 'was_load_admin_scripts' );
+function was_load_admin_scripts(){
     $font_awesome = array('font-awesome', 'fontawesome');
     if (was_stylesheet_installed($font_awesome)===false)
         wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.css');
@@ -11,6 +11,13 @@ function load_admin_scripts(){
     wp_enqueue_style( 'bootstrap-css', WAS_URL.'lib/bootstrap/css/bootstrap.min.css');
     wp_enqueue_script( 'bootstrap-js', WAS_URL.'lib/bootstrap/js/bootstrap.min.js', array('jquery'));
     wp_enqueue_script( 'admin-js', WAS_URL.'js/admin.js', array('jquery'));
+}
+
+// Load Frontend Scripts
+add_action('wp_enqueue_scripts', 'was_load_frontend_scripts');
+function was_load_frontend_scripts()
+{
+	wp_enqueue_style('was-styles', WAS_URL.'css/standards.css');
 }
 
 // Add Standards Menu on Admin
@@ -32,11 +39,11 @@ function add_standards_menu(){
 }
 
 function wp_academic_standards_page(){
-    include_once(WAS_PATH."/template/standards.php");
+    include_once(WAS_PATH."/template/admin/standards.php");
 }
 
 function was_import_standards_page(){
-    include_once(WAS_PATH."/template/standards-importer.php");
+    include_once(WAS_PATH."/template/admin/standards-importer.php");
 }
 
 /**

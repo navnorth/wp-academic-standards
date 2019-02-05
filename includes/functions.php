@@ -172,3 +172,488 @@ if (!function_exists('was_stylesheet_installed')){
         return false; 
     }
 }
+
+/**
+ * Get Standards Count
+ **/
+if (!function_exists('was_core_standards_count')){
+    function was_core_standards_count(){
+            global $wpdb;
+            $cnt = 0;
+            
+            $query = "SELECT count(*) FROM {$wpdb->prefix}oer_core_standards";
+    
+            $cnt = $wpdb->get_var($query);
+            
+            return $cnt;
+    }
+}
+
+/**
+ * Get Standards
+ **/
+if (!function_exists('was_core_standards')){
+    function was_core_standards(){
+            global $wpdb;
+            
+            $query = "SELECT * FROM {$wpdb->prefix}oer_core_standards";
+            
+            $standards = $wpdb->get_results($query);
+            
+            return $standards;
+    }
+}
+
+/**
+ * Get Resource Count By Standard
+ **/
+if (!function_exists('was_resource_count_by_standard')){
+    function was_resource_count_by_standard($standard_id){
+            
+        $cnt = 0;
+        
+        $substandards = was_substandards($standard_id);
+        
+        if(count($substandards)>0){
+                foreach($substandards as $substandard){
+                        $cnt += was_resource_count_by_substandard($substandard->id);
+                }
+        }
+        $notations = was_standard_notations($standard_id);
+        
+        if ($notations){
+                foreach($notations as $notation){
+                        $cnt += was_resource_count_by_notation($notation->id);
+                }
+        }
+        return $cnt;
+    }
+}
+
+/**
+ * Get Resource Count By Sub-Standard
+ **/
+if (!function_exists('was_resource_count_by_substandard')){
+    function was_resource_count_by_substandard($substandard_id){
+        $cnt = 0;
+        
+        $child_substandards = was_substandards($substandard_id, false);
+        
+        if(count($child_substandards)>0){
+            foreach($child_substandards as $child_substandard){
+                $cnt += was_resource_count_by_substandard($child_substandard->id, false);
+            }
+        }
+        $notations = was_standard_notations($substandard_id);
+        
+        if ($notations){
+            foreach($notations as $notation){
+                $cnt += was_resource_count_by_notation($notation->id);
+            }
+        }
+        return $cnt;
+    }
+}
+
+/**
+ * Get Resource Count By Notation
+ **/
+if (!function_exists('was_resource_count_by_notation')){
+    function was_resource_count_by_notation($notation_id){
+        $cnt = 0;
+        
+        $notation = "standard_notation-".$notation_id;
+        
+        //later in the request
+        $args = array(
+                'post_type'  => 'resource', //or a post type of your choosing
+                'posts_per_page' => -1,
+                'meta_query' => array(
+                        array(
+                        'key' => 'oer_standard',
+                        'value' => $notation,
+                        'compare' => 'like'
+                        )
+                )
+        );
+        
+        $query = new WP_Query($args);
+        
+        $cnt += count($query->posts);
+        
+        $child_notations = was_child_notations($notation_id);
+        
+        if ($child_notations){
+                foreach ($child_notations as $child_notation){
+                        $cnt += was_resource_count_by_notation($child_notation->id);
+                }
+        }
+        
+        return $cnt;
+    }
+}
+
+/**
+ * Get child standards of a core standard
+ **/
+if (!function_exists('was_substandards')) {
+    function was_substandards($standard_id, $core=true){
+        global $wpdb;
+        
+        if ($core)
+                $std_id = "core_standards-".$standard_id;
+        else
+                $std_id = "sub_standards-".$standard_id;
+        
+        $substandards = array();
+        
+        $query = "SELECT * FROM {$wpdb->prefix}oer_sub_standards where parent_id='%s'";
+        
+        $substandards = $wpdb->get_results($wpdb->prepare($query, $std_id));
+        
+        return $substandards;
+    }
+}
+
+/**
+ * Get Standard Notations under a Sub Standard
+ **/
+if (!function_exists('was_standard_notations')){
+    function was_standard_notations($standard_id){
+        global $wpdb;
+        
+        $std_id = "sub_standards-".$standard_id;
+        
+        $notations = array();
+        
+        $query = "SELECT * FROM {$wpdb->prefix}oer_standard_notation where parent_id='%s'";
+        
+        $result = $wpdb->get_results($wpdb->prepare($query, $std_id));
+        
+        foreach ($result as $row){
+                $notations[] = $row;
+        }
+        
+        return $notations;
+    }
+}
+
+/**
+ * Get Substandard(s) by Notation
+ **/
+if (!function_exists('was_substandards_by_notation')) {
+    function was_substandards_by_notation($notation){
+        global $wpdb;
+        
+        $std = null;
+        
+        $query = "SELECT * FROM {$wpdb->prefix}oer_standard_notation WHERE standard_notation = '%s'";
+        
+        $standard_notation = $wpdb->get_results($wpdb->prepare($query, $notation));
+        
+        if ($standard_notation){
+            $substandard_id = $standard_notation[0]->parent_id;
+            $std = was_hierarchical_substandards($substandard_id);
+        }
+        
+        return $std;
+    }
+}
+
+/**
+ * Get Child Notations
+ **/
+if (!function_exists('was_child_notations')){
+    function was_child_notations($notation_id){
+        global $wpdb;
+        
+        $notation = "standard_notation-".$notation_id;
+        
+        $query = "SELECT * FROM {$wpdb->prefix}oer_standard_notation WHERE parent_id = '%s'";
+        
+        $standard_notations = $wpdb->get_results($wpdb->prepare($query, $notation));
+        
+        return $standard_notations;
+    }
+}
+
+/**
+ * Get Core Standard by standard or substandard ID
+ **/
+if (!function_exists('was_corestandard_by_standard')){
+    function was_corestandard_by_standard($parent_id){
+        global $wpdb;
+        
+        $standard = null;
+        $parent = explode("-",$parent_id);
+        if ($parent[0]=="sub_standards") {
+                $query = "SELECT * FROM {$wpdb->prefix}oer_sub_standards WHERE id = '%s'";
+                $substandards = $wpdb->get_results($wpdb->prepare($query, $parent[1]));
+                
+                foreach($substandards as $substandard){
+                        $standard = was_corestandard_by_standard($substandard->parent_id);
+                }
+        } else {
+                $query = "SELECT * FROM {$wpdb->prefix}oer_core_standards WHERE id = '%s'";
+                $standards = $wpdb->get_results($wpdb->prepare($query, $parent[1]));
+                foreach($standards as $std){
+                        $standard = $std;
+                }
+        }
+        
+        return $standard;
+    }
+}
+
+/**
+ * Get Standard By Id
+ **/
+if (!function_exists('was_standard_by_id')){
+    function was_standard_by_id($id){
+        global $wpdb;
+        
+        $std = null;
+        
+        $query = "SELECT * FROM {$wpdb->prefix}oer_core_standards WHERE id = %d";
+        
+        $standards = $wpdb->get_results($wpdb->prepare($query,$id));
+        
+        foreach($standards as $standard){
+                        $std = $standard;
+        }
+        
+        return $std;
+    }
+}
+
+/**
+ * Get Standard By Slug
+ **/
+if (!function_exists('was_standard_by_slug')){
+    function was_standard_by_slug($slug){
+        global $wpdb;
+        
+        $std = null;
+        
+        $query = "SELECT * FROM {$wpdb->prefix}oer_core_standards";
+        
+        $standards = $wpdb->get_results($query);
+        
+        foreach($standards as $standard){
+            if (sanitize_title($standard->standard_name)===$slug)
+                $std = $standard;
+        }
+        
+        return $std;
+    }
+}
+
+/**
+ * Get SubStandard By Slug
+ **/
+if (!function_exists('was_substandard_by_slug')){
+    function was_substandard_by_slug($slug){
+        global $wpdb;
+        
+        $std = null;
+        
+        $query = "SELECT * FROM {$wpdb->prefix}oer_sub_standards";
+        
+        $substandards = $wpdb->get_results($query);
+        
+        foreach($substandards as $substandard){
+                if (sanitize_title($substandard->standard_title)===$slug)
+                        $std = $substandard;
+        }
+        
+        return $std;
+    }
+}
+
+/**
+ * Get Core Standard by Notation
+ **/
+if (!function_exists('was_standard_by_notation')) {
+    function was_standard_by_notation($notation){
+        global $wpdb;
+        
+        $std = null;
+        
+        $query = "SELECT * FROM {$wpdb->prefix}oer_standard_notation WHERE standard_notation = '%s'";
+        
+        $standard_notation = $wpdb->get_results($wpdb->prepare($query, $notation));
+        
+        if ($standard_notation){
+            $substandard_id = $standard_notation[0]->parent_id;
+            $substandard = was_parent_standard($substandard_id);
+            
+            if (strpos($substandard[0]['parent_id'],"core_standards")!==false){
+                $pIds = explode("-",$substandard[0]['parent_id']);
+                
+                if (count($pIds)>1){
+                    $parent_id=(int)$pIds[1];
+                    $std = was_standard_by_id($parent_id);
+                }
+            }
+        }
+        
+        return $std;
+    }
+}
+
+/** Get Parent Standard **/
+if (!function_exists('was_parent_standard')){
+    function was_parent_standard($standard_id) {
+        global $wpdb, $_oer_prefix;
+        
+        $stds = explode("-",$standard_id);
+        $table = $stds[0];
+        
+        $prefix = substr($standard_id,0,strpos($standard_id,"_")+1);
+        
+        $table_name = $wpdb->prefix.$_oer_prefix.$table;
+        
+        $id = $stds[1];
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $table_name. " where id = %s" , $id ) , ARRAY_A);
+        
+        foreach($results as $result) {
+
+            $stdrds = explode("-",$result['parent_id']);
+            $tbl = $stdrds[0];
+            
+            $tbls = array('sub_standards','standard_notation');
+            
+            if (in_array($tbl,$tbls)){
+                $results = was_parent_standard($result['parent_id']);
+            }
+
+        }
+        return $results;
+    }
+}
+
+/**
+ * Get Parent Sub Standard by Notation
+ **/
+if (!function_exists('was_substandard_by_notation')) {
+    function was_substandard_by_notation($notation) {
+        global $wpdb;
+        
+        $std = null;
+        
+        $query = "SELECT * FROM {$wpdb->prefix}oer_standard_notation WHERE standard_notation = '%s'";
+        
+        $substandards = $wpdb->get_results($wpdb->prepare($query, $notation));
+        
+        foreach($substandards as $substandard){
+                $std = $substandard;
+        }
+        
+        return $std;
+    }
+}
+
+// Get Hierarchical Substandards
+if (!function_exists('was_hierarchical_substandards')){
+    function was_hierarchical_substandards($substandard_id){
+        $substandard=null;
+        $substandards = null;
+        $hierarchy = "";
+        $ids = explode("-",$substandard_id);
+        if (strpos($substandard_id,"sub_standards")!==false) {
+            do {
+                    
+                $substandard = was_substandard_details($ids[1]);
+                $ids = explode("-", $substandard['parent_id']);
+                $substandards[] = $substandard;
+                    
+            } while(strpos($substandard['parent_id'],"sub_standards")!==false);
+        }
+        
+        return $substandards;
+    }
+}
+
+// Get Hierarchical Notations
+if (!function_exists('was_hierarchical_notations')){
+    function was_hierarchical_notations($notation_id){
+        $notation=null;
+        $notations = array();
+        $hierarchy = "";
+        $ids = explode("-",$notation_id);
+        if (strpos($notation_id,"standard_notation")!==false) {
+            do {
+                $notation = was_notation_details($ids[1]);
+                $ids = explode("-", $notation[0]['parent_id']);
+                $notations[] = $notation;
+            } while(strpos($notation[0]['parent_id'],"standard_notation")!==false);
+        }
+        return $notations;
+    }
+}
+
+// Get Notation Details
+if (!function_exists('was_notation_details')){
+    function was_notation_details($notation_id){
+        global $wpdb;
+        $notations = null;
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where id = %s" , $notation_id  ) , ARRAY_A);
+        foreach ($results as $row){
+            $notations = $row;
+        }
+        return $notations;
+    }
+}
+
+// Get Substandard Details
+if (!function_exists('was_substandard_details')){
+    function was_substandard_details($substandard_id){
+        global $wpdb;
+        $substandards = null;
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where id = %s" , $substandard_id  ) , ARRAY_A);
+        foreach ($results as $row){
+            $substandards = $row;
+        }
+        return $substandards;
+    }
+}
+
+/**
+ * Get Resources by notation
+ **/
+if (!function_exists('was_resources_by_notation')) {
+    function was_resources_by_notation($notation_id) {
+            
+        $notation = "standard_notation-".$notation_id;
+        
+        //later in the request
+        $args = array(
+            'post_type'  => 'resource', //or a post type of your choosing
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                'key' => 'oer_standard',
+                'value' => $notation,
+                'compare' => 'like'
+                )
+            )
+        );
+        
+        $query = new WP_Query($args);
+        
+        return $query->posts;
+    }
+}
+
+if (!function_exists('was_custom_styles')) {
+    function was_custom_styles(){
+        ?>
+        <style type="text/css">
+            .substandards-template #content ul.oer-substandards > li:not(:active),
+            .standards-template #content ul.oer-standards > li,
+            .substandards-template #content ul.oer-notations > li,
+            .notation-template #content ul.oer-subnotations > li { background:url(<?php echo WAS_URL."/images/arrow-right.png"; ?>) no-repeat top left; padding-left:28px; }
+        </style>
+        <?php
+    }
+}

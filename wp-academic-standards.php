@@ -37,6 +37,9 @@ define( 'WAS_PLUGIN_NAME', 'WP Academic Standards' );
 define( 'WAS_ADMIN_PLUGIN_NAME', 'WP Academic Standards');
 define( 'WAS_VERSION', '0.0.1' );
 
+global $_oer_prefix;
+$_oer_prefix = "oer_";
+
 include_once(WAS_PATH.'includes/init.php');
 include_once(WAS_PATH.'includes/functions.php');
 
@@ -91,6 +94,9 @@ function was_create_table()
 	   require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	   dbDelta($sql);
 	}
+    was_add_rewrites();
+    //Trigger permalink reset
+    flush_rewrite_rules();
 }
 
 //Load localization directory
@@ -110,6 +116,74 @@ function was_add_settings_link( $links, $file ){
 		/** End of Insert settings link **/
 	}
 	return $links;
+}
+
+// Add rewrite rule for substandards
+add_action( 'init', 'was_add_rewrites', 10, 0 );
+function was_add_rewrites()
+{
+	global $wp_rewrite;
+	add_rewrite_tag( '%standard%', '([^/]*)' );
+	add_rewrite_tag( '%substandard%' , '([^&]+)' );
+	add_rewrite_tag( '%notation%' , '([^&]+)' );
+	add_rewrite_rule( '^standards/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]', 'top' );
+	add_rewrite_rule( '^standards/([^/]*)/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]', 'top' );
+	add_rewrite_rule( '^standards/([^/]*)/([^/]*)/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]&notation=$matches[3]', 'top' );
+	add_rewrite_endpoint( 'standard', EP_PERMALINK | EP_PAGES );
+	add_rewrite_endpoint( 'substandard', EP_PERMALINK | EP_PAGES );
+	add_rewrite_endpoint( 'notation', EP_PERMALINK | EP_PAGES );
+
+	$flush_rewrite = get_option('oer_rewrite_rules');
+	if ($flush_rewrite==false) {
+		$wp_rewrite->init();
+		$wp_rewrite->flush_rules();
+		update_option('oer_rewrite_rules', true);
+	}
+}
+
+add_filter( 'query_vars', 'was_add_query_vars' );
+function was_add_query_vars( $vars ){
+	$vars[] = "standard";
+	$vars[] = "substandard";
+	$vars[] = "notation";
+	return $vars;
+}
+
+add_action( 'template_include' , 'was_assign_standard_template' );
+function was_assign_standard_template($template) {
+	global $wp_query;
+
+	$url_path = trim(parse_url(add_query_arg(array()), PHP_URL_PATH), '/');
+
+	status_header(200);
+	
+	if ( strpos( $url_path,'standards' ) !== false && !get_query_var('standard') && !get_query_var('substandard') && !get_query_var('notation') ) {
+		// load the file if exists
+		$wp_query->is_404 = false;
+		$template = locate_template('template/frontend/standards.php', true);
+		if (!$template) {
+			$template = dirname(__FILE__) . '/template/frontend/standards.php';
+		}
+	} elseif (get_query_var('standard') && !get_query_var('substandard') && !get_query_var('notation')){
+		$wp_query->is_404 = false;
+		$template = locate_template('template/frontend/template-standard.php', true);
+		if (!$template) {
+			$template = dirname(__FILE__) . '/template/frontend/template-standard.php';
+		}
+	} elseif (get_query_var('standard') && get_query_var('substandard') && !get_query_var('notation')){
+		$wp_query->is_404 = false;
+		$template = locate_template('template/frontend/template-substandard.php', true);
+		if (!$template) {
+			$template = dirname(__FILE__) . '/template/frontend/template-substandard.php';
+		}
+	} elseif (get_query_var('standard') && get_query_var('substandard') && get_query_var('notation')){
+		$wp_query->is_404 = false;
+		$template = locate_template('template/frontend/template-notation.php', true);
+		if (!$template) {
+			$template = dirname(__FILE__) . '/template/frontend/template-notation.php';
+		}
+	}
+	return $template;
 }
 
 ?>
