@@ -46,8 +46,7 @@ if (!function_exists('get_standard_label')) {
 if (!function_exists('child_standards')){
     function child_standards($id)
     {
-        global $wpdb;
-        global $chck, $class;
+        global $wpdb, $chck, $class;
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $id ) ,ARRAY_A);
         
         if(!empty($results))
@@ -92,7 +91,7 @@ if (!function_exists('child_standards')){
 if (!function_exists('child_standard_notations')) {
     function child_standard_notations($id)
     {
-        global $wpdb;
+        global $wpdb, $class;
         
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s" , $id ) , ARRAY_A);
     
@@ -154,5 +153,22 @@ if (!function_exists('was_display_admin_standards')){
         </ul>
         <?php
         }
+    }
+}
+
+if (!function_exists('was_stylesheet_installed')){
+    function was_stylesheet_installed($arr_styles)
+    {
+        global $wp_styles;
+    
+        foreach( $wp_styles->queue as $style ) 
+        {
+            foreach ($arr_styles as $css)
+            {
+                if (false !== strpos( $wp_styles->registered[$style]->src, $css ))
+                    return true;
+            }
+        }
+        return false; 
     }
 }

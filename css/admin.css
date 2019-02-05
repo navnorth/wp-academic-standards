@@ -43,10 +43,6 @@
 	width: 32px;
 	height: 32px;
 }
-.oer_snglfld.oer_hdngsngl input[type="button"]
-{
-	/*float: right;*/
-}
 .oer_snglfld .oer_txt
 {
 	width: 180px;
@@ -119,13 +115,6 @@
 	font-weight: bold;
 	color: blue;
 }
-/*.oer_lstofstandrd li{
-	display: none;
-}*/
-/*li.oer_sbstndard
-{
-	display: block;
-}*/
 
 .oer_fld .oer_lstofstandrd {
     float: left;
@@ -143,9 +132,6 @@
     float: left;
     width: 90%;
 	margin-top: 5px;
-}
-.oer_fld .oer_lstofstandrd img{
-    /*margin-left:100px;*/
 }
 .oer_fld .oer_lstofstandrd .oer_sbstndard .stndrd_ttl img
 {
@@ -218,8 +204,8 @@ ul.oer_slctstandard > li
 .oer-plugin-row:first-child, .oer-import-row:first-child { padding:15px 15px 0; }
 .oer-import-row:first-child { padding:10px 0 0; }
 .oer-import-row { padding:0; }
-.oer-plugin-row .oer-row-left, .oer-import-row .row-left { width:63%; float:left; }
-.oer-plugin-row .oer-row-right, .oer-import-row .row-right { width:35%; float:right; }
+.oer-plugin-row .oer-row-left, .oer-import-row .row-left { width:75%; float:left; }
+.oer-plugin-row .oer-row-right, .oer-import-row .row-right { width:23%; float:right; }
 .oer-import-row .row2-left { width:85%; float:left; }
 .oer-import-row .row2-right { width:13%; float:right; }
 .oer-plugin-row fieldset, .oer-import-row fieldset { margin-bottom:15px; }
@@ -291,3 +277,11 @@ p.submit { margin-top:0; padding: 15px; }
 	padding:5px 25px;
 }
 /** end of Admin Standards Listing **/
+/** Import Standards Styles **/
+label.was-core-standard{
+    margin-left: 5px;
+    line-height: 1em;
+    margin-bottom: 0;
+}
+.container { max-width:100%; }
+/** End of Import Standards Styles **/
