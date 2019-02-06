@@ -156,6 +156,148 @@ if (!function_exists('was_display_admin_standards')){
     }
 }
 
+if (!function_exists('was_selectable_admin_standards')){
+    function was_selectable_admin_standards($post_id, $meta_key="oer_standard"){
+        global $wpdb, $post;
+        
+        $standards = get_post_meta($post_id, $meta_key, true);
+        $results = $wpdb->get_results("SELECT * from " . $wpdb->prefix. "oer_core_standards",ARRAY_A);
+        if ($results){
+             ?>
+            <ul class='oer-standard-list'>
+            <?php
+              foreach($results as $row){
+                $value = 'core_standards-'.$row['id'];
+                ?>
+                <li class='core-standard'>
+                  <a data-toggle='collapse' data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo $row['standard_name']; ?></a>
+                </li>
+            <?php
+                was_child_standards($value, $standards, $meta_key);
+              }
+        }
+    }
+}
+
+/** Get Child Standards **/
+if (!function_exists('was_child_standards')){
+    function was_child_standards($id, $oer_standard, $meta_key="oer_standard") {
+	global $wpdb, $chck, $class;
+        
+	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $id ) ,ARRAY_A);
+	if(!empty($oer_standard))
+	{
+	    $stndrd_arr = explode(",",$oer_standard);
+	}
+	
+	if(!empty($results))
+	{
+            echo "<div id='".$id."' class='collapse'>";
+                echo "<ul>";
+                foreach($results as $result)
+                {
+                    $value = 'sub_standards-'.$result['id'];
+                    if(!empty($stndrd_arr))
+                    {
+                        if(in_array($value, $stndrd_arr))
+                        {
+                            $chck = 'checked="checked"';
+                            $class = 'selected';
+                        }
+                        else
+                        {
+                            $chck = '';
+                            $class = '';
+                        }
+                    }
+
+                    $id = 'sub_standards-'.$result['id'];
+                    $subchildren = get_substandard_children($id);
+                    $child = check_child_standard($id);
+
+                    echo "<li class='oer_sbstndard ". $class ."'>";
+                    
+                    if (!empty($subchildren)){
+                        echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_title']."</a>";
+                    }
+
+                    if(empty($subchildren) && empty($child)) {
+                        echo "<input type='checkbox' ".$chck." name='".$meta_key."[]' value='".$value."' onclick='was_check_all(this)' >
+                                ".$result['standard_title']."
+                                <div class='oer_stndrd_desc'></div>";
+                    }
+                    
+                    $id = 'sub_standards-'.$result['id'];
+                    was_child_standards($id, $oer_standard, $meta_key);
+                    
+                    if (!empty($child)) {
+                        echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_title']."</a>";
+                        $sid = 'sub_standards-'.$result['id'];
+                        was_child_standard_notations($sid, $oer_standard, $meta_key);
+                    }
+                    echo "</li>";
+                }
+                echo "</ul>";
+            echo "</div>";
+	}
+    }
+}
+
+/** Get Standard Notation **/
+if (!function_exists('was_child_standard_notations')) {
+    function was_child_standard_notations($id, $oer_standard, $meta_key="oer_standard"){
+	global $wpdb;
+	
+	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s" , $id ) , ARRAY_A);
+
+	if(!empty($oer_standard))
+	{
+		$stndrd_arr = explode(",",$oer_standard);
+	}
+
+	if(!empty($results))
+	{
+		echo "<div id='".$id."' class='collapse'>";
+		echo "<ul>";
+			foreach($results as $result)
+			{
+				$chck = '';
+				$class = '';
+				$id = 'standard_notation-'.$result['id'];
+				$child = check_child_standard($id);
+				$value = 'standard_notation-'.$result['id'];
+      
+				if(!empty($oer_standard))
+				{
+					if(in_array($value, $stndrd_arr))
+					{
+						$chck = 'checked="checked"';
+						$class = 'selected';
+					}
+				}
+
+				echo "<li class='".$class."'>";
+				if(!empty($child))
+				{
+					echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_notation']."</a>";
+				}
+
+				if (empty($child))
+					echo "<input type='checkbox' ".$chck." name='".$meta_key."[]' value='".$value."' onclick='was_check_myChild(this)'>";
+					
+				echo  $result['standard_notation']."
+					<div class='oer_stndrd_desc'> ". $result['description']." </div>";
+
+				was_child_standard_notations($id, $oer_standard,$meta_key);
+
+				echo "</li>";
+			}
+		echo "</ul>";
+		echo "</div>";
+	}
+    }
+}
+
 if (!function_exists('was_stylesheet_installed')){
     function was_stylesheet_installed($arr_styles)
     {

@@ -48,3 +48,41 @@ function importWASStandards(frm,btn) {
     jQuery('#importAcademicStandards .oer-import-row input[type=submit]').prop('disabled',true);
     return(true);
 }
+
+// Check All
+function was_check_all(ref) {
+    if(ref.checked)
+    {
+        jQuery(ref).parent('div').parent('li').children('ul').find("input:checkbox").each(function() {
+            jQuery(this).prop('checked', true);
+        });
+    }
+    else
+    {
+        jQuery(ref).parent('div').parent('li').children('ul').find("input:checkbox").each(function() {
+            jQuery(this).prop('checked', false);
+        });
+    }
+}
+
+// Check Child
+function was_check_myChild(ref) {
+    if(jQuery(ref).parent('div').parent('li').has('ul')){
+        if(ref.checked)
+        {
+            jQuery(ref).parent('div').parent('li').children('ul').children('li').find("input:checkbox").each(function() {
+                jQuery(this).prop('checked', true);
+            });
+        }
+        else
+        {
+            /*jQuery(ref).parent('div').parent('li').parent('ul').parent('li').children("div").find("input:checkbox").each(function() {
+                jQuery(this).prop('checked', false);
+
+            });*/
+            jQuery(ref).parent('div').parent('li').children('ul').children('li').find("input:checkbox").each(function() {
+                jQuery(this).prop('checked', false);
+            });
+        }
+    }
+}
