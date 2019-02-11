@@ -21,13 +21,13 @@ $sub_standards = was_substandards($standard->id);
 was_custom_styles();
 ?>
 <div class="oer-backlink">
-    <a href="<?php echo home_url('standards'); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back to Standards",WAS_SLUG); ?></a>
+    <a class="backlink-btn" href="<?php echo home_url('standards'); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back to Standards",WAS_SLUG); ?></a>
 </div>
 <div class="oer-cntnr">
 	<section id="primary" class="site-content">
 		<div id="content" class="standards-display" role="main">
 		    <div class="oer-allftrdrsrc">
-			<div class="oer-snglrsrchdng"><h2><?php printf(__("Browse %s", WAS_SLUG), $standard->standard_name); ?></h2></div>
+			<div class="oer-snglrsrchdng"><h2><?php printf(__("%s", WAS_SLUG), $standard->standard_name); ?></h2></div>
 			<div class="oer-allftrdrsrccntr">
 			    <?php if ($sub_standards) {  ?>
 			    <ul class="oer-standards">
@@ -35,7 +35,7 @@ was_custom_styles();
 				    $cnt = was_resource_count_by_substandard($sub_standard->id);
 				    $slug = "standards/".$standard_name_slug."/".sanitize_title($sub_standard->standard_title);
 				?>
-				<li><a href="<?php echo home_url($slug); ?>"><?php echo $sub_standard->standard_title; ?></a> <span class="res-count"><?php echo $cnt; ?></span></li>
+				<li><a href="<?php echo home_url($slug); ?>"><i class="fa fa-plus"></i> <?php echo $sub_standard->standard_title; ?></a> <span class="res-count"><?php echo $cnt; ?></span></li>
 				<?php } ?>
 			    </ul>
 			    <?php } ?>

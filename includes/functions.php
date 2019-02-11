@@ -161,6 +161,7 @@ if (!function_exists('was_selectable_admin_standards')){
         global $wpdb, $post;
         
         $standards = get_post_meta($post_id, $meta_key, true);
+        
         $results = $wpdb->get_results("SELECT * from " . $wpdb->prefix. "oer_core_standards",ARRAY_A);
         if ($results){
              ?>

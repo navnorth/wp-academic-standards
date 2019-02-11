@@ -28,7 +28,7 @@ $standards = was_core_standards();
 				    $cnt = was_resource_count_by_standard($standard->id);
 				    $slug = "standards/".sanitize_title($standard->standard_name);
 				?>
-				<li><a href="<?php echo home_url($slug); ?>"><?php echo $standard->standard_name; ?></a> <span class="res-count"><?php echo $cnt; ?></span></li>
+				<li><a href="<?php echo home_url($slug); ?>"><i class="fa fa-plus"></i> <?php echo $standard->standard_name; ?></a> <span class="res-count"><?php echo $cnt; ?></span></li>
 				<?php } ?>
 			    </ul>
 			    <?php } ?>

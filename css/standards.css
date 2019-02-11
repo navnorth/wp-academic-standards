@@ -1,2 +1,3 @@
 ul.oer-standard li, ul.oer-standards li { list-style-type:none; }
 #content.standards-display { width:100%; }
+#content.standards-display ul.oer-standards { margin-left:0; }

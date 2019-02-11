@@ -50,13 +50,13 @@ $resources = was_resources_by_notation($notation->id);
 was_custom_styles();
 ?>
 <div class="oer-backlink">
-    <a href="<?php echo home_url('standards/'.$standard_slug.'/'.$parent_slug); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back", WAS_SLUG); ?></a>
+    <a class="backlink-btn" href="<?php echo home_url('standards/'.$standard_slug.'/'.$parent_slug); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back", WAS_SLUG); ?></a>
 </div>
 <div class="oer-cntnr">
 	<section id="primary" class="site-content">
 		<div id="content" class="standards-display" role="main">
 		    <div class="oer-allftrdrsrc">
-			<div class="oer-snglrsrchdng"><h2><?php printf(__("Browse %s", WAS_SLUG), '<a href="'.home_url("standards/".sanitize_title($standard->standard_name)).'">'.$standard->standard_name.'</a>'); ?></h2></div>
+			<div class="oer-snglrsrchdng"><h2><?php printf(__("%s", WAS_SLUG), '<a href="'.home_url("standards/".sanitize_title($standard->standard_name)).'">'.$standard->standard_name.'</a>'); ?></h2></div>
 			<div class="oer-allftrdrsrccntr-notation">
 			    <ul class="oer-standard">
 			    <?php  if ($upstandards){
@@ -88,7 +88,7 @@ was_custom_styles();
 				<li>
 				    <ul class="oer-notations">
 					<li>
-					    <h4><strong><?php echo $notation->standard_notation; ?></strong> <?php echo $notation->description; ?></h4>
+					    <h4><strong><i class="fa fa-minus"></i> <?php echo $notation->standard_notation; ?></strong> <?php echo $notation->description; ?></h4>
 					</li>
 					<?php if (!empty($subnotations)) { ?>
 					<li>

@@ -39,13 +39,13 @@ $notations = was_standard_notations($standard->id);
 was_custom_styles();
 ?>
 <div class="oer-backlink">
-    <a href="<?php echo home_url('standards/'.$parent_slug); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back",WAS_SLUG); ?></a>
+    <a class="backlink-btn" href="<?php echo home_url('standards/'.$parent_slug); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back",WAS_SLUG); ?></a>
 </div>
 <div class="oer-cntnr">
 	<section id="primary" class="site-content">
 		<div id="content" class="standards-display" role="main">
 		    <div class="oer-allftrdrsrc">
-			<div class="oer-snglrsrchdng"><h2><?php printf(__("Browse %s", WAS_SLUG), '<a href="'.home_url("standards/".sanitize_title($core_standard->standard_name)).'">'.$core_standard->standard_name.'</a>'); ?></h2></div>
+			<div class="oer-snglrsrchdng"><h2><?php printf(__("%s", WAS_SLUG), '<a href="'.home_url("standards/".sanitize_title($core_standard->standard_name)).'">'.$core_standard->standard_name.'</a>'); ?></h2></div>
 			<div class="oer-allftrdrsrccntr">
 			    <ul class="oer-standard">
 				<?php if ($parent_substandards) { 
@@ -61,7 +61,7 @@ was_custom_styles();
 					if ($cnt>1) { ?>
 					    <ul class="oer-substandards">
 						<li>
-						    <a href="<?php echo home_url($slug); ?>"><?php echo $parent_substandard['standard_title']; ?></a>
+						    <a href="<?php echo home_url($slug); ?>"><i class="fa fa-plus"></i> <?php echo $parent_substandard['standard_title']; ?></a>
 						</li>
 					<?php
 					    $end_html .= '</ul>';
@@ -84,7 +84,7 @@ was_custom_styles();
 					$output_html .= '</ul>';
 					$output_html .= '</li>';
 				    } else
-					echo $standard->standard_title;
+					echo '<i class="fa fa-minus"></i> '.$standard->standard_title;
 				    
 				    if ($sub_standards) {  ?>
 					<ul class="oer-substandards">
@@ -92,7 +92,7 @@ was_custom_styles();
 						 $cnt = was_resource_count_by_substandard($sub_standard->id);
 						$slug = "standards/".sanitize_title($core_standard->standard_name)."/".sanitize_title($sub_standard->standard_title);
 					    ?>
-					    <li><a href="<?php echo home_url($slug); ?>"><?php echo $sub_standard->standard_title; ?></a> <span class="res-count"><?php echo $cnt; ?></span></li>
+					    <li><a href="<?php echo home_url($slug); ?>"><i class="fa fa-plus"></i> <?php echo $sub_standard->standard_title; ?></a> <span class="res-count"><?php echo $cnt; ?></span></li>
 					    <?php } ?>
 					</ul>
 				    <?php }
