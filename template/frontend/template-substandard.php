@@ -36,7 +36,6 @@ $parent_substandards = was_hierarchical_substandards($standard->parent_id);
 $sub_standards = was_substandards($standard->id, false);
 $notations = was_standard_notations($standard->id);
 
-was_custom_styles();
 ?>
 <div class="oer-backlink">
     <a class="backlink-btn" href="<?php echo home_url('standards/'.$parent_slug); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back",WAS_SLUG); ?></a>

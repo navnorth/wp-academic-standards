@@ -47,7 +47,6 @@ $substandards = was_substandards_by_notation($notation_slug);
 $standard = was_standard_by_notation($notation_slug);
 $resources = was_resources_by_notation($notation->id);
 
-was_custom_styles();
 ?>
 <div class="oer-backlink">
     <a class="backlink-btn" href="<?php echo home_url('standards/'.$standard_slug.'/'.$parent_slug); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back", WAS_SLUG); ?></a>

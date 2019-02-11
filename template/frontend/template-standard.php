@@ -18,7 +18,6 @@ $standard_name_slug = $wp_query->query_vars['standard'];
 $standard = was_standard_by_slug($standard_name_slug);
 $sub_standards = was_substandards($standard->id);
 
-was_custom_styles();
 ?>
 <div class="oer-backlink">
     <a class="backlink-btn" href="<?php echo home_url('standards'); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back to Standards",WAS_SLUG); ?></a>
