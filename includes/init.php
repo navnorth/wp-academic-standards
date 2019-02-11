@@ -17,7 +17,10 @@ function was_load_admin_scripts(){
 add_action('wp_enqueue_scripts', 'was_load_frontend_scripts');
 function was_load_frontend_scripts()
 {
-	wp_enqueue_style('was-styles', WAS_URL.'css/standards.css');
+    $font_awesome = array('font-awesome', 'fontawesome');
+    if (was_stylesheet_installed($font_awesome)===false)
+        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.css');
+    wp_enqueue_style('was-styles', WAS_URL.'css/standards.css');
 }
 
 // Add Standards Menu on Admin
