@@ -20,7 +20,7 @@ $standards = was_core_standards();
 	<section id="primary" class="site-content">
 		<div id="content" class="standards-display" role="main">
 		    <div class="oer-allftrdrsrc">
-			<div class="oer-snglrsrchdng"><h1><?php printf(__("Browse All %d Standards", WAS_SLUG), $std_count); ?></h1></div>
+			<div class="oer-snglrsrchdng"><h1><?php printf(__("%d Academic Standards", WAS_SLUG), $std_count); ?></h1></div>
 			<div class="oer-allftrdrsrccntr">
 			    <?php if ($standards) {  ?>
 			    <ul class="oer-standards">
