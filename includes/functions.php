@@ -800,3 +800,237 @@ if (!function_exists('was_custom_styles')) {
         <?php
     }
 }
+
+if (!function_exists('was_show_setup_settings')){
+    function was_show_setup_settings() {
+            global $message, $type;
+            ?>
+    <div class="plugin-body">
+        <div class="was-plugin-row">
+            <div class="oer-row">
+                <?php _e("These are the settings of WP Academic Standards.", WAS_SLUG); ?>
+                <div class="oer-import-row">
+                <h2 class="hidden"></h2>
+                <?php if ($message) { ?>
+                <div class="notice notice-<?php echo esc_attr($type); ?> is-dismissible">
+                    <p><?php echo $message; ?></p>
+                </div>
+                <?php } ?>
+                </div>
+            </div>
+        </div>
+        <div class="was-plugin-row">
+            <form method="post" class="was_settings_form" action="options.php"  onsubmit="return wasShowLoader(this)">
+                <?php settings_fields("was_setup_settings"); ?>
+                <?php do_settings_sections("was_setup_settings_section"); ?>
+                <?php submit_button('Save', 'primary setup-continue'); ?>
+            </form>
+        </div>
+    </div>
+    <?php
+    }
+}
+
+//Import Default CCSS
+if (!function_exists('was_importDefaultStandards')){
+    function was_importDefaultStandards() {
+        $files = array(
+            WAS_PATH."samples/CCSS_Math.xml",
+            WAS_PATH."samples/CCSS_ELA.xml",
+            WAS_PATH."samples/NGSS.xml"
+            );
+        foreach ($files as $file) {
+            $import = oer_importStandards($file);
+            if ($import['type']=="success") {
+                if (strpos($file,'Math')) {
+                            $message .= "Successfully imported Common Core Mathematics Standards. \n";
+                } else {
+                            $message .= "Successfully imported Common Core English Language Arts Standards. \n";
+                }
+            }
+            $type = $import['type'];
+        }
+        $response = array( 'message' => $message, 'type' => $type );
+        return $response;
+    }
+}
+
+/** Import Standards **/
+if (!function_exists('was_importStandards')){
+    function was_importStandards($file){
+	global $wpdb;
+
+	$time = time();
+	$date = date($time);
+
+	//Set Maximum Excution Time
+	ini_set('max_execution_time', 0);
+	set_time_limit(0);
+
+	// Log start of import process
+	debug_log("Academic Standards Importer: Start Bulk Import of Standards");
+
+	if( isset($file) ){
+            try {
+
+                $filedetails = pathinfo($file);
+
+                $filename = $filedetails['filename']."-".$date;
+
+                $doc = new DOMDocument();
+                $doc->preserveWhiteSpace = FALSE;
+                $doc->load( $file );
+
+                $StandardDocuments = $doc->getElementsByTagName('StandardDocument');
+                
+                $xml_arr = array();
+                $m = 0;
+                foreach( $StandardDocuments as $StandardDocument)
+                {
+                        $url = $StandardDocuments->item($m)->getAttribute('rdf:about');
+                        $titles = $StandardDocuments->item($m)->getElementsByTagName('title');
+                        $core_standard[$url]['title'] = $titles->item($m)->nodeValue;
+                }
+
+                $Statements = $doc->getElementsByTagName('Statement');
+                $i = 0;
+                foreach( $Statements as $Statement)
+                {
+                    $statementNotations = $Statements->item($i)->getElementsByTagName('statementNotation');
+                    if($statementNotations->length == 1)
+                    {
+                        $url = $Statements->item($i)->getAttribute('rdf:about');
+                        $isChildOfs = $Statements->item($i)->getElementsByTagName('isChildOf');
+                        $descriptions = $Statements->item($i)->getElementsByTagName('description');
+                        for($j = 0; $j < sizeof($statementNotations); $j++)
+                        {
+                            $standard_notation[$url]['ischild'] = $isChildOfs->item($j)->getAttribute('rdf:resource');
+                            $standard_notation[$url]['title'] = $statementNotations->item($j)->nodeValue;
+                            $standard_notation[$url]['description'] = $descriptions->item($j)->nodeValue;
+                        }
+                    }
+                    else
+                    {
+                        $descriptions = $Statements->item($i)->getElementsByTagName('description');
+                        $url = $Statements->item($i)->getAttribute('rdf:about');
+                        $isChildOfs = $Statements->item($i)->getElementsByTagName('isChildOf');
+                        $k = 0;
+                        foreach( $descriptions as $description)
+                        {
+                            $xml_arr[$url]['ischild'] = $isChildOfs->item($k)->getAttribute('rdf:resource');
+                            $xml_arr[$url]['title'] = $descriptions->item($k)->nodeValue;
+                            $k++;
+                        }
+                    }
+                    $i++;
+                }
+
+                // Get Core Standard
+                foreach($core_standard as $cskey => $csdata)
+                {
+                    $url = $cskey;
+                    $title = $csdata['title'];
+                    $results = $wpdb->get_results( $wpdb->prepare( "SELECT id from " . $wpdb->prefix. "oer_core_standards where standard_name = %s" , $title ));
+                    if(empty($results))
+                    {
+                        $wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_core_standards values("", %s , %s)' , $title , $url ));
+                    }
+                }
+                // Get Core Standard
+
+                // Get Sub Standard
+                foreach($xml_arr as $key => $data)
+                {
+                    $url = esc_url_raw($key);
+                    $ischild = $data['ischild'];
+                    $title = sanitize_text_field($data['title']);
+                    $parent = '';
+
+                    $rsltset = $wpdb->get_results( $wpdb->prepare( "select id from " . $wpdb->prefix. "oer_core_standards where standard_url=%s" , $ischild ));
+                    if(!empty($rsltset))
+                    {
+                        $parent = "core_standards-".$rsltset[0]->id;
+                    }
+                    else
+                    {
+                        $rsltset_sec = $wpdb->get_results( $wpdb->prepare( "select id from " . $wpdb->prefix. "oer_sub_standards where url=%s" , $ischild ));
+                        if(!empty($rsltset_sec))
+                        {
+                            $parent = 'sub_standards-'.$rsltset_sec[0]->id;
+                        }
+                    }
+
+                    $res = $wpdb->get_results( $wpdb->prepare( "SELECT id from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s && url = %s" , $parent , $url ));
+                    if(empty($res))
+                    {
+                        $wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_sub_standards values("", %s, %s, %s)' , $parent , $title , $url ));
+                    }
+                }
+                // Get Sub Standard
+
+                // Get Standard Notation
+                foreach($standard_notation as $st_key => $st_data)
+                {
+                    $url = esc_url_raw($st_key);
+                    $ischild = $st_data['ischild'];
+                    $notation = sanitize_text_field($st_data['title']);
+                    $description = sanitize_text_field($st_data['description']);
+                    $parent = '';
+
+                    $rsltset = $wpdb->get_results( $wpdb->prepare( "select id from " . $wpdb->prefix. "oer_sub_standards where url=%s" , $ischild ));
+                    if(!empty($rsltset))
+                    {
+                        $parent = 'sub_standards-'.$rsltset[0]->id;
+                    }
+                    else
+                    {
+                        $rsltset_sec = $wpdb->get_results( $wpdb->prepare( "select id from " . $wpdb->prefix. "oer_standard_notation where url=%s" , $ischild ));
+                        if(!empty($rsltset_sec))
+                        {
+                            $parent = 'standard_notation-'.$rsltset_sec[0]->id;
+                        }
+                    }
+
+                    $res = $wpdb->get_results( $wpdb->prepare( "SELECT id from " . $wpdb->prefix. "oer_standard_notation where standard_notation = %s && parent_id = %s && url = %s" , $notation , $parent , $url ));
+                    if(empty($res))
+                    {
+                        //$description = preg_replace("/[^a-zA-Z0-9]+/", " ", html_entity_decode($description))
+                        $description = esc_sql($description);
+                        $wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_standard_notation values("", %s, %s, %s, "", %s)' , $parent , $notation , $description , $url ));
+                    }
+                }
+
+            } catch(Exception $e) {
+                $response = array(
+                'message' => $e->getMessage(),
+                'type' => 'error'
+                );
+                // Log any error during import process
+                debug_log($e->getMessage());
+                return $response;
+            }
+            // Log Finished Import
+            debug_log("Academic Standards Importer: Finished Bulk Import of Standards");
+            // Get Standard Notation
+            $response = array(
+                    'message' => 'successful',
+                    'type' => 'success'
+            );
+            return $response;
+	}
+    }
+}
+
+//Check if Standard Exists
+if (!function_exists('was_isStandardExisting')){
+    function was_isStandardExisting($standard) {
+        global $wpdb;
+
+        $response = false;
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT id from " . $wpdb->prefix. "oer_core_standards where standard_name like %s" , '%'.$standard.'%'));
+        if(!empty($results))
+            $response = true;
+
+        return $response;
+    }
+}

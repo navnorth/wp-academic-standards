@@ -120,15 +120,15 @@ function was_add_settings_link( $links, $file ){
 
 // Add rewrite rule for substandards
 add_action( 'init', 'was_add_rewrites', 10, 0 );
-function was_add_rewrites()
+function was_add_rewrites($root_slug="standards")
 {
 	global $wp_rewrite;
 	add_rewrite_tag( '%standard%', '([^/]*)' );
 	add_rewrite_tag( '%substandard%' , '([^&]+)' );
 	add_rewrite_tag( '%notation%' , '([^&]+)' );
-	add_rewrite_rule( '^standards/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]', 'top' );
-	add_rewrite_rule( '^standards/([^/]*)/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]', 'top' );
-	add_rewrite_rule( '^standards/([^/]*)/([^/]*)/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]&notation=$matches[3]', 'top' );
+	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]', 'top' );
+	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]', 'top' );
+	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^/]*)/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]&notation=$matches[3]', 'top' );
 	add_rewrite_endpoint( 'standard', EP_PERMALINK | EP_PAGES );
 	add_rewrite_endpoint( 'substandard', EP_PERMALINK | EP_PAGES );
 	add_rewrite_endpoint( 'notation', EP_PERMALINK | EP_PAGES );
@@ -154,10 +154,15 @@ function was_assign_standard_template($template) {
 	global $wp_query;
 
 	$url_path = trim(parse_url(add_query_arg(array()), PHP_URL_PATH), '/');
-
+        
+        $root_slug = get_option('was_standard_slug');
+        if (!$root_slug || $root_slug==""){
+            $root_slug = "standards";
+        }
+        
 	status_header(200);
 	
-	if ( strpos( $url_path,'standards' ) !== false && !get_query_var('standard') && !get_query_var('substandard') && !get_query_var('notation') ) {
+	if ( strpos( $url_path, $root_slug ) !== false && !get_query_var('standard') && !get_query_var('substandard') && !get_query_var('notation') ) {
 		// load the file if exists
 		$wp_query->is_404 = false;
 		$template = locate_template('template/frontend/standards.php', true);

@@ -86,3 +86,13 @@ function was_check_myChild(ref) {
         }
     }
 }
+
+//Show Loader
+function wasShowLoader(form) {
+	setTimeout(function() {
+		var Top = document.documentElement.scrollTop || document.body.scrollTop;
+		jQuery('.loader .loader-img').css({'padding-top':Top + 'px'});
+		jQuery('.loader').show();
+	} ,1000);
+	return true;
+}

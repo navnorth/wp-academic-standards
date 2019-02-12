@@ -47,20 +47,24 @@ $substandards = was_substandards_by_notation($notation_slug);
 $standard = was_standard_by_notation($notation_slug);
 $resources = was_resources_by_notation($notation->id);
 
+$root_slug = get_option('was_standard_slug');
+if (!isset($root_slug) || $root_slug==""){
+    $root_slug ="standards";
+}
 ?>
 <div class="oer-backlink">
-    <a class="backlink-btn" href="<?php echo home_url('standards/'.$standard_slug.'/'.$parent_slug); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back", WAS_SLUG); ?></a>
+    <a class="backlink-btn" href="<?php echo home_url($root_slug.'/'.$standard_slug.'/'.$parent_slug); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back", WAS_SLUG); ?></a>
 </div>
 <div class="oer-cntnr">
 	<section id="primary" class="site-content">
 		<div id="content" class="standards-display" role="main">
 		    <div class="oer-allftrdrsrc">
-			<div class="oer-snglrsrchdng"><h2><?php printf(__("%s", WAS_SLUG), '<a href="'.home_url("standards/".sanitize_title($standard->standard_name)).'">'.$standard->standard_name.'</a>'); ?></h2></div>
+			<div class="oer-snglrsrchdng"><h2><?php printf(__("%s", WAS_SLUG), '<a href="'.home_url($root_slug."/".sanitize_title($standard->standard_name)).'">'.$standard->standard_name.'</a>'); ?></h2></div>
 			<div class="oer-allftrdrsrccntr-notation">
 			    <ul class="oer-standard">
 			    <?php  if ($upstandards){
 				foreach($upstandards as $upstandard) {
-				    $slug = "standards/".sanitize_title($standard->standard_name)."/".sanitize_title($upstandard['standard_title']);
+				    $slug = $root_slug."/".sanitize_title($standard->standard_name)."/".sanitize_title($upstandard['standard_title']);
 				?>
 				<li>
 				    <ul class="oer-hsubstandards">

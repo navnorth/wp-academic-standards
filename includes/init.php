@@ -39,6 +39,12 @@ function add_standards_menu(){
                      "edit_posts",
                      "import-standards",
                      "was_import_standards_page");
+    add_submenu_page("wp-academic-standards",
+                     __("Academic Standards Settings", WAS_SLUG),
+                     __("Settings", WAS_SLUG),
+                     "edit_posts",
+                     "standards-settings",
+                     "was_standards_settings_page");
 }
 
 function wp_academic_standards_page(){
@@ -47,6 +53,10 @@ function wp_academic_standards_page(){
 
 function was_import_standards_page(){
     include_once(WAS_PATH."/template/admin/standards-importer.php");
+}
+
+function was_standards_settings_page(){
+    include_once(WAS_PATH."/template/admin/settings.php");
 }
 
 /**
@@ -110,5 +120,186 @@ function import_was_standards(){
     wp_safe_redirect( admin_url("admin.php?page=import-standards&message=$message&type=$type"));
     exit;
 }
+
+//Initialize Setup Settings Tab
+add_action( 'admin_init' , 'was_setup_settings' );
+function was_setup_settings(){
+
+	//Create Setup Section
+	add_settings_section(
+		'was_setup_settings',
+		'',
+		'was_setup_settings_callback',
+		'was_setup_settings_section'
+	);
+
+	//Add Settings field for Importing Common Core State Standards
+	add_settings_field(
+		'was_import_ccss',
+		'',
+		'was_setup_settings_field',
+		'was_setup_settings_section',
+		'was_setup_settings',
+		array(
+			'uid' => 'was_import_ccss',
+			'type' => 'checkbox',
+			'value' => '1',
+			'name' =>  __('Import Common Core State Standards', WAS_SLUG),
+			'description' => __('Enable use of CCSS as an optional alignment option for resources.', OER_SLUG)
+		)
+	);
+        
+        //Set API Secret for Url2PNG
+	add_settings_field(
+		'was_standard_slug',
+		__("Standards Root Slug", WAS_SLUG),
+		'was_setup_settings_field',
+		'was_setup_settings_section',
+		'was_setup_settings',
+		array(
+			'uid' => 'was_standard_slug',
+			'type' => 'textbox',
+                        'default' => "standards",
+			'title' => __('Standards Root Slug', WAS_SLUG)
+		)
+	);
+        
+        register_setting( 'was_setup_settings' , 'was_import_ccss' );
+	register_setting( 'was_setup_settings' , 'was_standard_slug' );
+}
+
+//Setup Setting Callback
+function was_setup_settings_callback(){
+
+}
+
+function was_setup_settings_field( $arguments ) {
+	$selected = "";
+	$size = "";
+	$class = "";
+	$disabled = "";
+	$wrapper_class = "";
+	$data_masked = "";
+
+	$value = get_option($arguments['uid']);
+	
+	if (isset($arguments['masked'])){
+		$data_masked = "data-hidden='".$value."'";
+		$value = oer_mask_string($value, 4, 7);
+	}
+
+	if (isset($arguments['indent'])){
+		if (isset($arguments['wrapper_class']))
+			$wrapper_class = $arguments['wrapper_class'];
+		echo '<div class="indent '.$wrapper_class.'">';
+	}
+
+	if (isset($arguments['class'])) {
+		$class = $arguments['class'];
+		$class = " class='".$class."' ";
+	}
+
+	if (isset($arguments['pre_html'])) {
+		echo $arguments['pre_html'];
+	}
+
+	switch($arguments['type']){
+		case "textbox":
+			$size = 'size="50"';
+			if (isset($arguments['title']))
+				$title = $arguments['title'];
+			echo '<label for="'.$arguments['uid'].'"><strong>'.$title.'</strong></label><input name="'.$arguments['uid'].'" id="'.$arguments['uid'].'" type="'.$arguments['type'].'" value="' . $value . '" ' . $size . ' ' .  $selected . ' ' . $data_masked . ' />';
+			break;
+		case "checkbox":
+			$display_value = "";
+			$selected = "";
+
+			if ($value=="1" || $value=="on"){
+				$selected = "checked='checked'";
+				$display_value = "value='1'";
+			} elseif ($value===false){
+				$selected = "";
+				if (isset($arguments['default'])) {
+					if ($arguments['default']==true){
+						$selected = "checked='checked'";
+					}
+				}
+			} else {
+				$selected = "";
+			}
+
+			if (isset($arguments['disabled'])){
+				if ($arguments['disabled']==true)
+					$disabled = " disabled";
+			}
+
+			echo '<input name="'.$arguments['uid'].'" id="'.$arguments['uid'].'" '.$class.' type="'.$arguments['type'].'" ' . $display_value . ' ' . $size . ' ' .  $selected . ' ' . $disabled . '  /><label for="'.$arguments['uid'].'"><strong>'.$arguments['name'].'</strong></label>';
+			break;
+		case "select":
+			if (isset($arguments['name']))
+				$title = $arguments['name'];
+			echo '<label for="'.$arguments['uid'].'"><strong>'.$title.'</strong></label>';
+			echo '<select name="'.$arguments['uid'].'" id="'.$arguments['uid'].'">';
+
+			if (isset($arguments['options']))
+				$options = $arguments['options'];
+
+			foreach($options as $key=>$desc){
+				$selected = "";
+				if ($value===false){
+					if ($key==$arguments['default'])
+						$selected = " selected";
+				} else {
+					if ($key==$value)
+						$selected = " selected";
+				}
+				$disabled = "";
+				switch ($key){
+					case 3:
+						if(!shortcode_exists('wonderplugin_pdf'))
+							$disabled = " disabled";
+						break;
+					case 4:
+						if (!shortcode_exists('pdf-embedder'))
+							$disabled = " disabled";
+						break;
+					case 5:
+						if(!shortcode_exists('pdfviewer'))
+							$disabled = " disabled";
+						break;
+					default:
+						break;
+				}
+				echo '<option value="'.$key.'"'.$selected.''.$disabled.'>'.$desc.'</option>';
+			}
+
+			echo '<select>';
+			break;
+		case "textarea":
+			echo '<label for="'.$arguments['uid'].'"><h3><strong>'.$arguments['name'];
+			if (isset($arguments['inline_description']))
+				echo '<span class="inline-desc">'.$arguments['inline_description'].'</span>';
+			echo '</strong></h3></label>';
+			echo '<textarea name="'.$arguments['uid'].'" id="'.$arguments['uid'].'" rows="10">' . $value . '</textarea>';
+			break;
+		default:
+			break;
+	}
+
+	//Show Helper Text if specified
+	if (isset($arguments['helper'])) {
+		printf( '<span class="helper"> %s</span>' , $arguments['helper'] );
+	}
+
+	//Show Description if specified
+	if( isset($arguments['description']) ){
+		printf( '<p class="description">%s</p>', $arguments['description'] );
+	}
+
+	if (isset($arguments['indent'])){
+		echo '</div>';
+	}
+}
+
 
 ?>
