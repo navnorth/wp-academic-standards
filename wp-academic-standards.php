@@ -37,7 +37,7 @@ define( 'WAS_PLUGIN_NAME', 'WP Academic Standards' );
 define( 'WAS_ADMIN_PLUGIN_NAME', 'WP Academic Standards');
 define( 'WAS_VERSION', '0.0.1' );
 
-global $_oer_prefix;
+global $_oer_prefix, $message, $type;
 $_oer_prefix = "oer_";
 
 include_once(WAS_PATH.'includes/init.php');

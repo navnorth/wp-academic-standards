@@ -3,34 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 global $message, $type;
 
-if (isset($_REQUEST['settings-updated'])) {
-    if (!current_user_can('manage_options')) {
-        wp_die( "You don't have permission to access this page!" );
-    }
-    
-    //Import CCSS Standards
-    $import_ccss = get_option('was_import_ccss');
-    if ($import_ccss) {
-        $response = was_importDefaultStandards();
-        if ($response) {
-            $message .= $response["message"];
-            $type .= $response["type"];
-        }
-    }
-    
-    // Standards slug Root
-    $standard_root_slug = get_option('was_standard_slug');
-    if (isset($standard_root_slug) && $standard_root_slug!==""){
-        was_add_rewrites($standard_root_slug);
-        //Trigger permalink reset
-        flush_rewrite_rules();
-        $message = "Permalink structure has been reset for standards root slug ".$standard_root_slug;
-        $type = "success";
-    }
-    
-    //Redirect to main settings page
-    wp_safe_redirect( admin_url( 'admin.php?page=standards-settings' ) );
-    exit();
+if (!current_user_can('manage_options')) {
+    wp_die( "You don't have permission to access this page!" );
 }
 ?>
 <div class="wrap">
