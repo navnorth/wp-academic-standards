@@ -328,7 +328,7 @@ function was_process_settings_form(){
         }
         
         //Redirect to main settings page
-        wp_safe_redirect( admin_url( 'admin.php?page=standards-settings' ) );
+        wp_redirect( admin_url( 'admin.php?page=standards-settings' ) );
         exit();
     }
 }

@@ -644,6 +644,20 @@ if (!function_exists('was_standard_by_notation')) {
     }
 }
 
+/** Get Core Standard **/
+if (!function_exists('was_core_standard')){
+    function was_core_standard($id) {
+            global $wpdb;
+            $results = null;
+            
+            if ($id!=="") {
+                    $stds = explode("-",$id);
+                    $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_core_standards where id = %s" , $stds[1] ) , ARRAY_A);
+            }
+            return $results;
+    }
+}
+
 /** Get Parent Standard **/
 if (!function_exists('was_parent_standard')){
     function was_parent_standard($standard_id) {
@@ -1032,5 +1046,89 @@ if (!function_exists('was_isStandardExisting')){
             $response = true;
 
         return $response;
+    }
+}
+
+// Display Selected Standards on frontend
+if (!function_exists('was_display_selected_standards')){
+    function was_display_selected_standards($standard_meta_key="oer_standard"){
+        global $post, $wpdb, $_oer_prefix;
+        
+        $oer_standard = get_post_meta($post->ID, $standard_meta_key, true);
+        
+        $standards = explode(",", $oer_standard);
+        $oer_standards = array();
+        
+        foreach ($standards as $standard) {
+            if ($standard!=""){
+                $stds = was_parent_standard($standard);
+                foreach($stds as $std){
+                    $core_std = was_core_standard($std['parent_id']);
+                    $oer_standards[] = array(
+                    'id' => $standard,
+                    'core_id' => $core_std[0]['id'],
+                    'core_title' => $core_std[0]['standard_name']
+                     );
+                }
+            }
+        }
+        
+        foreach ($oer_standards as $key => $row) {
+            $core[$key]  = $row['core_id'];
+        }
+        
+        if (!empty($oer_standards))
+            array_multisort($core, SORT_ASC, $oer_standards);
+        
+        if(!empty($oer_standards))
+        {
+        ?>
+            <div class="alignedStandards">
+            <h2><?php _e("Standards Alignment", OER_SLUG) ?></h2>
+            <div class="oer_meta_container">
+                <div class="oer_stndrds_notn">
+                <?php
+                    if(!empty($oer_standards))
+                    {
+                    ?>
+                        <?php
+                        $displayed_core_standards = array();
+                        foreach($oer_standards as $o_standard) {
+                                
+                            if (!in_array($o_standard['core_id'],$displayed_core_standards)){
+                                echo "<div class='oer-core-title'><h4><strong>".$o_standard['core_title']."</strong></h4></div>";
+                                $displayed_core_standards[] = $o_standard['core_id'];
+                            }
+                            
+                            $oer_standard =$o_standard['id'];
+                            $stnd_arr = explode(",", $oer_standard);
+                            
+                            for($i=0; $i< count($stnd_arr); $i++)
+                            {
+                                $table = explode("-",$stnd_arr[$i]);
+                                
+                                $table_name = $wpdb->prefix.$_oer_prefix.$table[0];
+                                
+                                $id = $table[1];
+                                
+                                $res = $wpdb->get_row( $wpdb->prepare("select * from $table_name where id=%d" , $id ), ARRAY_A);
+                                
+                                echo "<div class='oer_sngl_stndrd'>";
+                                    if (strpos($table_name,"sub_standards")>0) {
+                                        echo "<span class='oer_sngl_description'>".$res['standard_title']."</span>";
+                                    } else {
+                                        echo "<span class='oer_sngl_notation'>".$res['standard_notation']."</span>";
+                                        echo "<span class='oer_sngl_description'>".$res['description']."</span>";
+                                    }
+                                echo "</div>";
+                            }
+                        }
+                    }
+                ?>
+                </div>
+
+            </div>
+        </div>
+        <?php }
     }
 }
