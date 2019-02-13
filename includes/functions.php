@@ -1132,3 +1132,19 @@ if (!function_exists('was_display_selected_standards')){
         <?php }
     }
 }
+
+if (!function_exists('was_search_standards')){
+    function was_search_standards($keyword) {
+        global $wpdb;
+        
+        $results = null;
+        
+        $search = $wpdb->get_results( $wpdb->prepare( "SELECT id from " . $wpdb->prefix. "oer_standard_notation where description like %s" , '%'.$keyword.'%'));
+        if (!empty($search)){
+            foreach($search as $row){
+                $results[]= $row;
+            }
+        }
+        return $results;
+    }
+}
