@@ -1137,14 +1137,96 @@ if (!function_exists('was_search_standards')){
     function was_search_standards($keyword) {
         global $wpdb;
         
+        $all_results = array();
         $results = null;
         
-        $search = $wpdb->get_results( $wpdb->prepare( "SELECT id from " . $wpdb->prefix. "oer_standard_notation where description like %s" , '%'.$keyword.'%'));
+        $search = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where description like %s" , '%'.$keyword.'%'));
         if (!empty($search)){
             foreach($search as $row){
                 $results[]= $row;
             }
         }
+        
+        if (!empty($results)){
+            foreach ($results as $res){
+                //echo $res->parent_id;
+                $parent = was_get_parent($res->parent_id);
+                $all_results[] = array("parent"=>$parent,"notation"=>$res);
+                //echo "<li><strong>".$res->standard_notation."</strong> ".$res->description."</li>";
+            }
+        }
+        
+        usort($all_results, "was_sort_search_results");
+        $added = array();
+        if (!empty($all_results)){
+            echo "<ul class='search-standards-list'>";
+            foreach($all_results as $sresult) {
+                $parents = $sresult['parent'];
+                foreach ($parents as $parent){
+                    if (property_exists($parent,"standard_name")){
+                        if (!in_array($parent->standard_name,$added)) {
+                            echo "<li>".$parent->standard_name."</li>";
+                            $added[] = $parent->standard_name;
+                        }
+                    }
+                    if (property_exists($parent,"standard_title")){
+                        if (!in_array($parent->standard_title, $added)){
+                            echo "<ul>";
+                            echo "<li>".$parent->standard_title."</li>";
+                            $added[] = $parent->standard_title;
+                            echo "</ul>";
+                        }
+                    }
+                }
+            }
+            echo "</ul>";
+        }
+    }
+}
+
+if (!function_exists('was_get_parent')){
+    function was_get_parent($parent_id){
+        global $wpdb;
+        
+        $table ="";
+        $id = 0;
+        $results = null;
+        $ids = explode("-",$parent_id);
+        if (is_array($ids)){
+            if (isset($ids[0]))
+                $table = $ids[0];
+            if (isset($ids[1]))
+                $id = $ids[1];
+        }
+        
+        if ($table!=="" && $id!==0) {
+            $parent = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_".$table." where id=%d" , ''.$id.''));
+            if (!empty($parent)){
+                foreach($parent as $row){
+                    if ($table!=="core_standards"){
+                        $results = was_get_parent($row->parent_id);
+                        $results[]= $row;
+                    }
+                    else
+                        $results[] = $row;
+                }
+            }
+        }
         return $results;
+    }
+}
+
+if (!function_exists('was_sort_search_results')){
+    function was_sort_search_results($a, $b){
+        $ret = $a['parent'][0]->id - $b['parent'][0]->id;
+        if ($ret == 0){
+            $ret = $a['parent'][1]->id - $b['parent'][1]->id;
+            if ($ret == 0){
+                if (isset($a['parent'][2]) && isset($a['parent'][2])) {
+                    $ret = $a['parent'][2]->id - $b['parent'][2]->id;
+                }
+            }
+        }
+        return $ret;
     }
 }
