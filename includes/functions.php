@@ -1134,11 +1134,18 @@ if (!function_exists('was_display_selected_standards')){
 }
 
 if (!function_exists('was_search_standards')){
-    function was_search_standards($keyword) {
+    function was_search_standards($post_id, $keyword, $meta_key="oer_standard") {
         global $wpdb;
         
         $all_results = array();
         $results = null;
+        $chck = null;
+        $core_standard = false;
+        $sub_standard = false;
+        $standard_notation = false;
+        
+        $standards = get_post_meta($post_id, $meta_key, true);
+        $selected_standards = explode(",",$standards);
         
         $search = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where description like %s" , '%'.$keyword.'%'));
         if (!empty($search)){
@@ -1149,10 +1156,8 @@ if (!function_exists('was_search_standards')){
         
         if (!empty($results)){
             foreach ($results as $res){
-                //echo $res->parent_id;
                 $parent = was_get_parent($res->parent_id);
                 $all_results[] = array("parent"=>$parent,"notation"=>$res);
-                //echo "<li><strong>".$res->standard_notation."</strong> ".$res->description."</li>";
             }
         }
         
@@ -1162,21 +1167,58 @@ if (!function_exists('was_search_standards')){
             echo "<ul class='search-standards-list'>";
             foreach($all_results as $sresult) {
                 $parents = $sresult['parent'];
-                foreach ($parents as $parent){
-                    if (property_exists($parent,"standard_name")){
-                        if (!in_array($parent->standard_name,$added)) {
-                            echo "<li>".$parent->standard_name."</li>";
-                            $added[] = $parent->standard_name;
+                if (is_array($parents)){
+                    foreach ($parents as $parent){
+                        if (property_exists($parent,"standard_name")){
+                            if (!in_array($parent->standard_name,$added)) {
+                                if (!$core_standard)
+                                    echo "<li>";
+                                echo $parent->standard_name;
+                                $core_standard = true;
+                                $added[] = $parent->standard_name;
+                            }
+                        }
+                        if (property_exists($parent,"standard_title")){
+                            if (!in_array($parent->standard_title, $added)){
+                                if (!$sub_standard)
+                                    echo "<li><ul>";
+                                echo "<li>".$parent->standard_title."</li>";
+                                $added[] = $parent->standard_title;
+                                $sub_standard = true;
+                            }
+                        }
+                        if (property_exists($parent,"standard_notation")){
+                            if (!$standard_notation)
+                                    echo "<li><ul>";
+                            if (!in_array($parent->standard_notation, $added)){
+                                echo "<li><strong>".$parent->standard_notation."</strong> ".$parent->description."</li>";
+                                $added[] = $parent->standard_notation;
+                                $standard_notation = true;
+                            }
                         }
                     }
-                    if (property_exists($parent,"standard_title")){
-                        if (!in_array($parent->standard_title, $added)){
-                            echo "<ul>";
-                            echo "<li>".$parent->standard_title."</li>";
-                            $added[] = $parent->standard_title;
-                            echo "</ul>";
-                        }
+                }
+                $notation = $sresult['notation'];
+                if ($notation){
+                    $value = "standard_notation-".$notation->id;
+                    if (in_array($value, $selected_standards)){
+                        $chck = "checked='checked'";
                     }
+                    echo "<li><ul>";
+                    echo "<li><input type='checkbox' ".$chck." name='".$meta_key."[]' value='".$value."' onclick='was_check_all(this)' ><strong>".$notation->standard_notation."</strong> ".$notation->description."</li>";
+                    echo "</ul></li>";
+                }
+                if ($standard_notation==true){
+                    $standard_notation = false;
+                    echo "</ul></li>";
+                }
+                if ($sub_standard==true){
+                    $sub_standard = false;
+                    echo "</ul></li>";
+                }
+                if ($core_standard==true){
+                    $core_standard = false;
+                    echo "</li>";
                 }
             }
             echo "</ul>";
