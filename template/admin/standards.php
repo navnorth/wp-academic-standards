@@ -7,5 +7,4 @@ global $wpdb;
     <div id="icon-themes" class="icon32"></div>
     <h2><?php _e('WP Academic Standards', WAS_SLUG); ?></h2>
     <?php was_display_admin_standards(); ?>
-    <?php was_search_standards(25144,"writing"); ?>
 </div>

@@ -1224,7 +1224,7 @@ if (!function_exists('was_search_standards')){
                         $chck = "checked='checked'";
                     }
                     was_pre_search_block($ancestors);
-                    echo "<li><input type='checkbox' ".$chck." name='".$meta_key."[]' value='".$value."' onclick='was_check_all(this)' ><strong>".$notation->standard_notation."</strong> ".$notation->description."</li>";
+                    echo "<li><input type='checkbox' ".$chck." name='".$meta_key."[]' value='".$value."' onclick='was_check_all(this)' >".$notation->standard_notation." <div class='oer_stndrd_desc'>".$notation->description."</div></li>";
                     was_post_search_block($ancestors);
                 }
             }
