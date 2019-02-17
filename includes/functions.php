@@ -1133,6 +1133,22 @@ if (!function_exists('was_display_selected_standards')){
     }
 }
 
+if (!function_exists('was_pre_search_block')){
+    function was_pre_search_block($iteration){
+        for ($i=0;$i<$iteration;$i++){
+            echo "<li><ul>";
+        }
+    }
+}
+
+if (!function_exists('was_post_search_block')){
+    function was_post_search_block($iteration){
+        for ($i=0;$i<$iteration;$i++){
+            echo "</ul><li>";
+        }
+    }
+}
+
 if (!function_exists('was_search_standards')){
     function was_search_standards($post_id, $keyword, $meta_key="oer_standard") {
         global $wpdb;
@@ -1166,32 +1182,34 @@ if (!function_exists('was_search_standards')){
         if (!empty($all_results)){
             echo "<ul class='search-standards-list'>";
             foreach($all_results as $sresult) {
+                $chck = "";
+                $ancestors = 0;
                 $parents = $sresult['parent'];
                 if (is_array($parents)){
                     foreach ($parents as $parent){
                         if (property_exists($parent,"standard_name")){
                             if (!in_array($parent->standard_name,$added)) {
-                                if (!$core_standard)
-                                    echo "<li>";
-                                echo $parent->standard_name;
+                                echo "<li>".$parent->standard_name."</li>";
                                 $core_standard = true;
                                 $added[] = $parent->standard_name;
                             }
                         }
                         if (property_exists($parent,"standard_title")){
+                            $ancestors++;
                             if (!in_array($parent->standard_title, $added)){
-                                if (!$sub_standard)
-                                    echo "<li><ul>";
+                                was_pre_search_block($ancestors);
                                 echo "<li>".$parent->standard_title."</li>";
+                                was_post_search_block($ancestors);
                                 $added[] = $parent->standard_title;
                                 $sub_standard = true;
                             }
                         }
                         if (property_exists($parent,"standard_notation")){
-                            if (!$standard_notation)
-                                    echo "<li><ul>";
+                            $ancestors++;
                             if (!in_array($parent->standard_notation, $added)){
+                                was_pre_search_block($ancestors);
                                 echo "<li><strong>".$parent->standard_notation."</strong> ".$parent->description."</li>";
+                                was_post_search_block($ancestors);
                                 $added[] = $parent->standard_notation;
                                 $standard_notation = true;
                             }
@@ -1200,25 +1218,14 @@ if (!function_exists('was_search_standards')){
                 }
                 $notation = $sresult['notation'];
                 if ($notation){
+                    $ancestors++;
                     $value = "standard_notation-".$notation->id;
                     if (in_array($value, $selected_standards)){
                         $chck = "checked='checked'";
                     }
-                    echo "<li><ul>";
+                    was_pre_search_block($ancestors);
                     echo "<li><input type='checkbox' ".$chck." name='".$meta_key."[]' value='".$value."' onclick='was_check_all(this)' ><strong>".$notation->standard_notation."</strong> ".$notation->description."</li>";
-                    echo "</ul></li>";
-                }
-                if ($standard_notation==true){
-                    $standard_notation = false;
-                    echo "</ul></li>";
-                }
-                if ($sub_standard==true){
-                    $sub_standard = false;
-                    echo "</ul></li>";
-                }
-                if ($core_standard==true){
-                    $core_standard = false;
-                    echo "</li>";
+                    was_post_search_block($ancestors);
                 }
             }
             echo "</ul>";
