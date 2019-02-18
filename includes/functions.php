@@ -65,6 +65,7 @@ if (!function_exists('child_standards')){
                 
                 if (!empty($subchildren)){
                     echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_title']."</a>";
+                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a href="#"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>';
                 }
                 
                 if(empty($subchildren) && empty($child)) {
@@ -76,6 +77,7 @@ if (!function_exists('child_standards')){
                 
                 if (!empty($child)) {
                     echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_title']."</a>";
+                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a href="#"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>';
                     $sid = 'sub_standards-'.$result['id'];
                     child_standard_notations($sid);
                 }
@@ -109,6 +111,7 @@ if (!function_exists('child_standard_notations')) {
                     if(!empty($child))
                     {
                         echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_notation']."</a>";
+                        echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a href="#"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>';
                     }
                             
                     echo  "<strong>".$result['standard_notation']."</strong>
@@ -144,7 +147,7 @@ if (!function_exists('was_display_admin_standards')){
                 $value = 'core_standards-'.$row['id'];
                 ?>
                 <li class='core-standard'>
-                    <a data-toggle='collapse' data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo $row['standard_name']; ?></a>
+                    <a data-toggle='collapse' data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo $row['standard_name']; ?></a> <span class="std-edit"><a href="#"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>
                 </li>
             <?php
                 child_standards($value);
