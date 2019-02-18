@@ -1180,6 +1180,7 @@ if (!function_exists('was_search_standards')){
         usort($all_results, "was_sort_search_results");
         $added = array();
         if (!empty($all_results)){
+            echo "<div id='search-results-list'>";
             echo "<ul class='search-standards-list'>";
             foreach($all_results as $sresult) {
                 $chck = "";
@@ -1229,6 +1230,7 @@ if (!function_exists('was_search_standards')){
                 }
             }
             echo "</ul>";
+            echo "</div>";
         }
     }
 }
