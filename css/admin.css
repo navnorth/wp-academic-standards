@@ -294,3 +294,5 @@ label.was-core-standard{
 .was-plugin-footer { padding-top:5px; border-top:1px solid #cdcdcd; }
 .search-standards-list ul{ margin-left:15px; }
 .search-standards-list li input[type=checkbox] { margin-top:0 !important; margin-right:3px; }
+
+.hidden-block { display:none; }

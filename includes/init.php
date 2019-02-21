@@ -332,4 +332,9 @@ function was_process_settings_form(){
         exit();
     }
 }
+
+add_action( "admin_footer" , "was_edit_standard_modal" );
+function was_edit_standard_modal(){
+    include_once(WAS_PATH."template/admin/modals/edit_standard_modal.php");
+}
 ?>

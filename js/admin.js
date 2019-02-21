@@ -9,6 +9,10 @@ jQuery(document).ready(function($) {
                     std_url.attr("disabled", true)
             }
     });
+    
+    $(".std-edit").on("click", function(){
+        
+    });
 });
 
 // Get File Extension

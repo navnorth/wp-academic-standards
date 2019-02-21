@@ -1,0 +1,63 @@
+<!-- Modal -->
+<?php global $post; ?>
+<div class="modal fade" id="editStandardModal" tabindex="-1" role="dialog" aria-labelledby="standardModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="standardModalLabel">Edit Standard</h4>
+      </div>
+      <div id="edit-standard" class="modal-body">
+        <div id="edit-core-standard" class="hidden-block">
+          <div class="form-grup">
+            <label for="standard_name">Standard Name:</label>
+            <input type="text" class="form-control" id="standard_name">
+          </div>
+          <div class="form-grup">
+            <label for="standard_url">Standard URL:</label>
+            <input type="text" class="form-control" id="standard_url">
+          </div>
+        </div>
+        <div id="edit-sub-standard" class="hidden-block">
+          <div class="form-grup">
+            <label for="">Parent:</label>
+            <select class="form-control" id=""></select>
+          </div>
+          <div class="form-grup">
+            <label for="">Standard Title:</label>
+            <input type="text" class="form-control" id="">
+          </div>
+          <div class="form-grup">
+            <label for="">Standard URL:</label>
+            <input type="text" class="form-control" id="">
+          </div>
+        </div>
+        <div id="edit-standard-notation" class="hidden-block">
+          <div class="form-grup">
+            <label for="">Parent:</label>
+            <select class="form-control" id=""></select>
+          </div>
+          <div class="form-grup">
+            <label for="">Standard Notation:</label>
+            <input type="text" class="form-control" id="">
+          </div>
+          <div class="form-grup">
+            <label for="">Description:</label>
+            <input type="text" class="form-control" id="">
+          </div>
+          <div class="form-grup">
+            <label for="">Comment:</label>
+            <input type="text" class="form-control" id="">
+          </div>
+          <div class="form-grup">
+            <label for="">Notation URL:</label>
+            <input type="text" class="form-control" id="">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnSaveStandards" class="btn btn-default btn-sm" data-postid="<?php echo $post->ID; ?>" data-dismiss="modal">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
