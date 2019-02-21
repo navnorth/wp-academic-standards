@@ -148,7 +148,7 @@ if (!function_exists('was_display_admin_standards')){
                 $value = 'core_standards-'.$row['id'];
                 ?>
                 <li class='core-standard'>
-                    <a data-toggle='collapse' data-id="<?php echo $row['id']; ?>" data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo $row['standard_name']; ?></a> <span class="std-edit"><a href="javascript:void(0);" data-toggle="modal" data-target="#editStandardModal" class="std-edit-icon" data-stdid="<?php echo $row['id']; ?>"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>
+                    <a data-toggle='collapse' data-id="<?php echo $row['id']; ?>" data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo $row['standard_name']; ?></a> <span class="std-edit"><a href="javascript:void(0);" data-target="#editStandardModal" class="std-edit-icon" data-value="<?php echo $value; ?>" data-stdid="<?php echo $row['id']; ?>"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>
                 </li>
             <?php
                 child_standards($value);
@@ -1283,5 +1283,25 @@ if (!function_exists('was_sort_search_results')){
             }
         }
         return $ret;
+    }
+}
+
+if (!function_exists('was_standard_details')){
+    function was_standard_details($stdid){
+        global $wpdb;
+        
+        $rec = null;
+        
+        $stds = explode("-", $stdid);
+        $table = $stds[0];
+        $id = $stds[1];
+        
+        $result = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_".$table." where id=%d" , $id));
+        if (!empty($result)){
+            foreach($result as $row){
+                $rec = $row;
+            }
+        }
+        return $rec;
     }
 }

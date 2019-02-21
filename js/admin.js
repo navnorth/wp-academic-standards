@@ -10,10 +10,49 @@ jQuery(document).ready(function($) {
             }
     });
     
-    $(".std-edit").on("click", function(){
-        
+    $(".std-edit a").on("click", function(){
+        var std_val = $(this).attr('data-value');
+        display_standard_details(std_val);
+        jQuery("#editStandardModal").modal("show");
     });
 });
+
+// display core standard details on edit
+function display_standard_details(id) {
+    data = {
+        action: 'get_standard_details',
+        std_id: id
+    }
+    
+    var stndrd = id.split("-");
+    var type = stndrd[0];
+    var block_name;
+    //* Process the AJAX POST request
+    jQuery.post(
+        ajaxurl,
+        data
+        ).done( function(response) {
+            if (response) {
+                switch (type) {
+                    case "core_standards":
+                        details = JSON.parse(response);
+                        jQuery("#editStandardModal #standard_name").val(details.standard_name);
+                        jQuery("#editStandardModal #standard_url").val(details.standard_url);
+                        block_name = "edit-core-standard";
+                        break;
+                    case "sub_standards":
+                        block_name = "edit-sub-standard";
+                        break;
+                    case "standard_notation":
+                        block_name = "edit-standard-notation";
+                        break;
+                }   
+            }
+            jQuery("#"+block_name).show();
+        });
+
+    return false;
+}
 
 // Get File Extension
 function getFileExtension(filename) {

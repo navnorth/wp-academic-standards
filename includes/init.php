@@ -337,4 +337,23 @@ add_action( "admin_footer" , "was_edit_standard_modal" );
 function was_edit_standard_modal(){
     include_once(WAS_PATH."template/admin/modals/edit_standard_modal.php");
 }
+
+add_action('wp_ajax_get_standard_details', 'was_get_standard_details');
+function was_get_standard_details(){
+	$std_id = null;
+	
+	if (isset($_POST['std_id'])){
+		$std_id = $_POST['std_id'];
+	}
+	
+	if (!$std_id){
+		echo "Invalid Standard ID";
+		die();
+	}
+	
+        $details = was_standard_details($std_id);
+        echo json_encode($details);
+    
+	die();
+}
 ?>
