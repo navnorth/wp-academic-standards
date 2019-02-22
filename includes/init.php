@@ -356,4 +356,35 @@ function was_get_standard_details(){
     
 	die();
 }
+
+add_action('wp_ajax_update_standard', 'was_update_standard');
+function was_update_standard(){
+    global $wpdb;
+    $standard = null;
+    $success = null;
+    
+    if (isset($_POST['details'])){
+        $standard = $_POST['details'];
+    }
+    
+    if (array_key_exists("standard_name", $standard)){
+        $success = $wpdb->update(
+            $wpdb->prefix."oer_core_standards",
+            array(
+                "standard_name" => $standard['standard_name'],
+                "standard_url" => $standard['standard_url']
+            ),
+            array( "id" => $standard['id'] ),
+            array(
+                "%s",
+                "%s"
+            ),
+            array( "%d" )
+        );
+    }
+    
+    echo $success;
+    
+    die();
+}
 ?>

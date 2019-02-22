@@ -13,7 +13,22 @@ jQuery(document).ready(function($) {
     $(".std-edit a").on("click", function(){
         var std_val = $(this).attr('data-value');
         display_standard_details(std_val);
-        jQuery("#editStandardModal").modal("show");
+        $("#editStandardModal").modal("show");
+    });
+    
+    $("#editStandardModal").on("hidden.bs.modal", function(){
+        $(".hidden-block").hide();
+    });
+    
+    $("#btnUpdateStandards").on("click", function(){
+        if ($("#edit-core-standard").is(":visible")) {
+            var edit_data = {
+                id: $("#edit-core-standard #standard_id").val(),
+                standard_name: $("#edit-core-standard #standard_name").val(),
+                standard_url: $("#edit-core-standard #standard_url").val()
+            };
+            update_standard(edit_data);
+        }
     });
 });
 
@@ -27,6 +42,7 @@ function display_standard_details(id) {
     var stndrd = id.split("-");
     var type = stndrd[0];
     var block_name;
+    
     //* Process the AJAX POST request
     jQuery.post(
         ajaxurl,
@@ -36,6 +52,7 @@ function display_standard_details(id) {
                 switch (type) {
                     case "core_standards":
                         details = JSON.parse(response);
+                        jQuery("#editStandardModal #standard_id").val(details.id);
                         jQuery("#editStandardModal #standard_name").val(details.standard_name);
                         jQuery("#editStandardModal #standard_url").val(details.standard_url);
                         block_name = "edit-core-standard";
@@ -52,6 +69,30 @@ function display_standard_details(id) {
         });
 
     return false;
+}
+
+function update_standard(details) {
+    data =  {
+        action: "update_standard",
+        details: details
+    }
+    
+    jQuery.post(
+        ajaxurl,
+        data
+    ).done(function( response ){
+        var message;
+        if (response===false) {
+            message = "Updating standard failed."
+        } else {
+            message = "Standard successfully updated.";
+        }
+        jQuery('.standards-notice-success').append("<p>"+message+"</p>");
+        jQuery('.standards-notice-success').show();
+        setTimeout(function(){
+            jQuery('.standards-notice-success').hide();
+        },5000);
+    });
 }
 
 // Get File Extension

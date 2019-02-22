@@ -148,7 +148,9 @@ if (!function_exists('was_display_admin_standards')){
                 $value = 'core_standards-'.$row['id'];
                 ?>
                 <li class='core-standard'>
-                    <a data-toggle='collapse' data-id="<?php echo $row['id']; ?>" data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo $row['standard_name']; ?></a> <span class="std-edit"><a href="javascript:void(0);" data-target="#editStandardModal" class="std-edit-icon" data-value="<?php echo $value; ?>" data-stdid="<?php echo $row['id']; ?>"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>
+                    <a data-toggle='collapse' data-id="<?php echo $row['id']; ?>" data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo $row['standard_name']; ?></a>
+                        <span class="std-edit"><a href="javascript:void(0);" data-target="#editStandardModal" class="std-edit-icon" data-value="<?php echo $value; ?>" data-stdid="<?php echo $row['id']; ?>"><i class="far fa-edit"></i></a></span>
+                        <span class="std-add"><a href="javascript:void(0)" data-target="#addStandardModal" class="std-add-icon" data-parent="<?php echo $value; ?>"><i class="fas fa-plus"></i></a></span>
                 </li>
             <?php
                 child_standards($value);
