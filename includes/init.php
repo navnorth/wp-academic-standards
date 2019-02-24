@@ -403,7 +403,7 @@ function was_add_standard(){
         $standard = $_POST['details'];
     }
     
-    if (array_key_exists("standard_name", $standard)){
+    if (array_key_exists("standard_title", $standard)){
         $success = $wpdb->insert(
             $wpdb->prefix."oer_sub_standards",
             array(
