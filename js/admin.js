@@ -16,7 +16,21 @@ jQuery(document).ready(function($) {
         $("#editStandardModal").modal("show");
     });
     
-    $("#editStandardModal").on("hidden.bs.modal", function(){
+    $(".std-add a").on("click", function(){
+        var std_val = $(this).attr('data-parent');
+        var std;
+        if (std_val) {
+            stds = std_val.split("-");
+            std = stds[0];
+        }
+        if (std=="core_standards") {
+            $("#addStandardModal #standard_parent_id").val(std_val);
+            $("#addStandardModal #add-sub-standard").show();
+        }
+        $("#addStandardModal").modal("show");
+    });
+    
+    $("#editStandardModal, #addStandardModal").on("hidden.bs.modal", function(){
         $(".hidden-block").hide();
     });
     
@@ -28,6 +42,17 @@ jQuery(document).ready(function($) {
                 standard_url: $("#edit-core-standard #standard_url").val()
             };
             update_standard(edit_data);
+        }
+    });
+    
+    $("#btnSaveStandards").on("click", function(){
+        if ($("#add-sub-standard").is(":visible")) {
+            var add_data = {
+                parent_id: $("#add-sub-standard #standard_parent_id").val(),
+                standard_title: $("#add-sub-standard #standard_title").val(),
+                standard_url: $("#add-sub-standard #standard_url").val()
+            }
+            add_standard(add_data);
         }
     });
 });
@@ -92,6 +117,46 @@ function update_standard(details) {
         setTimeout(function(){
             jQuery('.standards-notice-success').hide();
         },5000);
+        display_standards();
+    });
+}
+
+function add_standard(details) {
+    data =  {
+        action: "add_standard",
+        details: details
+    }
+    
+    jQuery.post(
+        ajaxurl,
+        data
+    ).done(function( response ){
+        var message;
+        if (response===false) {
+            message = "Adding standard failed."
+        } else {
+            message = "Standard successfully added.";
+        }
+        jQuery('.standards-notice-success').append("<p>"+message+"</p>");
+        jQuery('.standards-notice-success').show();
+        setTimeout(function(){
+            jQuery('.standards-notice-success').hide();
+        },5000);
+        display_standards();
+    });
+}
+
+function display_standards() {
+    data =  {
+        action: "load_admin_standards"
+    }
+    
+    jQuery.post(
+        ajaxurl,
+        data
+    ).done(function( response ){
+        jQuery("#admin-standard-list").html("");
+        jQuery("#admin-standard-list").html(response);
     });
 }
 

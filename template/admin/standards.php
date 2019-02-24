@@ -9,5 +9,7 @@ global $wpdb;
     <div class="notice notice-success standards-notice-success is-dismissible hidden-block">
     	
     </div>
+    <div id="admin-standard-list">
     <?php was_display_admin_standards(); ?>
+    </div>
 </div>

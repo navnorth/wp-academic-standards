@@ -338,6 +338,11 @@ function was_edit_standard_modal(){
     include_once(WAS_PATH."template/admin/modals/edit_standard_modal.php");
 }
 
+add_action( "admin_footer" , "was_add_standard_modal" );
+function was_add_standard_modal(){
+    include_once(WAS_PATH."template/admin/modals/add_standard_modal.php");
+}
+
 add_action('wp_ajax_get_standard_details', 'was_get_standard_details');
 function was_get_standard_details(){
 	$std_id = null;
@@ -386,5 +391,43 @@ function was_update_standard(){
     echo $success;
     
     die();
+}
+
+add_action('wp_ajax_add_standard', 'was_add_standard');
+function was_add_standard(){
+    global $wpdb;
+    $standard = null;
+    $success = null;
+    
+    if (isset($_POST['details'])){
+        $standard = $_POST['details'];
+    }
+    
+    if (array_key_exists("standard_name", $standard)){
+        $success = $wpdb->insert(
+            $wpdb->prefix."oer_sub_standards",
+            array(
+                "parent_id" => $standard['parent_id'],
+                "standard_title" => $standard['standard_title'],
+                "url" => $standard['standard_url']
+            ),
+            array(
+                "%s",
+                "%s",
+                "%s"
+            )
+        );
+    }
+    
+    echo $success;
+    
+    die();
+}
+
+add_action('wp_ajax_load_admin_standards', 'was_load_admin_standards');
+function was_load_admin_standards(){
+	was_display_admin_standards();
+    
+	die();
 }
 ?>
