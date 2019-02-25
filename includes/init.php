@@ -449,6 +449,24 @@ function was_add_standard(){
                 "%s"
             )
         );
+    } elseif (array_key_exists("standard_notation", $standard)) {
+        $success = $wpdb->insert(
+            $wpdb->prefix."oer_standard_notation",
+            array(
+                "parent_id" => $standard['parent_id'],
+                "standard_notation" => $standard['standard_notation'],
+                "description" => $standard['description'],
+                "comment" => $standard['comment'],
+                "url" => $standard['url']
+            ),
+            array(
+                "%s",
+                "%s",
+                "%s",
+                "%s",
+                "%s"
+            )
+        );
     }
     
     echo $success;

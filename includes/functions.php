@@ -65,12 +65,12 @@ if (!function_exists('child_standards')){
                 
                 if (!empty($subchildren)){
                     echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_title']."</a>";
-                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>';
+                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span>';
                 }
                 
                 if(empty($subchildren) && empty($child)) {
                     echo $result['standard_title'];
-                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>';
+                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span>';
 		}
                 
                 $id = 'sub_standards-'.$result['id'];
@@ -78,7 +78,7 @@ if (!function_exists('child_standards')){
                 
                 if (!empty($child)) {
                     echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_title']."</a>";
-                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>';
+                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span>';
                     $sid = 'sub_standards-'.$result['id'];
                     child_standard_notations($sid);
                 }
@@ -116,7 +116,7 @@ if (!function_exists('child_standard_notations')) {
                             
                     echo  "<strong>".$result['standard_notation']."</strong>
                         <div class='was_stndrd_desc'> ". $result['description']." </div>";
-                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span><span class="std-del"><a href="#"><i class="far fa-trash-alt"></i></a></span>';
+                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span><span class="std-del"><a href="#"><i class="far fa-trash-alt"></i></a></span>';
     
                     echo "</li>";
                     

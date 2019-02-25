@@ -26,6 +26,9 @@ jQuery(document).ready(function($) {
         if (std=="core_standards") {
             $("#addStandardModal #standard_parent_id").val(std_val);
             $("#addStandardModal #add-sub-standard").show();
+        } else {
+            $("#addStandardModal #standard_parent_id").val(std_val);
+            $("#addStandardModal #add-standard-notation").show();
         }
         $("#addStandardModal").modal("show");
     });
@@ -63,14 +66,24 @@ jQuery(document).ready(function($) {
     });
     
     $("#btnSaveStandards").on("click", function(){
+        var add_data;
         if ($("#add-sub-standard").is(":visible")) {
-            var add_data = {
+            add_data = {
                 parent_id: $("#add-sub-standard #standard_parent_id").val(),
                 standard_title: $("#add-sub-standard #standard_title").val(),
                 standard_url: $("#add-sub-standard #standard_url").val()
             }
-            add_standard(add_data);
+            
+        } else if ($("#add-standard-notation").is(":visible")) {
+            add_data = {
+                parent_id: $("#add-standard-notation #standard_parent_id").val(),
+                standard_notation: $("#add-standard-notation #standard_notation").val(),
+                description: $("#add-standard-notation #description").val(),
+                comment: $("#add-standard-notation #comment").val(),
+                url: $("#add-standard-notation #notation_url").val()
+            }
         }
+        add_standard(add_data);
     });
 });
 
@@ -167,6 +180,9 @@ function add_standard(details) {
         setTimeout(function(){
             jQuery('.standards-notice-success').hide();
         },5000);
+        jQuery("#addStandardModal input").each(function(){
+            jQuery(this).val("");
+        });
         display_standards();
     });
 }
