@@ -296,3 +296,4 @@ label.was-core-standard{
 .search-standards-list li input[type=checkbox] { margin-top:0 !important; margin-right:3px; }
 
 .hidden-block { display:none; }
+.std-edit a, .std-add a { cursor:pointer; }

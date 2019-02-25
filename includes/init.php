@@ -386,6 +386,20 @@ function was_update_standard(){
             ),
             array( "%d" )
         );
+    } elseif (array_key_exists("standard_title", $standard)) {
+        $success = $wpdb->update(
+            $wpdb->prefix."oer_sub_standards",
+            array(
+                "standard_title" => $standard['standard_title'],
+                "url" => $standard['url']
+            ),
+            array( "id" => $standard['id'] ),
+            array(
+                "%s",
+                "%s"
+            ),
+            array( "%d" )
+        );
     }
     
     echo $success;

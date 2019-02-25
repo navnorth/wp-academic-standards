@@ -21,38 +21,33 @@
         </div>
         <div id="edit-sub-standard" class="hidden-block">
           <div class="form-group">
-            <label for="">Parent:</label>
-            <select class="form-control" id=""></select>
-          </div>
-          <div class="form-group">
+            <input type="hidden" id="substandard_id">
+            <input type="hidden" class="form-control" id="substandard_parent_id">
             <label for="">Standard Title:</label>
-            <input type="text" class="form-control" id="">
+            <input type="text" class="form-control" id="substandard_title">
           </div>
           <div class="form-group">
             <label for="">Standard URL:</label>
-            <input type="text" class="form-control" id="">
+            <input type="text" class="form-control" id="substandard_url">
           </div>
         </div>
         <div id="edit-standard-notation" class="hidden-block">
           <div class="form-group">
-            <label for="">Parent:</label>
-            <select class="form-control" id=""></select>
-          </div>
-          <div class="form-group">
+            <input type="hidden" class="form-control" id="notation_parent_id">
             <label for="">Standard Notation:</label>
-            <input type="text" class="form-control" id="">
+            <input type="text" class="form-control" id="standard_notation">
           </div>
           <div class="form-group">
             <label for="">Description:</label>
-            <input type="text" class="form-control" id="">
+            <input type="text" class="form-control" id="description">
           </div>
           <div class="form-group">
             <label for="">Comment:</label>
-            <input type="text" class="form-control" id="">
+            <input type="text" class="form-control" id="comment">
           </div>
           <div class="form-group">
             <label for="">Notation URL:</label>
-            <input type="text" class="form-control" id="">
+            <input type="text" class="form-control" id="notation_url">
           </div>
         </div>
       </div>

@@ -10,13 +10,13 @@ jQuery(document).ready(function($) {
             }
     });
     
-    $(".std-edit a").on("click", function(){
+    $("#admin-standard-list").on("click", ".std-edit a", function(){
         var std_val = $(this).attr('data-value');
         display_standard_details(std_val);
         $("#editStandardModal").modal("show");
     });
     
-    $(".std-add a").on("click", function(){
+    $("#admin-standard-list").on("click", ".std-add a", function(){
         var std_val = $(this).attr('data-parent');
         var std;
         if (std_val) {
@@ -35,11 +35,20 @@ jQuery(document).ready(function($) {
     });
     
     $("#btnUpdateStandards").on("click", function(){
+        var edit_data;
         if ($("#edit-core-standard").is(":visible")) {
-            var edit_data = {
+            edit_data = {
                 id: $("#edit-core-standard #standard_id").val(),
                 standard_name: $("#edit-core-standard #standard_name").val(),
                 standard_url: $("#edit-core-standard #standard_url").val()
+            };
+            update_standard(edit_data);
+        } else if ($("#edit-sub-standard").is(":visible")) {
+            edit_data = {
+                id: $("#edit-sub-standard #substandard_id").val(),
+                parent_id: $("#edit-sub-standard #substandard_parent_id").val(),
+                standard_title: $("#edit-sub-standard #substandard_title").val(),
+                url: $("#edit-sub-standard #substandard_url").val()
             };
             update_standard(edit_data);
         }
@@ -74,15 +83,19 @@ function display_standard_details(id) {
         data
         ).done( function(response) {
             if (response) {
+                details = JSON.parse(response);
                 switch (type) {
                     case "core_standards":
-                        details = JSON.parse(response);
                         jQuery("#editStandardModal #standard_id").val(details.id);
                         jQuery("#editStandardModal #standard_name").val(details.standard_name);
                         jQuery("#editStandardModal #standard_url").val(details.standard_url);
                         block_name = "edit-core-standard";
                         break;
                     case "sub_standards":
+                        jQuery("#editStandardModal #substandard_id").val(details.id);
+                        jQuery("#editStandardModal #substandard_parent_id").val(details.parent_id);
+                        jQuery("#editStandardModal #substandard_title").val(details.standard_title);
+                        jQuery("#editStandardModal #substandard_url").val(details.url);
                         block_name = "edit-sub-standard";
                         break;
                     case "standard_notation":
@@ -92,8 +105,6 @@ function display_standard_details(id) {
             }
             jQuery("#"+block_name).show();
         });
-
-    return false;
 }
 
 function update_standard(details) {
@@ -112,7 +123,7 @@ function update_standard(details) {
         } else {
             message = "Standard successfully updated.";
         }
-        jQuery('.standards-notice-success').append("<p>"+message+"</p>");
+        jQuery('.standards-notice-success').empty().append("<p>"+message+"</p>");
         jQuery('.standards-notice-success').show();
         setTimeout(function(){
             jQuery('.standards-notice-success').hide();
@@ -137,7 +148,7 @@ function add_standard(details) {
         } else {
             message = "Standard successfully added.";
         }
-        jQuery('.standards-notice-success').append("<p>"+message+"</p>");
+        jQuery('.standards-notice-success').empty().append("<p>"+message+"</p>");
         jQuery('.standards-notice-success').show();
         setTimeout(function(){
             jQuery('.standards-notice-success').hide();
