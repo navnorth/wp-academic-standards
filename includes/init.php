@@ -400,6 +400,24 @@ function was_update_standard(){
             ),
             array( "%d" )
         );
+    } elseif (array_key_exists("standard_notation", $standard)) {
+        $success = $wpdb->update(
+            $wpdb->prefix."oer_standard_notation",
+            array(
+                "standard_notation" => $standard['standard_notation'],
+                "description" => $standard['description'],
+                "comment" => $standard['comment'],
+                "url" => $standard['url']
+            ),
+            array( "id" => $standard['id'] ),
+            array(
+                "%s",
+                "%s",
+                "%s",
+                "%s"
+            ),
+            array( "%d" )
+        );
     }
     
     echo $success;

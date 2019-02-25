@@ -33,6 +33,7 @@
         </div>
         <div id="edit-standard-notation" class="hidden-block">
           <div class="form-group">
+            <input type="hidden" class="form-control" id="notation_id">
             <input type="hidden" class="form-control" id="notation_parent_id">
             <label for="">Standard Notation:</label>
             <input type="text" class="form-control" id="standard_notation">

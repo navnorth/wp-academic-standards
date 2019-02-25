@@ -42,7 +42,6 @@ jQuery(document).ready(function($) {
                 standard_name: $("#edit-core-standard #standard_name").val(),
                 standard_url: $("#edit-core-standard #standard_url").val()
             };
-            update_standard(edit_data);
         } else if ($("#edit-sub-standard").is(":visible")) {
             edit_data = {
                 id: $("#edit-sub-standard #substandard_id").val(),
@@ -50,8 +49,17 @@ jQuery(document).ready(function($) {
                 standard_title: $("#edit-sub-standard #substandard_title").val(),
                 url: $("#edit-sub-standard #substandard_url").val()
             };
-            update_standard(edit_data);
+        } else if ($("#edit-standard-notation").is(":visible")) {
+            edit_data = {
+                id: $("#edit-standard-notation #notation_id").val(),
+                parent_id: $("#edit-standard-notation #notation_parent_id").val(),
+                standard_notation: $("#edit-standard-notation #standard_notation").val(),
+                description: $("#edit-standard-notation #description").val(),
+                comment: $("#edit-standard-notation #comment").val(),
+                url: $("#edit-standard-notation #notation_url").val()
+            };
         }
+        update_standard(edit_data);
     });
     
     $("#btnSaveStandards").on("click", function(){
@@ -99,6 +107,12 @@ function display_standard_details(id) {
                         block_name = "edit-sub-standard";
                         break;
                     case "standard_notation":
+                        jQuery("#editStandardModal #notation_id").val(details.id);
+                        jQuery("#editStandardModal #notation_parent_id").val(details.parent_id);
+                        jQuery("#editStandardModal #standard_notation").val(details.standard_notation);
+                        jQuery("#editStandardModal #description").val(details.description);
+                        jQuery("#editStandardModal #comment").val(details.comment);
+                        jQuery("#editStandardModal #notation_url").val(details.notation_url);
                         block_name = "edit-standard-notation";
                         break;
                 }   

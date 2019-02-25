@@ -112,12 +112,11 @@ if (!function_exists('child_standard_notations')) {
                     if(!empty($child))
                     {
                         echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_notation']."</a>";
-                        echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a href="#"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span>';
                     }
                             
                     echo  "<strong>".$result['standard_notation']."</strong>
                         <div class='was_stndrd_desc'> ". $result['description']." </div>";
-                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a data-target="#editStandarModal"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span><span class="std-del"><a href="#"><i class="far fa-trash-alt"></i></a></span>';
+                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a href="#"><i class="fas fa-plus"></i></a></span><span class="std-del"><a href="#"><i class="far fa-trash-alt"></i></a></span>';
     
                     echo "</li>";
                     
