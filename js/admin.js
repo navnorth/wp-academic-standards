@@ -33,6 +33,22 @@ jQuery(document).ready(function($) {
         $("#addStandardModal").modal("show");
     });
     
+    $("#admin-standard-list").on("click", ".std-del a", function(){
+        var std_id = $(this).attr('data-stdid');
+        
+        if (confirm("Are you sure you want to delete this standard?")==true) {
+            delete_standard(std_id);
+        }
+    });
+    
+    $("#admin-standard-list").on("click", ".std-up a", function(){
+        $(this).moveUp();
+    });
+    
+    $("#admin-standard-list").on("click", ".std-down a", function(){
+        $(this).moveDown();
+    });
+    
     $("#editStandardModal, #addStandardModal").on("hidden.bs.modal", function(){
         $(".hidden-block").hide();
     });
@@ -85,6 +101,18 @@ jQuery(document).ready(function($) {
         }
         add_standard(add_data);
     });
+    
+    $.fn.moveUp = function(){
+        prev = $(this).parent().parent().prev();
+        $(this).parent().parent().insertBefore(prev);
+    }
+    
+    $.fn.moveDown = function() {
+        next = $(this).parent().parent().next();
+        $(this).parent().parent().insertAfter(next);
+    }
+    
+    
 });
 
 // display core standard details on edit
@@ -185,6 +213,32 @@ function add_standard(details) {
         });
         display_standards();
     });
+}
+
+function delete_standard(id) {
+        data = {
+            action: "delete_standard",
+            standard_id: id
+        }
+        
+        jQuery.post(
+            ajaxurl,
+            data
+        ).done(function( response ){
+            console.log(response);
+            var message;
+            if (response===false) {
+                message = "Deleting standard failed."
+            } else {
+                message = "Standard successfully deleted.";
+            }
+            jQuery('.standards-notice-success').empty().append("<p>"+message+"</p>");
+            jQuery('.standards-notice-success').show();
+            setTimeout(function(){
+                jQuery('.standards-notice-success').hide();
+            },5000);
+            display_standards();
+        });
 }
 
 function display_standards() {

@@ -115,9 +115,9 @@ if (!function_exists('child_standard_notations')) {
                     }
                             
                     echo  "<strong>".$result['standard_notation']."</strong>
-                        <div class='was_stndrd_desc'> ". $result['description']." </div>";
-                    echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span><span class="std-del"><a href="#"><i class="far fa-trash-alt"></i></a></span>';
-    
+                        <div class='was_stndrd_desc'> ". $result['description'];
+                    echo '<span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit std-icon"><a data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add std-icon"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="'.$result['id'].'" data-value="'.$id.'"><i class="far fa-trash-alt"></i></a></span>';
+                    echo "</div>";
                     echo "</li>";
                     
                     child_standard_notations($id);

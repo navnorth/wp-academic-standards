@@ -480,4 +480,26 @@ function was_load_admin_standards(){
     
 	die();
 }
+
+add_action('wp_ajax_delete_standard', 'was_delete_standard');
+function was_delete_standard(){
+    global $wpdb;
+    $standard_id = null;
+    $success = null;
+    
+    if (isset($_POST['standard_id'])){
+        $standard_id = $_POST['standard_id'];
+    }
+    
+    if ($standard_id){
+        $success = $wpdb->delete(
+            $wpdb->prefix."oer_standard_notation",
+            array("id" => $standard_id)
+        );
+    }
+    
+    echo $success;
+    
+    die();
+}
 ?>
