@@ -62,7 +62,7 @@ if (!function_exists('child_standards')){
                 $child = check_child_standard($id);
 
                 echo "<li class='was_sbstndard ". $class ."'>";
-                
+                echo "<input type='hidden' name='pos[]' class='std-pos' data-value='".$value."' value='".$result['pos']."'>";
                 if (!empty($subchildren)){
                     echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_title']."</a>";
                     echo '<span class="std-up"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span>';
@@ -109,6 +109,7 @@ if (!function_exists('child_standard_notations')) {
                     $value = 'standard_notation-'.$result['id'];
     
                     echo "<li class='".$class."'>";
+                    echo "<input type='hidden' name='pos[]' class='std-pos' data-value='".$value."' value='".$result['pos']."'>";
                     if(!empty($child))
                     {
                         echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_notation']."</a>";
@@ -139,6 +140,7 @@ if (!function_exists('was_display_loader')){
 if (!function_exists('was_display_admin_standards')){
     function was_display_admin_standards(){
         global $wpdb;
+        
         $results = $wpdb->get_results("SELECT * from " . $wpdb->prefix. "oer_core_standards",ARRAY_A);
         if ($results){
         ?>

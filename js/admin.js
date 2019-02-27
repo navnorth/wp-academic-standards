@@ -102,11 +102,13 @@ jQuery(document).ready(function($) {
         add_standard(add_data);
     });
     
+    // move standard up
     $.fn.moveUp = function(){
         prev = $(this).parent().parent().prev();
         $(this).parent().parent().insertBefore(prev);
     }
     
+    // move standard down
     $.fn.moveDown = function() {
         next = $(this).parent().parent().next();
         $(this).parent().parent().insertAfter(next);

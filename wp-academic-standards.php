@@ -47,7 +47,7 @@ register_activation_hook(__FILE__, 'was_create_table');
 function was_create_table()
 {
 	global $wpdb;
-	$subprefix = "was_";
+	$subprefix = "oer_";
 
 	//Change hard-coded table prefix to $wpdb->prefix
 	$table_name = $wpdb->prefix . $subprefix . "core_standards";
@@ -77,6 +77,14 @@ function was_create_table()
 	  require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	  dbDelta($sql);
 	}
+        
+        // Alter substandards table and add pos field
+        $row = $wpdb->get_results(  "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '".$table_name."' AND column_name = 'pos'"  );
+
+        if(empty($row)){
+            $sql = "ALTER TABLE ".$table_name." ADD pos INT(11) NOT NULL";
+            $wpdb->query($sql);
+        }
 
 	//Change hard-coded table prefix to $wpdb->prefix
 	$table_name = $wpdb->prefix . $subprefix . "standard_notation";
@@ -94,6 +102,15 @@ function was_create_table()
 	   require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	   dbDelta($sql);
 	}
+        
+        // Alter standard notation table and add pos field
+        $row = $wpdb->get_results(  "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '".$table_name."' AND column_name = 'pos'"  );
+
+        if(empty($row)){
+            $sql = "ALTER TABLE ".$table_name." ADD pos INT(11) NOT NULL";
+            $wpdb->query($sql);
+        }
+        
     was_add_rewrites();
     //Trigger permalink reset
     flush_rewrite_rules();
