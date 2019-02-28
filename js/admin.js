@@ -105,12 +105,40 @@ jQuery(document).ready(function($) {
     // move standard up
     $.fn.moveUp = function(){
         prev = $(this).parent().parent().prev();
-        $(this).parent().parent().insertBefore(prev);
+        current = $(this).parent().parent();
+        last = current.find('.std-pos').attr('data-count');
+        prevPos = prev.find('.std-pos').val();
+        curPos = current.find('.std-pos').val();
+        prev.find('.std-pos').val(curPos);
+        current.find('.std-pos').val(prevPos);
+        if (prevPos==1) {
+            current.find('.std-up').hide();
+            prev.find('.std-up').show();
+        }
+        if (curPos==last) {
+            prev.find('.std-down').hide();
+            current.find('.std-down').show();
+        }
+        current.insertBefore(prev);
     }
     
     // move standard down
     $.fn.moveDown = function() {
         next = $(this).parent().parent().next();
+        current = $(this).parent().parent();
+        last = current.find('.std-pos').attr('data-count');
+        nextPos = next.find('.std-pos').val();
+        curPos = current.find('.std-pos').val();
+        next.find('.std-pos').val(curPos);
+        current.find('.std-pos').val(nextPos);
+        if (curPos==1) {
+            current.find('.std-up').show();
+            next.find('.std-up').hide();
+        }
+        if (nextPos==last) {
+            next.find('.std-down').show();
+            current.find('.std-down').hide();
+        }
         $(this).parent().parent().insertAfter(next);
     }
     
