@@ -119,7 +119,10 @@ jQuery(document).ready(function($) {
             prev.find('.std-down').hide();
             current.find('.std-down').show();
         }
+        parent = $(this).parent().parent().parent().parent();
+        
         current.insertBefore(prev);
+        move_position(parent);
     }
     
     // move standard down
@@ -139,7 +142,10 @@ jQuery(document).ready(function($) {
             next.find('.std-down').show();
             current.find('.std-down').hide();
         }
+        parent = $(this).parent().parent().parent().parent();
         $(this).parent().parent().insertAfter(next);
+        
+        move_position(parent);
     }
     
     
@@ -255,7 +261,6 @@ function delete_standard(id) {
             ajaxurl,
             data
         ).done(function( response ){
-            console.log(response);
             var message;
             if (response===false) {
                 message = "Deleting standard failed."
@@ -282,6 +287,30 @@ function display_standards() {
     ).done(function( response ){
         jQuery("#admin-standard-list").html("");
         jQuery("#admin-standard-list").html(response);
+    });
+}
+
+function move_position(parent) {
+    id = parent.attr("id");
+    parent.find("ul").first().children("li").each(function(){
+        std_id = jQuery(this).find('.std-pos').attr('data-value');
+        pos = jQuery(this).find('.std-pos').val();
+        update_position(std_id,pos);
+    });
+}
+
+function update_position(standard_id,pos) {
+    data = {
+        action: "update_standard_position",
+        standard_id: standard_id,
+        position: pos
+    }
+    
+     jQuery.post(
+        ajaxurl,
+        data
+    ).done(function( response ){
+        
     });
 }
 

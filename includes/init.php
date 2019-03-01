@@ -502,4 +502,46 @@ function was_delete_standard(){
     
     die();
 }
+
+add_action("wp_ajax_update_standard_position", "was_update_standard_position");
+function was_update_standard_position(){
+    global $wpdb;
+    $standard_id = null;
+    $pos = 0;
+    $success = null;
+    $table = null;
+    $id = 0;
+    
+    if (isset($_POST['standard_id'])){
+        $standard_id = $_POST['standard_id'];
+    }
+    
+    if (isset($_POST['position'])){
+        $pos = $_POST['position'];
+    }
+    
+    
+    if ($standard_id && $pos){
+        $stds = explode("-", $standard_id);
+        if (!empty($stds)){
+            $table = $stds[0];
+            $id = $stds[1];
+            
+            $success = $wpdb->update(
+                $wpdb->prefix."oer_".$table,
+                array(
+                    "pos" => $pos
+                ),
+                array( "id" => $id ),
+                array(
+                    "%d"
+                ),
+                array( "%d" )
+            );
+            
+        }
+    }
+    
+    die();
+}
 ?>
