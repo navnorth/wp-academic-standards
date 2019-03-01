@@ -47,7 +47,7 @@ register_activation_hook(__FILE__, 'was_create_table');
 function was_create_table()
 {
 	global $wpdb;
-	$subprefix = "oer_";
+	$subprefix = "was_";
 
 	//Change hard-coded table prefix to $wpdb->prefix
 	$table_name = $wpdb->prefix . $subprefix . "core_standards";
