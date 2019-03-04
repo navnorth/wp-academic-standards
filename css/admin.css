@@ -298,3 +298,5 @@ label.was-core-standard{
 .hidden-block { display:none; }
 .std-edit a, .std-add a, .std-del a { cursor:pointer; }
 .std-icon { margin:0px 1px;}
+.wrap-header { position:relative; }
+.wrap-header #addStandardSet { position:absolute; right:0; top:10px; }

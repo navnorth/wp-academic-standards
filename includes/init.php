@@ -467,7 +467,19 @@ function was_add_standard(){
                 "%s"
             )
         );
-    }
+    } elseif (array_key_exists("standard_name", $standard)){
+        $success = $wpdb->insert(
+            $wpdb->prefix."oer_core_standards",
+            array(
+                "standard_name" => $standard['standard_name'],
+                "standard_url" => $standard['standard_url']
+            ),
+            array(
+                "%s",
+                "%s"
+            )
+        );
+    } 
     
     echo $success;
     

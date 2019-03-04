@@ -87,11 +87,14 @@ if (!function_exists('child_standards')){
                 $id = 'sub_standards-'.$result['id'];
                 child_standards($id);
                 
-                if (!empty($child)) {
+                if (empty($subchildren) && !empty($child)) {
                     echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_title']."</a>";
                     echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span>';
                     $sid = 'sub_standards-'.$result['id'];
                     child_standard_notations($sid);
+                } elseif (!empty($subchildren) && !empty($child)) {
+                    $sid = 'sub_standards-'.$result['id'];
+                    child_standard_notations($sid, true);
                 }
                 echo "</li>";
                 $index++;
@@ -104,7 +107,7 @@ if (!function_exists('child_standards')){
 
 /** Get Standard Notation **/
 if (!function_exists('child_standard_notations')) {
-    function child_standard_notations($id)
+    function child_standard_notations($id, $continue = false)
     {
         global $wpdb, $class;
         

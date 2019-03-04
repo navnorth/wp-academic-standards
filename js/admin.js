@@ -16,6 +16,11 @@ jQuery(document).ready(function($) {
         $("#editStandardModal").modal("show");
     });
     
+    $("#addStandardSet").on("click", function(){
+        $("#addStandardModal #add-core-standard").show();
+        $("#addStandardModal").modal("show");
+    });
+    
     $("#admin-standard-list").on("click", ".std-add a", function(){
         var std_val = $(this).attr('data-parent');
         var std;
@@ -97,6 +102,11 @@ jQuery(document).ready(function($) {
                 description: $("#add-standard-notation #description").val(),
                 comment: $("#add-standard-notation #comment").val(),
                 url: $("#add-standard-notation #notation_url").val()
+            }
+        } else if ($("#add-core-standard").is(":visible")) {
+            add_data = {
+                standard_name: $("#add-core-standard #standard_name").val(),
+                standard_url: $("#add-core-standard #standard_url").val()
             }
         }
         add_standard(add_data);

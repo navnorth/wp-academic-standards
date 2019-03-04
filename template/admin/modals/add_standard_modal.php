@@ -8,6 +8,16 @@
         <h4 class="modal-title" id="standardModalLabel">Add Standard</h4>
       </div>
       <div id="add-standard" class="modal-body">
+        <div id="add-core-standard" class="hidden-block">
+          <div class="form-group">
+            <label for="standard_name">Standard Name:</label>
+            <input type="text" class="form-control" id="standard_name">
+          </div>
+          <div class="form-group">
+            <label for="standard_url">Standard URL:</label>
+            <input type="text" class="form-control" id="standard_url">
+          </div>
+        </div>
         <div id="add-sub-standard" class="hidden-block">
           <div class="form-group">
             <input type="hidden" id="standard_parent_id">
