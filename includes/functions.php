@@ -891,7 +891,7 @@ if (!function_exists('was_importDefaultStandards')){
             WAS_PATH."samples/NGSS.xml"
             );
         foreach ($files as $file) {
-            $import = oer_importStandards($file);
+            $import = was_importStandards($file);
             if ($import['type']=="success") {
                 if (strpos($file,'Math')) {
                             $message .= "Successfully imported Common Core Mathematics Standards. \n";
