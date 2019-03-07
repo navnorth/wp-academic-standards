@@ -873,7 +873,7 @@ if (!function_exists('was_show_setup_settings')){
         <div class="was-plugin-row">
             <form method="post" class="was_settings_form" action="options.php"  onsubmit="return wasShowLoader(this)">
                 <?php settings_fields("was_setup_settings"); ?>
-                <?php do_settings_sections("was_setup_settings_section"); ?>
+                <?php do_settings_sections("standards-settings"); ?>
                 <?php submit_button('Save', 'primary setup-continue'); ?>
             </form>
         </div>

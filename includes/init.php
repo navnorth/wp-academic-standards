@@ -130,7 +130,7 @@ function was_setup_settings(){
 		'was_setup_settings',
 		'',
 		'was_setup_settings_callback',
-		'was_setup_settings_section'
+		'standards-settings'
 	);
 
 	//Add Settings field for Importing Common Core State Standards
@@ -138,7 +138,7 @@ function was_setup_settings(){
 		'was_import_ccss',
 		'',
 		'was_setup_settings_field',
-		'was_setup_settings_section',
+		'standards-settings',
 		'was_setup_settings',
 		array(
 			'uid' => 'was_import_ccss',
@@ -154,7 +154,7 @@ function was_setup_settings(){
 		'was_standard_slug',
 		__("Standards Root Slug", WAS_SLUG),
 		'was_setup_settings_field',
-		'was_setup_settings_section',
+		'standards-settings',
 		'was_setup_settings',
 		array(
 			'uid' => 'was_standard_slug',
@@ -305,7 +305,7 @@ function was_setup_settings_field( $arguments ) {
 add_action( 'wp_loaded', 'was_process_settings_form' );
 function was_process_settings_form(){
     global $message, $type;
-    if (isset($_REQUEST['settings-updated'])) {
+    if (isset($_REQUEST['settings-updated']) && $_REQUEST['page']=="standards-settings") {
         
         //Import CCSS Standards
         $import_ccss = get_option('was_import_ccss');
