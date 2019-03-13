@@ -182,22 +182,22 @@ function display_standard_details(id) {
                 switch (type) {
                     case "core_standards":
                         jQuery("#editStandardModal #standard_id").val(details.id);
-                        jQuery("#editStandardModal #standard_name").val(details.standard_name);
+                        jQuery("#editStandardModal #standard_name").val(details.standard_name.replace(/\\/g,''));
                         jQuery("#editStandardModal #standard_url").val(details.standard_url);
                         block_name = "edit-core-standard";
                         break;
                     case "sub_standards":
                         jQuery("#editStandardModal #substandard_id").val(details.id);
                         jQuery("#editStandardModal #substandard_parent_id").val(details.parent_id);
-                        jQuery("#editStandardModal #substandard_title").val(details.standard_title);
+                        jQuery("#editStandardModal #substandard_title").val(details.standard_title.replace(/\\/g,''));
                         jQuery("#editStandardModal #substandard_url").val(details.url);
                         block_name = "edit-sub-standard";
                         break;
                     case "standard_notation":
                         jQuery("#editStandardModal #notation_id").val(details.id);
                         jQuery("#editStandardModal #notation_parent_id").val(details.parent_id);
-                        jQuery("#editStandardModal #standard_notation").val(details.standard_notation);
-                        jQuery("#editStandardModal #description").val(details.description);
+                        jQuery("#editStandardModal #standard_notation").val(details.standard_notation.replace(/\\/g,''));
+                        jQuery("#editStandardModal #description").val(details.description.replace(/\\/g,''));
                         jQuery("#editStandardModal #comment").val(details.comment);
                         jQuery("#editStandardModal #notation_url").val(details.notation_url);
                         block_name = "edit-standard-notation";

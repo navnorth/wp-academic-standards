@@ -179,7 +179,7 @@ if (!function_exists('was_display_admin_standards')){
                 $value = 'core_standards-'.$row['id'];
                 ?>
                 <li class='core-standard'>
-                    <a data-toggle='collapse' data-id="<?php echo $row['id']; ?>" data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo $row['standard_name']; ?></a>
+                    <a data-toggle='collapse' data-id="<?php echo $row['id']; ?>" data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo stripslashes(esc_html($row['standard_name'])); ?></a>
                         <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="<?php echo $value; ?>" data-stdid="<?php echo $row['id']; ?>"><i class="far fa-edit"></i></a></span>
                         <span class="std-add std-icon"><a data-target="#addStandardModal" class="std-add-icon" data-parent="<?php echo $value; ?>"><i class="fas fa-plus"></i></a></span>
                 </li>

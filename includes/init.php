@@ -376,7 +376,7 @@ function was_update_standard(){
         $success = $wpdb->update(
             $wpdb->prefix."oer_core_standards",
             array(
-                "standard_name" => $standard['standard_name'],
+                "standard_name" => sanitize_text_field($standard['standard_name']),
                 "standard_url" => $standard['standard_url']
             ),
             array( "id" => $standard['id'] ),
@@ -390,7 +390,7 @@ function was_update_standard(){
         $success = $wpdb->update(
             $wpdb->prefix."oer_sub_standards",
             array(
-                "standard_title" => $standard['standard_title'],
+                "standard_title" => sanitize_text_field($standard['standard_title']),
                 "url" => $standard['url']
             ),
             array( "id" => $standard['id'] ),
@@ -404,7 +404,7 @@ function was_update_standard(){
         $success = $wpdb->update(
             $wpdb->prefix."oer_standard_notation",
             array(
-                "standard_notation" => $standard['standard_notation'],
+                "standard_notation" => sanitize_text_field($standard['standard_notation']),
                 "description" => $standard['description'],
                 "comment" => $standard['comment'],
                 "url" => $standard['url']
@@ -440,7 +440,7 @@ function was_add_standard(){
             $wpdb->prefix."oer_sub_standards",
             array(
                 "parent_id" => $standard['parent_id'],
-                "standard_title" => $standard['standard_title'],
+                "standard_title" => sanitize_text_field($standard['standard_title']),
                 "url" => $standard['standard_url']
             ),
             array(
@@ -454,7 +454,7 @@ function was_add_standard(){
             $wpdb->prefix."oer_standard_notation",
             array(
                 "parent_id" => $standard['parent_id'],
-                "standard_notation" => $standard['standard_notation'],
+                "standard_notation" => sanitize_text_field($standard['standard_notation']),
                 "description" => $standard['description'],
                 "comment" => $standard['comment'],
                 "url" => $standard['url']
@@ -471,7 +471,7 @@ function was_add_standard(){
         $success = $wpdb->insert(
             $wpdb->prefix."oer_core_standards",
             array(
-                "standard_name" => $standard['standard_name'],
+                "standard_name" => sanitize_text_field($standard['standard_name']),
                 "standard_url" => $standard['standard_url']
             ),
             array(
