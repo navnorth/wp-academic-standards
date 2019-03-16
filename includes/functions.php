@@ -193,6 +193,31 @@ if (!function_exists('was_display_admin_standards')){
     }
 }
 
+if (!function_exists('was_display_admin_core_standards')){
+    function was_display_admin_core_standards(){
+        global $wpdb;
+        
+        $results = $wpdb->get_results("SELECT * from " . $wpdb->prefix. "oer_core_standards",ARRAY_A);
+        if ($results){
+        ?>
+        <ul class='was-standard-list'>
+            <?php
+            foreach($results as $row){
+                $value = 'core_standards-'.$row['id'];
+                ?>
+                <li class='core-standard'>
+                    <a href="<?php echo admin_url("admin.php?page=wp-academic-standards&std=core_standards-".$row['id']); ?>" data-toggle='collapse' data-id="<?php echo $row['id']; ?>" data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo stripslashes(esc_html($row['standard_name'])); ?></a>
+                        <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="<?php echo $value; ?>" data-stdid="<?php echo $row['id']; ?>"><i class="far fa-edit"></i></a></span>
+                </li>
+            <?php
+            }
+            ?>
+        </ul>
+        <?php
+        }
+    }
+}
+
 if (!function_exists('was_selectable_admin_standards')){
     function was_selectable_admin_standards($post_id, $meta_key="oer_standard"){
         global $wpdb, $post;

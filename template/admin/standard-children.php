@@ -1,13 +1,8 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 global $wpdb;
-
-if (isset($_REQUEST['std'])){
-    include_once(WAS_PATH."template/admin/standard-children.php");
-    exit();
-}
-
 ?>
+
 <div class="wrap">
     <div id="icon-themes" class="icon32"></div>
     <div class="wrap-header">
