@@ -44,14 +44,18 @@ if (!function_exists('get_standard_label')) {
 
 /** Get Sub Standard **/
 if (!function_exists('child_standards')){
-    function child_standards($id)
+    function child_standards($id, $display=false)
     {
         global $wpdb, $chck, $class;
+        $collapse = " class='collapse'";
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s ORDER by pos, id" , $id ) ,ARRAY_A);
         
         if(!empty($results))
         {
-            echo "<div id='".$id."' class='collapse'>";
+            if ($display==true)
+                $collapse = "";
+                
+            echo "<div id='".$id."'".$collapse.">";
             echo "<ul>";
             $index = 1;
             

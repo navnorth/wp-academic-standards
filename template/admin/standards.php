@@ -16,7 +16,6 @@ if (isset($_REQUEST['std'])){
     </div>
     <div class="notice notice-success standards-notice-success is-dismissible hidden-block"></div>
     <div id="admin-standard-list">
-    <?php was_display_admin_core_standards();
-    //was_display_admin_standards(); ?>
+    <?php was_display_admin_core_standards(); ?>
     </div>
 </div>
