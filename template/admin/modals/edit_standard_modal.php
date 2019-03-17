@@ -35,11 +35,11 @@
           <div class="form-group">
             <input type="hidden" class="form-control" id="notation_id">
             <input type="hidden" class="form-control" id="notation_parent_id">
-            <label for="">Standard Notation:</label>
+            <label for="">Prefix:</label>
             <input type="text" class="form-control" id="standard_notation">
           </div>
           <div class="form-group">
-            <label for="">Description:</label>
+            <label for="">Standard Notation:</label>
             <input type="text" class="form-control" id="description">
           </div>
           <div class="form-group">

@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
             }
     });
     
-    $("#admin-standard-list").on("click", ".std-edit a", function(){
+    $("#admin-standard-list,#admin-standard-children-list").on("click", ".std-edit a", function(){
         var std_val = $(this).attr('data-value');
         display_standard_details(std_val);
         $("#editStandardModal").modal("show");
@@ -21,7 +21,7 @@ jQuery(document).ready(function($) {
         $("#addStandardModal").modal("show");
     });
     
-    $("#admin-standard-list").on("click", ".std-add a", function(){
+    $("#admin-standard-list,#admin-standard-children-list").on("click", ".std-add a", function(){
         var std_val = $(this).attr('data-parent');
         var std;
         if (std_val) {
@@ -59,13 +59,14 @@ jQuery(document).ready(function($) {
     });
     
     $("#btnUpdateStandards").on("click", function(){
-        var edit_data;
+        var edit_data, std;
         if ($("#edit-core-standard").is(":visible")) {
             edit_data = {
                 id: $("#edit-core-standard #standard_id").val(),
                 standard_name: $("#edit-core-standard #standard_name").val(),
                 standard_url: $("#edit-core-standard #standard_url").val()
             };
+            std = "core_standards";
         } else if ($("#edit-sub-standard").is(":visible")) {
             edit_data = {
                 id: $("#edit-sub-standard #substandard_id").val(),
@@ -73,6 +74,7 @@ jQuery(document).ready(function($) {
                 standard_title: $("#edit-sub-standard #substandard_title").val(),
                 url: $("#edit-sub-standard #substandard_url").val()
             };
+            std = "sub_standards";
         } else if ($("#edit-standard-notation").is(":visible")) {
             edit_data = {
                 id: $("#edit-standard-notation #notation_id").val(),
@@ -82,8 +84,9 @@ jQuery(document).ready(function($) {
                 comment: $("#edit-standard-notation #comment").val(),
                 url: $("#edit-standard-notation #notation_url").val()
             };
+            std = "standard_notation";
         }
-        update_standard(edit_data);
+        update_standard(edit_data, std);
     });
     
     $("#btnSaveStandards").on("click", function(){
@@ -208,7 +211,9 @@ function display_standard_details(id) {
         });
 }
 
-function update_standard(details) {
+/** Update Standard **/
+function update_standard(details, type) {
+    
     data =  {
         action: "update_standard",
         details: details
@@ -218,8 +223,11 @@ function update_standard(details) {
         ajaxurl,
         data
     ).done(function( response ){
+        response = JSON.parse(response);
+        console.log(type);
+        console.log(response);
         var message;
-        if (response===false) {
+        if (response.success===false) {
             message = "Updating standard failed."
         } else {
             message = "Standard successfully updated.";
@@ -229,10 +237,30 @@ function update_standard(details) {
         setTimeout(function(){
             jQuery('.standards-notice-success').hide();
         },5000);
-        display_standards();
+        
+        switch (type) {
+            case "core_standards":
+                jQuery('.core-standard a[data-target="#' + type + '-' + details['id'] + '"]').text("");
+                jQuery('.core-standard a[data-target="#' + type + '-' + details['id'] + '"]').text(response.standard.standard_name);
+                break;
+            case "sub_standards":
+                jQuery('.was_sbstndard  a[data-target*="#' + type + '-' + details['id'] + '"]').text("");
+                jQuery('.was_sbstndard  a[data-target*="#' + type + '-' + details['id'] + '"]').text(response.standard.standard_title);
+                standard = response.standard.standard_title;
+                break;
+            case "standard_notation":
+                jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_prefix').html("");
+                jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_prefix').html("<strong>" + response.standard.standard_notation + "</strong>");
+                jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_desc').text("");
+                jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_desc').text(response.standard.description);
+                standard = response.standard.standard_notation;
+                break;
+        }
+        console.log(standard);
     });
 }
 
+/** Add Standard **/
 function add_standard(details) {
     data =  {
         action: "add_standard",

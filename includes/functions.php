@@ -119,6 +119,8 @@ if (!function_exists('child_standard_notations')) {
     
         if(!empty($results))
         {
+            $class = "was_standard_notation";
+            
             if ($continue)
                 $id = $id."-1";
             echo "<div id='".$id."' class='collapse'>";
@@ -139,18 +141,18 @@ if (!function_exists('child_standard_notations')) {
                     $hiddenDown = "hidden-block";
                 }
                 
-                echo "<li class='".$class."'>";
+                echo "<li class='".$class."' data-target='#".$id."'>";
                 echo "<input type='hidden' name='pos[]' class='std-pos' data-value='".$value."' data-count='".count($results)."' value='".$index."'>";
                 if(!empty($child))
                 {
                     echo "<a data-toggle='collapse' data-target='#".$id."'>".$result['standard_notation']."</a>";
                 } else {
-                    echo "<strong>".$result['standard_notation']."</strong>";                        
+                    echo "<span class='was_stndrd_prefix'><strong>".$result['standard_notation']."</strong></span>";                        
                 }
                 
                 echo "<div class='was_stndrd_desc'> ". $result['description'];
-                echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit std-icon"><a data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add std-icon"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="'.$result['id'].'" data-value="'.$id.'"><i class="far fa-trash-alt"></i></a></span>';
                 echo "</div>";
+                echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit std-icon"><a data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add std-icon"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="'.$result['id'].'" data-value="'.$id.'"><i class="far fa-trash-alt"></i></a></span>';
                 echo "</li>";
                 
                 child_standard_notations($id);

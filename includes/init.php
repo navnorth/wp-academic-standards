@@ -420,7 +420,9 @@ function was_update_standard(){
         );
     }
     
-    echo $success;
+    $response = array("success"=>$success,"standard"=>$standard);
+    
+    echo json_encode($response);
     
     die();
 }

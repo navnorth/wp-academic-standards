@@ -302,3 +302,4 @@ label.was-core-standard{
 .wrap-header #addStandardSet { position:absolute; right:0; top:10px; }
 .float-right { float:right; }
 .standard-heading-inline { margin-bottom:15px; }
+.was_stndrd_desc { display:inline-block; }

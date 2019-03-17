@@ -4,9 +4,7 @@ global $wpdb;
 
 if (isset($_REQUEST['std'])){
     include_once(WAS_PATH."template/admin/standard-children.php");
-    exit();
-}
-
+} else {
 ?>
 <div class="wrap">
     <div id="icon-themes" class="icon32"></div>
@@ -19,3 +17,4 @@ if (isset($_REQUEST['std'])){
     <?php was_display_admin_core_standards(); ?>
     </div>
 </div>
+<?php } ?>
