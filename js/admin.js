@@ -21,6 +21,13 @@ jQuery(document).ready(function($) {
         $("#addStandardModal").modal("show");
     });
     
+    $("#addStandard").on("click", function(){
+        parent_std = $(this).attr('data-parent');
+        $("#addStandardModal #add-sub-standard #standard_parent_id").val(parent_std);
+        $("#addStandardModal #add-sub-standard").show();
+        $("#addStandardModal").modal("show");
+    });
+    
     $("#admin-standard-list,#admin-standard-children-list").on("click", ".std-add a", function(){
         var std_val = $(this).attr('data-parent');
         var std;
@@ -293,7 +300,9 @@ function add_standard(details, type) {
                 jQuery('ul.was-standard-list').append(coreStandard);
                 break;
             case "sub_standards":
-                
+                subStandard = getSubStandardDisplay(details, response.id);
+                jQuery('#admin-standard-children-list ul li.was_sbstndard:last-child .std-down').removeClass("hidden-block").show();
+                jQuery('#admin-standard-children-list ul').append(subStandard);
                 break;
             case "standard_notation":
 
@@ -307,6 +316,16 @@ function getCoreStandardDisplay(standard, stdid) {
     var html = '<li class="core-standard">';
     html += '<a href="' + WPURLS.admin_url + "admin.php?page=wp-academic-standards&std=core_standards-" + stdid + '" data-toggle="collapse" data-id="' + stdid + '" data-target="#core_standards-' + stdid + '">' + standard['standard_name'].replace(/\\/g,'') + '</a>';
     html += ' <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="' + corestd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span>';
+    html += '</li>';
+    return html;
+}
+
+function getSubStandardDisplay(standard, stdid) {
+    var substd = "sub_standards-" + stdid;
+    var html = '<li class="was_sbstndard">';
+    html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + standard['parent_id'] + '" data-count="" value="">';
+    html += standard['standard_title'].replace(/\\/g,'');
+    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + stdid + '"><i class="fas fa-plus"></i></a></span>';
     html += '</li>';
     return html;
 }
