@@ -90,14 +90,14 @@ jQuery(document).ready(function($) {
     });
     
     $("#btnSaveStandards").on("click", function(){
-        var add_data;
+        var add_data, std;
         if ($("#add-sub-standard").is(":visible")) {
             add_data = {
                 parent_id: $("#add-sub-standard #standard_parent_id").val(),
                 standard_title: $("#add-sub-standard #standard_title").val(),
                 standard_url: $("#add-sub-standard #standard_url").val()
             }
-            
+            std = "sub_standards";
         } else if ($("#add-standard-notation").is(":visible")) {
             add_data = {
                 parent_id: $("#add-standard-notation #standard_parent_id").val(),
@@ -106,13 +106,15 @@ jQuery(document).ready(function($) {
                 comment: $("#add-standard-notation #comment").val(),
                 url: $("#add-standard-notation #notation_url").val()
             }
+            std = "standard_notation";
         } else if ($("#add-core-standard").is(":visible")) {
             add_data = {
                 standard_name: $("#add-core-standard #standard_name").val(),
                 standard_url: $("#add-core-standard #standard_url").val()
             }
+            std = "core_standards";
         }
-        add_standard(add_data);
+        add_standard(add_data, std);
     });
     
     // move standard up
@@ -246,14 +248,12 @@ function update_standard(details, type) {
             case "sub_standards":
                 jQuery('.was_sbstndard  a[data-target*="#' + type + '-' + details['id'] + '"]').text("");
                 jQuery('.was_sbstndard  a[data-target*="#' + type + '-' + details['id'] + '"]').text(response.standard.standard_title);
-                standard = response.standard.standard_title;
                 break;
             case "standard_notation":
                 jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_prefix').html("");
                 jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_prefix').html("<strong>" + response.standard.standard_notation + "</strong>");
                 jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_desc').text("");
                 jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_desc').text(response.standard.description);
-                standard = response.standard.standard_notation;
                 break;
         }
         console.log(standard);
@@ -261,7 +261,7 @@ function update_standard(details, type) {
 }
 
 /** Add Standard **/
-function add_standard(details) {
+function add_standard(details, type) {
     data =  {
         action: "add_standard",
         details: details
@@ -272,7 +272,8 @@ function add_standard(details) {
         data
     ).done(function( response ){
         var message;
-        if (response===false) {
+        response = JSON.parse(response);
+        if (response.success===false) {
             message = "Adding standard failed."
         } else {
             message = "Standard successfully added.";
@@ -285,8 +286,29 @@ function add_standard(details) {
         jQuery("#addStandardModal input").each(function(){
             jQuery(this).val("");
         });
-        display_standards();
+        
+        switch (type) {
+            case "core_standards":
+                coreStandard = getCoreStandardDisplay(details, response.id);
+                jQuery('ul.was-standard-list').append(coreStandard);
+                break;
+            case "sub_standards":
+                
+                break;
+            case "standard_notation":
+
+                break;
+        }
     });
+}
+
+function getCoreStandardDisplay(standard, stdid) {
+    var corestd = "core_standards-" + stdid;
+    var html = '<li class="core-standard">';
+    html += '<a href="' + WPURLS.admin_url + "admin.php?page=wp-academic-standards&std=core_standards-" + stdid + '" data-toggle="collapse" data-id="' + stdid + '" data-target="#core_standards-' + stdid + '">' + standard['standard_name'].replace(/\\/g,'') + '</a>';
+    html += ' <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="' + corestd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span>';
+    html += '</li>';
+    return html;
 }
 
 function delete_standard(id) {

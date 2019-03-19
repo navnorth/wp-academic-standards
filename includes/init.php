@@ -11,6 +11,7 @@ function was_load_admin_scripts(){
     wp_enqueue_style( 'bootstrap-css', WAS_URL.'lib/bootstrap/css/bootstrap.min.css');
     wp_enqueue_script( 'bootstrap-js', WAS_URL.'lib/bootstrap/js/bootstrap.min.js', array('jquery'));
     wp_enqueue_script( 'admin-js', WAS_URL.'js/admin.js', array('jquery'));
+    wp_localize_script( 'admin-js', 'WPURLS', array( "site_url" => site_url(), "admin_url" => admin_url() ) );
 }
 
 // Load Frontend Scripts
@@ -432,6 +433,7 @@ function was_add_standard(){
     global $wpdb;
     $standard = null;
     $success = null;
+    $lastid = null;
     
     if (isset($_POST['details'])){
         $standard = $_POST['details'];
@@ -481,9 +483,11 @@ function was_add_standard(){
                 "%s"
             )
         );
-    } 
+    }
     
-    echo $success;
+    $lastid = $wpdb->insert_id;
+    
+    echo json_encode(array("success"=>$success, "id" => $lastid));
     
     die();
 }
