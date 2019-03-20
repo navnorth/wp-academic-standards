@@ -21,6 +21,7 @@
         <div id="add-sub-standard" class="hidden-block">
           <div class="form-group">
             <input type="hidden" id="standard_parent_id">
+            <input type="hidden" id="sibling_count">
             <label for="">Standard Title:</label>
             <input type="text" class="form-control" id="standard_title">
           </div>
@@ -32,7 +33,8 @@
         <div id="add-standard-notation" class="hidden-block">
           <div class="form-group">
             <input type="hidden" id="standard_parent_id">
-            <label for="">Standard Notation:</label>
+            <input type="hidden" id="sibling_count">
+            <label for="">Prefix:</label>
             <input type="text" class="form-control" id="standard_notation">
           </div>
           <div class="form-group">
