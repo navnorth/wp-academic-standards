@@ -32,6 +32,12 @@
         </div>
         <div id="add-standard-notation" class="hidden-block">
           <div class="form-group">
+            <label for="">Label:</label>
+            <select class="form-control" id="standard_label">
+              
+            </select>
+          </div>
+          <div class="form-group">
             <input type="hidden" id="standard_parent_id">
             <input type="hidden" id="sibling_count">
             <label for="">Prefix:</label>
