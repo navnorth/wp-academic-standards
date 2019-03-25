@@ -214,7 +214,7 @@ function display_standard_details(id) {
                         jQuery("#editStandardModal #notation_parent_id").val(details.parent_id);
                         jQuery("#editStandardModal #standard_notation").val(details.standard_notation.replace(/\\/g,''));
                         jQuery("#editStandardModal #description").val(details.description.replace(/\\/g,''));
-                        jQuery("#editStandardModal #comment").val(details.comment);
+                        jQuery("#editStandardModal #comment").val(details.comment.replace(/\\/g,''));
                         jQuery("#editStandardModal #notation_url").val(details.notation_url);
                         block_name = "edit-standard-notation";
                         break;
@@ -349,7 +349,7 @@ function getStandardNotationDisplay(standard,stdid, lastIndex) {
     var html = '<li class="was_standard_notation">';
     lastIndex++;
     html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + standard['parent_id'] + '" data-count="' + lastIndex + '" value="' + lastIndex + '">';
-    html += '<span class="was_stndrd_prefix"><strong>' + standard['standard_notation'] + '</strong></span>';
+    html += '<span class="was_stndrd_prefix"><strong>' + standard['standard_notation'].replace(/\\/g,'') + '</strong></span>';
     html += '<div class="was_stndrd_desc">';
     html += standard['description'].replace(/\\/g,'');
     html += '</div>';
