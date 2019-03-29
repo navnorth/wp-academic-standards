@@ -1369,3 +1369,81 @@ if (!function_exists('was_standard_details')){
         return $rec;
     }
 }
+
+if (!function_exists('was_admin_delete_standard')){
+    function was_admin_delete_standard($standard_id) {
+        global $wpdb;
+        
+        $results = $wpdb->get_results("SELECT * from " . $wpdb->prefix. "oer_core_standards where id=".$standard_id."",ARRAY_A);
+        if ($results){
+            foreach($results as $row){
+                $value = 'core_standards-'.$row['id'];
+                
+                was_admin_delete_substandards($value);
+            }
+        }
+        $wpdb->delete($wpdb->prefix."oer_core_standards", array("id"=>$standard_id));
+    }
+}
+
+if (!function_exists('was_admin_delete_substandards')){
+    function was_admin_delete_substandards($parent_id){
+        global $wpdb;
+        
+        $subs = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $id ) ,ARRAY_A);
+            
+        foreach($subs as $sub)
+        {
+            $value = 'sub_standards-'.$sub['id'];
+
+            $id = 'sub_standards-'.$sub['id'];
+            $subchildren = get_substandard_children($id);
+            $child = check_child_standard($id);
+            
+            if (!empty($subchildren))
+                was_admin_delete_substandards($id);
+            
+            if (empty($subchildren) && !empty($child)) {
+                $sid = 'sub_standards-'.$sub['id'];
+                was_admin_delete_standard_notations($sid);
+            } elseif (!empty($subchildren) && !empty($child)) {
+                $sid = 'sub_standards-'.$sub['id'];
+                was_admin_delete_standard_notations($sid, true);
+            }
+        }
+        
+        $wpdb->delete($wpdb->prefix."oer_sub_standards", array("parent_id"=>$parent_id));
+    }
+}
+
+if (!function_exists('was_admin_delete_standard_notations')){
+    function was_admin_delete_standard_notations($parent_id){
+        global $wpdb;
+        
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s" , $parent_id ) , ARRAY_A);
+    
+        if(!empty($results))
+        {
+            foreach($results as $result)
+            {
+                $id = 'standard_notation-'.$result['id'];
+                $child = check_child_standard($id);
+                $value = 'standard_notation-'.$result['id'];
+                
+                if ($child)
+                    was_admin_delete_standard_notations($id);
+            }
+        }
+        
+        $wpdb->delete($wpdb->prefix."oer_standard_notation", array("parent_id"=>$parent_id));
+    }
+}
+
+if (!function_exists('was_admin_delete_standards')){
+    function was_admin_delete_standards($standards){
+        $stds = explode(",", $standards);
+        foreach($stds as $std){
+            was_admin_delete_standard($std);
+        }
+    }
+}

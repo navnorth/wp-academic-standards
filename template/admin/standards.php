@@ -5,6 +5,8 @@ global $wpdb;
 if (isset($_REQUEST['std'])){
     include_once(WAS_PATH."template/admin/standard-children.php");
 } else {
+    if (isset($_REQUEST['delete']))
+        was_admin_delete_standard($_REQUEST['delete']);
 ?>
 <div class="wrap">
     <div id="icon-themes" class="icon32"></div>
