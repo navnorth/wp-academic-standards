@@ -25,19 +25,19 @@ if (!function_exists('get_substandard_children')){
 if (!function_exists('get_standard_label')) {
     function get_standard_label($slug){
         global $wpdb;
-        
+
         $slugs = explode("-", $slug);
         $table_name = "oer_".$slugs[0];
         $id = $slugs[1];
         $standard = null;
-        
+
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. $table_name . " where id = %s" , $id ) , ARRAY_A);
         if (!empty($results)){
                 foreach($results as $result) {
                         $standard = $result['description'];
                 }
         }
-        
+
         return $standard;
     }
 }
@@ -49,16 +49,16 @@ if (!function_exists('child_standards')){
         global $wpdb, $chck, $class;
         $collapse = " class='collapse'";
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s ORDER by pos, id" , $id ) ,ARRAY_A);
-        
+
         if(!empty($results))
         {
             if ($display==true)
                 $collapse = "";
-                
+
             echo "<div id='".$id."'".$collapse.">";
             echo "<ul>";
             $index = 1;
-            
+
             foreach($results as $result)
             {
                 $hiddenUp = "";
@@ -68,7 +68,7 @@ if (!function_exists('child_standards')){
                 $id = 'sub_standards-'.$result['id'];
                 $subchildren = get_substandard_children($id);
                 $child = check_child_standard($id);
-                
+
                 if ($index==1){
                     $hiddenUp = "hidden-block";
                 }
@@ -82,15 +82,15 @@ if (!function_exists('child_standards')){
                     echo "<a data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])."</a>";
                     echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span>';
                 }
-                
+
                 if(empty($subchildren) && empty($child)) {
                     echo stripslashes($result['standard_title']);
                     echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span>';
 		}
-                
+
                 $id = 'sub_standards-'.$result['id'];
                 child_standards($id);
-                
+
                 if (empty($subchildren) && !empty($child)) {
                     echo "<a data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])."</a>";
                     echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span>';
@@ -114,13 +114,13 @@ if (!function_exists('child_standard_notations')) {
     function child_standard_notations($id, $continue = false)
     {
         global $wpdb, $class;
-        
+
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s ORDER by pos, id" , $id ) , ARRAY_A);
-    
+
         if(!empty($results))
         {
             $class = "was_standard_notation";
-            
+
             if ($continue)
                 $id = $id."-1";
             echo "<div id='".$id."' class='collapse'>";
@@ -133,28 +133,28 @@ if (!function_exists('child_standard_notations')) {
                 $id = 'standard_notation-'.$result['id'];
                 $child = check_child_standard($id);
                 $value = 'standard_notation-'.$result['id'];
-                
+
                 if ($index==1){
                     $hiddenUp = "hidden-block";
                 }
                 if ($index == count($results)){
                     $hiddenDown = "hidden-block";
                 }
-                
+
                 echo "<li class='".$class."' data-target='#".$id."'>";
                 echo "<input type='hidden' name='pos[]' class='std-pos' data-value='".$value."' data-count='".count($results)."' value='".$index."'>";
                 if(!empty($child))
                 {
                     echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_notation'])."</a>";
                 } else {
-                    echo "<span class='was_stndrd_prefix'><strong>".stripslashes($result['standard_notation'])."</strong></span>";                        
+                    echo "<span class='was_stndrd_prefix'><strong>".stripslashes($result['standard_notation'])."</strong></span>";
                 }
-                
+
                 echo "<div class='was_stndrd_desc'> ". stripslashes($result['description']);
                 echo "</div>";
                 echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit std-icon"><a data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add std-icon"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="'.$result['id'].'" data-value="'.$id.'"><i class="far fa-trash-alt"></i></a></span>';
                 echo "</li>";
-                
+
                 child_standard_notations($id);
                 $index++;
             }
@@ -167,7 +167,7 @@ if (!function_exists('child_standard_notations')) {
 if (!function_exists('was_display_loader')){
     function was_display_loader(){
         ?>
-        <div class="loader"><div class="loader-img"><div><img src="<?php echo OER_URL; ?>images/loading.gif" align="center" valign="middle" /></div></div></div>
+        <div class="loader"><div class="loader-img"><div><img src="<?php echo WAS_URL; ?>images/loading.gif" align="center" valign="middle" /></div></div></div>
         <?php
     }
 }
@@ -175,7 +175,7 @@ if (!function_exists('was_display_loader')){
 if (!function_exists('was_display_admin_standards')){
     function was_display_admin_standards(){
         global $wpdb;
-        
+
         $results = $wpdb->get_results("SELECT * from " . $wpdb->prefix. "oer_core_standards",ARRAY_A);
         if ($results){
         ?>
@@ -202,7 +202,7 @@ if (!function_exists('was_display_admin_standards')){
 if (!function_exists('was_display_admin_core_standards')){
     function was_display_admin_core_standards(){
         global $wpdb;
-        
+
         $results = $wpdb->get_results("SELECT * from " . $wpdb->prefix. "oer_core_standards",ARRAY_A);
         if ($results){
         ?>
@@ -227,9 +227,9 @@ if (!function_exists('was_display_admin_core_standards')){
 if (!function_exists('was_selectable_admin_standards')){
     function was_selectable_admin_standards($post_id, $meta_key="oer_standard"){
         global $wpdb, $post;
-        
+
         $standards = get_post_meta($post_id, $meta_key, true);
-        
+
         $results = $wpdb->get_results("SELECT * from " . $wpdb->prefix. "oer_core_standards",ARRAY_A);
         if ($results){
              ?>
@@ -252,13 +252,13 @@ if (!function_exists('was_selectable_admin_standards')){
 if (!function_exists('was_child_standards')){
     function was_child_standards($id, $oer_standard, $meta_key="oer_standard") {
 	global $wpdb, $chck, $class;
-        
+
 	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $id ) ,ARRAY_A);
 	if(!empty($oer_standard))
 	{
 	    $stndrd_arr = explode(",",$oer_standard);
 	}
-	
+
 	if(!empty($results))
 	{
             echo "<div id='".$id."' class='collapse'>";
@@ -285,7 +285,7 @@ if (!function_exists('was_child_standards')){
                     $child = check_child_standard($id);
 
                     echo "<li class='oer_sbstndard ". $class ."'>";
-                    
+
                     if (!empty($subchildren)){
                         echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_title'])."</a>";
                     }
@@ -295,10 +295,10 @@ if (!function_exists('was_child_standards')){
                                 ".stripslashes($result['standard_title'])."
                                 <div class='oer_stndrd_desc'></div>";
                     }
-                    
+
                     $id = 'sub_standards-'.$result['id'];
                     was_child_standards($id, $oer_standard, $meta_key);
-                    
+
                     if (!empty($child)) {
                         echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_title'])."</a>";
                         $sid = 'sub_standards-'.$result['id'];
@@ -316,7 +316,7 @@ if (!function_exists('was_child_standards')){
 if (!function_exists('was_child_standard_notations')) {
     function was_child_standard_notations($id, $oer_standard, $meta_key="oer_standard"){
 	global $wpdb;
-	
+
 	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s" , $id ) , ARRAY_A);
 
 	if(!empty($oer_standard))
@@ -335,7 +335,7 @@ if (!function_exists('was_child_standard_notations')) {
 				$id = 'standard_notation-'.$result['id'];
 				$child = check_child_standard($id);
 				$value = 'standard_notation-'.$result['id'];
-      
+
 				if(!empty($oer_standard))
 				{
 					if(in_array($value, $stndrd_arr))
@@ -353,7 +353,7 @@ if (!function_exists('was_child_standard_notations')) {
 
 				if (empty($child))
 					echo "<input type='checkbox' ".$chck." name='".$meta_key."[]' value='".$value."' onclick='was_check_myChild(this)'>";
-					
+
 				echo  stripslashes($result['standard_notation'])."
 					<div class='oer_stndrd_desc'> ". stripslashes($result['description'])." </div>";
 
@@ -371,8 +371,8 @@ if (!function_exists('was_stylesheet_installed')){
     function was_stylesheet_installed($arr_styles)
     {
         global $wp_styles;
-    
-        foreach( $wp_styles->queue as $style ) 
+
+        foreach( $wp_styles->queue as $style )
         {
             foreach ($arr_styles as $css)
             {
@@ -380,7 +380,7 @@ if (!function_exists('was_stylesheet_installed')){
                     return true;
             }
         }
-        return false; 
+        return false;
     }
 }
 
@@ -391,11 +391,11 @@ if (!function_exists('was_core_standards_count')){
     function was_core_standards_count(){
             global $wpdb;
             $cnt = 0;
-            
+
             $query = "SELECT count(*) FROM {$wpdb->prefix}oer_core_standards";
-    
+
             $cnt = $wpdb->get_var($query);
-            
+
             return $cnt;
     }
 }
@@ -406,11 +406,11 @@ if (!function_exists('was_core_standards_count')){
 if (!function_exists('was_core_standards')){
     function was_core_standards(){
             global $wpdb;
-            
+
             $query = "SELECT * FROM {$wpdb->prefix}oer_core_standards";
-            
+
             $standards = $wpdb->get_results($query);
-            
+
             return $standards;
     }
 }
@@ -420,18 +420,18 @@ if (!function_exists('was_core_standards')){
  **/
 if (!function_exists('was_resource_count_by_standard')){
     function was_resource_count_by_standard($standard_id){
-            
+
         $cnt = 0;
-        
+
         $substandards = was_substandards($standard_id);
-        
+
         if(count($substandards)>0){
                 foreach($substandards as $substandard){
                         $cnt += was_resource_count_by_substandard($substandard->id);
                 }
         }
         $notations = was_standard_notations($standard_id);
-        
+
         if ($notations){
                 foreach($notations as $notation){
                         $cnt += was_resource_count_by_notation($notation->id);
@@ -447,16 +447,16 @@ if (!function_exists('was_resource_count_by_standard')){
 if (!function_exists('was_resource_count_by_substandard')){
     function was_resource_count_by_substandard($substandard_id){
         $cnt = 0;
-        
+
         $child_substandards = was_substandards($substandard_id, false);
-        
+
         if(count($child_substandards)>0){
             foreach($child_substandards as $child_substandard){
                 $cnt += was_resource_count_by_substandard($child_substandard->id, false);
             }
         }
         $notations = was_standard_notations($substandard_id);
-        
+
         if ($notations){
             foreach($notations as $notation){
                 $cnt += was_resource_count_by_notation($notation->id);
@@ -472,9 +472,9 @@ if (!function_exists('was_resource_count_by_substandard')){
 if (!function_exists('was_resource_count_by_notation')){
     function was_resource_count_by_notation($notation_id){
         $cnt = 0;
-        
+
         $notation = "standard_notation-".$notation_id;
-        
+
         //later in the request
         $args = array(
                 'post_type'  => 'resource', //or a post type of your choosing
@@ -487,19 +487,19 @@ if (!function_exists('was_resource_count_by_notation')){
                         )
                 )
         );
-        
+
         $query = new WP_Query($args);
-        
+
         $cnt += count($query->posts);
-        
+
         $child_notations = was_child_notations($notation_id);
-        
+
         if ($child_notations){
                 foreach ($child_notations as $child_notation){
                         $cnt += was_resource_count_by_notation($child_notation->id);
                 }
         }
-        
+
         return $cnt;
     }
 }
@@ -510,18 +510,18 @@ if (!function_exists('was_resource_count_by_notation')){
 if (!function_exists('was_substandards')) {
     function was_substandards($standard_id, $core=true){
         global $wpdb;
-        
+
         if ($core)
                 $std_id = "core_standards-".$standard_id;
         else
                 $std_id = "sub_standards-".$standard_id;
-        
+
         $substandards = array();
-        
+
         $query = "SELECT * FROM {$wpdb->prefix}oer_sub_standards where parent_id='%s'";
-        
+
         $substandards = $wpdb->get_results($wpdb->prepare($query, $std_id));
-        
+
         return $substandards;
     }
 }
@@ -532,19 +532,19 @@ if (!function_exists('was_substandards')) {
 if (!function_exists('was_standard_notations')){
     function was_standard_notations($standard_id){
         global $wpdb;
-        
+
         $std_id = "sub_standards-".$standard_id;
-        
+
         $notations = array();
-        
+
         $query = "SELECT * FROM {$wpdb->prefix}oer_standard_notation where parent_id='%s'";
-        
+
         $result = $wpdb->get_results($wpdb->prepare($query, $std_id));
-        
+
         foreach ($result as $row){
                 $notations[] = $row;
         }
-        
+
         return $notations;
     }
 }
@@ -555,18 +555,18 @@ if (!function_exists('was_standard_notations')){
 if (!function_exists('was_substandards_by_notation')) {
     function was_substandards_by_notation($notation){
         global $wpdb;
-        
+
         $std = null;
-        
+
         $query = "SELECT * FROM {$wpdb->prefix}oer_standard_notation WHERE standard_notation = '%s'";
-        
+
         $standard_notation = $wpdb->get_results($wpdb->prepare($query, $notation));
-        
+
         if ($standard_notation){
             $substandard_id = $standard_notation[0]->parent_id;
             $std = was_hierarchical_substandards($substandard_id);
         }
-        
+
         return $std;
     }
 }
@@ -577,13 +577,13 @@ if (!function_exists('was_substandards_by_notation')) {
 if (!function_exists('was_child_notations')){
     function was_child_notations($notation_id){
         global $wpdb;
-        
+
         $notation = "standard_notation-".$notation_id;
-        
+
         $query = "SELECT * FROM {$wpdb->prefix}oer_standard_notation WHERE parent_id = '%s'";
-        
+
         $standard_notations = $wpdb->get_results($wpdb->prepare($query, $notation));
-        
+
         return $standard_notations;
     }
 }
@@ -594,13 +594,13 @@ if (!function_exists('was_child_notations')){
 if (!function_exists('was_corestandard_by_standard')){
     function was_corestandard_by_standard($parent_id){
         global $wpdb;
-        
+
         $standard = null;
         $parent = explode("-",$parent_id);
         if ($parent[0]=="sub_standards") {
                 $query = "SELECT * FROM {$wpdb->prefix}oer_sub_standards WHERE id = '%s'";
                 $substandards = $wpdb->get_results($wpdb->prepare($query, $parent[1]));
-                
+
                 foreach($substandards as $substandard){
                         $standard = was_corestandard_by_standard($substandard->parent_id);
                 }
@@ -611,7 +611,7 @@ if (!function_exists('was_corestandard_by_standard')){
                         $standard = $std;
                 }
         }
-        
+
         return $standard;
     }
 }
@@ -622,17 +622,17 @@ if (!function_exists('was_corestandard_by_standard')){
 if (!function_exists('was_standard_by_id')){
     function was_standard_by_id($id){
         global $wpdb;
-        
+
         $std = null;
-        
+
         $query = "SELECT * FROM {$wpdb->prefix}oer_core_standards WHERE id = %d";
-        
+
         $standards = $wpdb->get_results($wpdb->prepare($query,$id));
-        
+
         foreach($standards as $standard){
                         $std = $standard;
         }
-        
+
         return $std;
     }
 }
@@ -643,18 +643,18 @@ if (!function_exists('was_standard_by_id')){
 if (!function_exists('was_standard_by_slug')){
     function was_standard_by_slug($slug){
         global $wpdb;
-        
+
         $std = null;
-        
+
         $query = "SELECT * FROM {$wpdb->prefix}oer_core_standards";
-        
+
         $standards = $wpdb->get_results($query);
-        
+
         foreach($standards as $standard){
             if (sanitize_title($standard->standard_name)===$slug)
                 $std = $standard;
         }
-        
+
         return $std;
     }
 }
@@ -665,18 +665,18 @@ if (!function_exists('was_standard_by_slug')){
 if (!function_exists('was_substandard_by_slug')){
     function was_substandard_by_slug($slug){
         global $wpdb;
-        
+
         $std = null;
-        
+
         $query = "SELECT * FROM {$wpdb->prefix}oer_sub_standards";
-        
+
         $substandards = $wpdb->get_results($query);
-        
+
         foreach($substandards as $substandard){
                 if (sanitize_title($substandard->standard_title)===$slug)
                         $std = $substandard;
         }
-        
+
         return $std;
     }
 }
@@ -687,27 +687,27 @@ if (!function_exists('was_substandard_by_slug')){
 if (!function_exists('was_standard_by_notation')) {
     function was_standard_by_notation($notation){
         global $wpdb;
-        
+
         $std = null;
-        
+
         $query = "SELECT * FROM {$wpdb->prefix}oer_standard_notation WHERE standard_notation = '%s'";
-        
+
         $standard_notation = $wpdb->get_results($wpdb->prepare($query, $notation));
-        
+
         if ($standard_notation){
             $substandard_id = $standard_notation[0]->parent_id;
             $substandard = was_parent_standard($substandard_id);
-            
+
             if (strpos($substandard[0]['parent_id'],"core_standards")!==false){
                 $pIds = explode("-",$substandard[0]['parent_id']);
-                
+
                 if (count($pIds)>1){
                     $parent_id=(int)$pIds[1];
                     $std = was_standard_by_id($parent_id);
                 }
             }
         }
-        
+
         return $std;
     }
 }
@@ -717,7 +717,7 @@ if (!function_exists('was_core_standard')){
     function was_core_standard($id) {
             global $wpdb;
             $results = null;
-            
+
             if ($id!=="") {
                     $stds = explode("-",$id);
                     $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_core_standards where id = %s" , $stds[1] ) , ARRAY_A);
@@ -730,24 +730,24 @@ if (!function_exists('was_core_standard')){
 if (!function_exists('was_parent_standard')){
     function was_parent_standard($standard_id) {
         global $wpdb, $_oer_prefix;
-        
+
         $stds = explode("-",$standard_id);
         $table = $stds[0];
-        
+
         $prefix = substr($standard_id,0,strpos($standard_id,"_")+1);
-        
+
         $table_name = $wpdb->prefix.$_oer_prefix.$table;
-        
+
         $id = $stds[1];
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $table_name. " where id = %s" , $id ) , ARRAY_A);
-        
+
         foreach($results as $result) {
 
             $stdrds = explode("-",$result['parent_id']);
             $tbl = $stdrds[0];
-            
+
             $tbls = array('sub_standards','standard_notation');
-            
+
             if (in_array($tbl,$tbls)){
                 $results = was_parent_standard($result['parent_id']);
             }
@@ -763,17 +763,17 @@ if (!function_exists('was_parent_standard')){
 if (!function_exists('was_substandard_by_notation')) {
     function was_substandard_by_notation($notation) {
         global $wpdb;
-        
+
         $std = null;
-        
+
         $query = "SELECT * FROM {$wpdb->prefix}oer_standard_notation WHERE standard_notation = '%s'";
-        
+
         $substandards = $wpdb->get_results($wpdb->prepare($query, $notation));
-        
+
         foreach($substandards as $substandard){
                 $std = $substandard;
         }
-        
+
         return $std;
     }
 }
@@ -787,14 +787,14 @@ if (!function_exists('was_hierarchical_substandards')){
         $ids = explode("-",$substandard_id);
         if (strpos($substandard_id,"sub_standards")!==false) {
             do {
-                    
+
                 $substandard = was_substandard_details($ids[1]);
                 $ids = explode("-", $substandard['parent_id']);
                 $substandards[] = $substandard;
-                    
+
             } while(strpos($substandard['parent_id'],"sub_standards")!==false);
         }
-        
+
         return $substandards;
     }
 }
@@ -848,9 +848,9 @@ if (!function_exists('was_substandard_details')){
  **/
 if (!function_exists('was_resources_by_notation')) {
     function was_resources_by_notation($notation_id) {
-            
+
         $notation = "standard_notation-".$notation_id;
-        
+
         //later in the request
         $args = array(
             'post_type'  => 'resource', //or a post type of your choosing
@@ -863,9 +863,9 @@ if (!function_exists('was_resources_by_notation')) {
                 )
             )
         );
-        
+
         $query = new WP_Query($args);
-        
+
         return $query->posts;
     }
 }
@@ -964,7 +964,7 @@ if (!function_exists('was_importStandards')){
                 $doc->load( $file );
 
                 $StandardDocuments = $doc->getElementsByTagName('StandardDocument');
-                
+
                 $xml_arr = array();
                 $m = 0;
                 foreach( $StandardDocuments as $StandardDocument)
@@ -1121,12 +1121,12 @@ if (!function_exists('was_isStandardExisting')){
 if (!function_exists('was_display_selected_standards')){
     function was_display_selected_standards($standard_meta_key="oer_standard"){
         global $post, $wpdb, $_oer_prefix;
-        
+
         $oer_standard = get_post_meta($post->ID, $standard_meta_key, true);
-        
+
         $standards = explode(",", $oer_standard);
         $oer_standards = array();
-        
+
         foreach ($standards as $standard) {
             if ($standard!=""){
                 $stds = was_parent_standard($standard);
@@ -1140,19 +1140,19 @@ if (!function_exists('was_display_selected_standards')){
                 }
             }
         }
-        
+
         foreach ($oer_standards as $key => $row) {
             $core[$key]  = $row['core_id'];
         }
-        
+
         if (!empty($oer_standards))
             array_multisort($core, SORT_ASC, $oer_standards);
-        
+
         if(!empty($oer_standards))
         {
         ?>
             <div class="alignedStandards">
-            <h2><?php _e("Standards Alignment", OER_SLUG) ?></h2>
+            <h2><?php _e("Standards Alignment", WAS_SLUG) ?></h2>
             <div class="oer_meta_container">
                 <div class="oer_stndrds_notn">
                 <?php
@@ -1162,25 +1162,25 @@ if (!function_exists('was_display_selected_standards')){
                         <?php
                         $displayed_core_standards = array();
                         foreach($oer_standards as $o_standard) {
-                                
+
                             if (!in_array($o_standard['core_id'],$displayed_core_standards)){
                                 echo "<div class='oer-core-title'><h4><strong>".$o_standard['core_title']."</strong></h4></div>";
                                 $displayed_core_standards[] = $o_standard['core_id'];
                             }
-                            
+
                             $oer_standard =$o_standard['id'];
                             $stnd_arr = explode(",", $oer_standard);
-                            
+
                             for($i=0; $i< count($stnd_arr); $i++)
                             {
                                 $table = explode("-",$stnd_arr[$i]);
-                                
+
                                 $table_name = $wpdb->prefix.$_oer_prefix.$table[0];
-                                
+
                                 $id = $table[1];
-                                
+
                                 $res = $wpdb->get_row( $wpdb->prepare("select * from $table_name where id=%d" , $id ), ARRAY_A);
-                                
+
                                 echo "<div class='oer_sngl_stndrd'>";
                                     if (strpos($table_name,"sub_standards")>0) {
                                         echo "<span class='oer_sngl_description'>".$res['standard_title']."</span>";
@@ -1220,31 +1220,31 @@ if (!function_exists('was_post_search_block')){
 if (!function_exists('was_search_standards')){
     function was_search_standards($post_id, $keyword, $meta_key="oer_standard") {
         global $wpdb;
-        
+
         $all_results = array();
         $results = null;
         $chck = null;
         $core_standard = false;
         $sub_standard = false;
         $standard_notation = false;
-        
+
         $standards = get_post_meta($post_id, $meta_key, true);
         $selected_standards = explode(",",$standards);
-        
+
         $search = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where description like %s" , '%'.$keyword.'%'));
         if (!empty($search)){
             foreach($search as $row){
                 $results[]= $row;
             }
         }
-        
+
         if (!empty($results)){
             foreach ($results as $res){
                 $parent = was_get_parent($res->parent_id);
                 $all_results[] = array("parent"=>$parent,"notation"=>$res);
             }
         }
-        
+
         usort($all_results, "was_sort_search_results");
         $added = array();
         if (!empty($all_results)){
@@ -1306,7 +1306,7 @@ if (!function_exists('was_search_standards')){
 if (!function_exists('was_get_parent')){
     function was_get_parent($parent_id){
         global $wpdb;
-        
+
         $table ="";
         $id = 0;
         $results = null;
@@ -1317,7 +1317,7 @@ if (!function_exists('was_get_parent')){
             if (isset($ids[1]))
                 $id = $ids[1];
         }
-        
+
         if ($table!=="" && $id!==0) {
             $parent = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_".$table." where id=%d" , ''.$id.''));
             if (!empty($parent)){
@@ -1353,13 +1353,13 @@ if (!function_exists('was_sort_search_results')){
 if (!function_exists('was_standard_details')){
     function was_standard_details($stdid){
         global $wpdb;
-        
+
         $rec = null;
-        
+
         $stds = explode("-", $stdid);
         $table = $stds[0];
         $id = $stds[1];
-        
+
         $result = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_".$table." where id=%d" , $id));
         if (!empty($result)){
             foreach($result as $row){
@@ -1373,12 +1373,12 @@ if (!function_exists('was_standard_details')){
 if (!function_exists('was_admin_delete_standard')){
     function was_admin_delete_standard($standard_id) {
         global $wpdb;
-        
+
         $results = $wpdb->get_results("SELECT * from " . $wpdb->prefix. "oer_core_standards where id=".$standard_id."",ARRAY_A);
         if ($results){
             foreach($results as $row){
                 $value = 'core_standards-'.$row['id'];
-                
+
                 was_admin_delete_substandards($value);
             }
         }
@@ -1389,9 +1389,9 @@ if (!function_exists('was_admin_delete_standard')){
 if (!function_exists('was_admin_delete_substandards')){
     function was_admin_delete_substandards($parent_id){
         global $wpdb;
-        
+
         $subs = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $id ) ,ARRAY_A);
-            
+
         foreach($subs as $sub)
         {
             $value = 'sub_standards-'.$sub['id'];
@@ -1399,10 +1399,10 @@ if (!function_exists('was_admin_delete_substandards')){
             $id = 'sub_standards-'.$sub['id'];
             $subchildren = get_substandard_children($id);
             $child = check_child_standard($id);
-            
+
             if (!empty($subchildren))
                 was_admin_delete_substandards($id);
-            
+
             if (empty($subchildren) && !empty($child)) {
                 $sid = 'sub_standards-'.$sub['id'];
                 was_admin_delete_standard_notations($sid);
@@ -1411,7 +1411,7 @@ if (!function_exists('was_admin_delete_substandards')){
                 was_admin_delete_standard_notations($sid, true);
             }
         }
-        
+
         $wpdb->delete($wpdb->prefix."oer_sub_standards", array("parent_id"=>$parent_id));
     }
 }
@@ -1419,9 +1419,9 @@ if (!function_exists('was_admin_delete_substandards')){
 if (!function_exists('was_admin_delete_standard_notations')){
     function was_admin_delete_standard_notations($parent_id){
         global $wpdb;
-        
+
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s" , $parent_id ) , ARRAY_A);
-    
+
         if(!empty($results))
         {
             foreach($results as $result)
@@ -1429,12 +1429,12 @@ if (!function_exists('was_admin_delete_standard_notations')){
                 $id = 'standard_notation-'.$result['id'];
                 $child = check_child_standard($id);
                 $value = 'standard_notation-'.$result['id'];
-                
+
                 if ($child)
                     was_admin_delete_standard_notations($id);
             }
         }
-        
+
         $wpdb->delete($wpdb->prefix."oer_standard_notation", array("parent_id"=>$parent_id));
     }
 }

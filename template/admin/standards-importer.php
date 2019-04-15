@@ -12,7 +12,7 @@ if ($type=="lr"){
 		$message .= " record imported.";
 	else
 		$message .= " records imported.";
-	
+
 	$type="success";
 }
 
@@ -47,7 +47,7 @@ if (!current_user_can('manage_options')) {
 								<tr>
 									<td>
 										<?php
-											$math = oer_isStandardExisting("Math");
+											$math = was_isStandardExisting("Math");
 											$attr = "";
 											$hidden = "";
 											$class = "was-core-standard";
@@ -58,7 +58,7 @@ if (!current_user_can('manage_options')) {
 												$class .= " disabled";
 												$checkbox = '<span><i class="far fa-check-square"></i></span>';
 											}
-											
+
 										?>
 										<input name="oer_common_core_mathematics" id="oer_common_core_mathematics" <?php echo $hidden; ?> type="checkbox" value="1" <?php echo esc_attr($attr); ?>><?php echo $checkbox; ?><label for="oer_common_core_mathematics" class="<?php echo $class; ?>"><strong>Common Core Mathematics</strong> <?php if ($math): ?><span class="prev-import">(previously imported)</span><?php endif; ?></label>
 									</td>
@@ -66,7 +66,7 @@ if (!current_user_can('manage_options')) {
 								<tr>
 									<td>
 										<?php
-											$english = oer_isStandardExisting("English");
+											$english = was_isStandardExisting("English");
 											$attr = "";
 											$hidden = "";
 											$class = "was-core-standard";
@@ -77,7 +77,7 @@ if (!current_user_can('manage_options')) {
 												$hidden = "class='hidden'";
 												$checkbox = '<span><i class="far fa-check-square"></i></span>';
 											}
-											
+
 										?>
 										<input name="oer_common_core_english" id="oer_common_core_english" <?php echo $hidden; ?> type="checkbox" value="1" <?php echo esc_attr($attr); ?>><?php echo $checkbox; ?><label for="oer_common_core_english"  class="<?php echo $class; ?>"><strong>Common Core English Language Arts</strong> <?php if ($english): ?><span class="prev-import">(previously imported)</span><?php endif; ?></label>
 									</td>
@@ -85,7 +85,7 @@ if (!current_user_can('manage_options')) {
 								<tr>
 									<td>
 										<?php
-											$science = oer_isStandardExisting("Next Generation Science");
+											$science = was_isStandardExisting("Next Generation Science");
 											$attr = "";
 											$hidden = "";
 											$class = "was-core-standard";
@@ -112,7 +112,7 @@ if (!current_user_can('manage_options')) {
 								?>
 								<tr>
 									<td>
-										
+
 										<?php echo $checkbox; ?><label for="oer_other_standard_<?php echo $oIndex; ?>"  class="<?php echo $class; ?>"><strong><?php echo $other['other_title']; ?></strong> <span class="prev-import">(previously imported)</span></label>
 									</td>
 								</tr>

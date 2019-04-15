@@ -67,7 +67,7 @@ add_action("admin_action_import_standards","import_was_standards");
 function import_was_standards(){
     require_once(WAS_PATH."classes/class-standards-importer.php");
     $standard_importer = new was_standards_importer;
-    
+
     $message = null;
     $type = null;
     $other = false;
@@ -75,31 +75,31 @@ function import_was_standards(){
     if (!current_user_can('manage_options')) {
 	    wp_die( "You don't have permission to access this page!" );
     }
-    
+
     //Standards Bulk Import
     if(isset($_POST['standards_import']))
     {
 	check_admin_referer('oer_standards_nonce_field');
-	    
+
 	$files = array();
-    
+
 	if (isset($_POST['oer_common_core_mathematics'])){
 	       $files[] = OER_PATH."samples/CCSS_Math.xml";
 	}
-    
+
 	if (isset($_POST['oer_common_core_english'])){
 	       $files[] = OER_PATH."samples/CCSS_ELA.xml";
 	}
-    
+
 	if (isset($_POST['oer_next_generation_science'])){
 	       $files[] = OER_PATH."samples/NGSS.xml";
 	}
-	
+
 	if (isset($_POST['oer_standard_other']) && isset($_POST['oer_standard_other_url'])){
 	       $files[] = $standard_importer->download_standard($_POST['oer_standard_other_url']);
 	       $other = true;
 	}
-	
+
 	foreach ($files as $file) {
 	    $import = $standard_importer->import_standard($file, $other);
 	    if ($import['type']=="success") {
@@ -117,7 +117,7 @@ function import_was_standards(){
 	}
 	$message = urlencode($message);
     }
-    
+
     wp_safe_redirect( admin_url("admin.php?page=import-standards&message=$message&type=$type"));
     exit;
 }
@@ -146,10 +146,10 @@ function was_setup_settings(){
 			'type' => 'checkbox',
 			'value' => '1',
 			'name' =>  __('Import Common Core State Standards', WAS_SLUG),
-			'description' => __('Enable use of CCSS as an optional alignment option for resources.', OER_SLUG)
+			'description' => __('Enable use of CCSS as an optional alignment option for resources.', WAS_SLUG)
 		)
 	);
-        
+
         //Set API Secret for Url2PNG
 	add_settings_field(
 		'was_standard_slug',
@@ -164,7 +164,7 @@ function was_setup_settings(){
 			'title' => __('Standards Root Slug', WAS_SLUG)
 		)
 	);
-        
+
         register_setting( 'was_setup_settings' , 'was_import_ccss' );
 	register_setting( 'was_setup_settings' , 'was_standard_slug' );
 }
@@ -183,7 +183,7 @@ function was_setup_settings_field( $arguments ) {
 	$data_masked = "";
 
 	$value = get_option($arguments['uid']);
-	
+
 	if (isset($arguments['masked'])){
 		$data_masked = "data-hidden='".$value."'";
 		$value = oer_mask_string($value, 4, 7);
@@ -307,7 +307,7 @@ add_action( 'wp_loaded', 'was_process_settings_form' );
 function was_process_settings_form(){
     global $message, $type;
     if (isset($_REQUEST['settings-updated']) && $_REQUEST['page']=="standards-settings") {
-        
+
         //Import CCSS Standards
         $import_ccss = get_option('was_import_ccss');
         if ($import_ccss) {
@@ -317,7 +317,7 @@ function was_process_settings_form(){
                 $type .= $response["type"];
             }
         }
-        
+
         // Standards slug Root
         $standard_root_slug = get_option('was_standard_slug');
         if (isset($standard_root_slug) && $standard_root_slug!==""){
@@ -327,7 +327,7 @@ function was_process_settings_form(){
             $message = "Permalink structure has been reset for standards root slug ".$standard_root_slug;
             $type = "success";
         }
-        
+
         //Redirect to main settings page
         wp_redirect( admin_url( 'admin.php?page=standards-settings' ) );
         exit();
@@ -347,19 +347,19 @@ function was_add_standard_modal(){
 add_action('wp_ajax_get_standard_details', 'was_get_standard_details');
 function was_get_standard_details(){
 	$std_id = null;
-	
+
 	if (isset($_POST['std_id'])){
 		$std_id = $_POST['std_id'];
 	}
-	
+
 	if (!$std_id){
 		echo "Invalid Standard ID";
 		die();
 	}
-	
+
         $details = was_standard_details($std_id);
         echo json_encode($details);
-    
+
 	die();
 }
 
@@ -368,11 +368,11 @@ function was_update_standard(){
     global $wpdb;
     $standard = null;
     $success = null;
-    
+
     if (isset($_POST['details'])){
         $standard = $_POST['details'];
     }
-    
+
     if (array_key_exists("standard_name", $standard)){
         $success = $wpdb->update(
             $wpdb->prefix."oer_core_standards",
@@ -420,11 +420,11 @@ function was_update_standard(){
             array( "%d" )
         );
     }
-    
+
     $response = array("success"=>$success,"standard"=>$standard);
-    
+
     echo json_encode($response);
-    
+
     die();
 }
 
@@ -434,11 +434,11 @@ function was_add_standard(){
     $standard = null;
     $success = null;
     $lastid = null;
-    
+
     if (isset($_POST['details'])){
         $standard = $_POST['details'];
     }
-    
+
     if (array_key_exists("standard_title", $standard)){
         $success = $wpdb->insert(
             $wpdb->prefix."oer_sub_standards",
@@ -484,18 +484,18 @@ function was_add_standard(){
             )
         );
     }
-    
+
     $lastid = $wpdb->insert_id;
-    
+
     echo json_encode(array("success"=>$success, "id" => $lastid));
-    
+
     die();
 }
 
 add_action('wp_ajax_load_admin_standards', 'was_load_admin_standards');
 function was_load_admin_standards(){
 	was_display_admin_standards();
-    
+
 	die();
 }
 
@@ -504,20 +504,20 @@ function was_delete_standard(){
     global $wpdb;
     $standard_id = null;
     $success = null;
-    
+
     if (isset($_POST['standard_id'])){
         $standard_id = $_POST['standard_id'];
     }
-    
+
     if ($standard_id){
         $success = $wpdb->delete(
             $wpdb->prefix."oer_standard_notation",
             array("id" => $standard_id)
         );
     }
-    
+
     echo $success;
-    
+
     die();
 }
 
@@ -529,22 +529,22 @@ function was_update_standard_position(){
     $success = null;
     $table = null;
     $id = 0;
-    
+
     if (isset($_POST['standard_id'])){
         $standard_id = $_POST['standard_id'];
     }
-    
+
     if (isset($_POST['position'])){
         $pos = $_POST['position'];
     }
-    
-    
+
+
     if ($standard_id && $pos){
         $stds = explode("-", $standard_id);
         if (!empty($stds)){
             $table = $stds[0];
             $id = $stds[1];
-            
+
             $success = $wpdb->update(
                 $wpdb->prefix."oer_".$table,
                 array(
@@ -556,10 +556,10 @@ function was_update_standard_position(){
                 ),
                 array( "%d" )
             );
-            
+
         }
     }
-    
+
     die();
 }
 ?>
