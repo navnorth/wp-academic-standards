@@ -179,7 +179,9 @@ function was_assign_standard_template($template) {
         
 	status_header(200);
 	
-	if ( preg_match( "/[\/]\b".$root_slug."\b$/",  $url_path) && !get_query_var('standard') && !get_query_var('substandard') && !get_query_var('notation') ) {
+	$slug_chars = strlen($root_slug);
+	
+	if ( substr($url_path,-$slug_chars)==$root_slug && !get_query_var('standard') && !get_query_var('substandard') && !get_query_var('notation') ) {
 		// load the file if exists
 		$wp_query->is_404 = false;
 		$template = locate_template('template/frontend/standards.php', true);
