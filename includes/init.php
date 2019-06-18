@@ -84,24 +84,25 @@ function import_was_standards(){
 	$files = array();
 
 	if (isset($_POST['oer_common_core_mathematics'])){
-	       $files[] = OER_PATH."samples/CCSS_Math.xml";
+	       $files[] = WAS_PATH."samples/CCSS_Math.xml";
 	}
 
 	if (isset($_POST['oer_common_core_english'])){
-	       $files[] = OER_PATH."samples/CCSS_ELA.xml";
+	       $files[] = WAS_PATH."samples/CCSS_ELA.xml";
 	}
 
 	if (isset($_POST['oer_next_generation_science'])){
-	       $files[] = OER_PATH."samples/NGSS.xml";
+	       $files[] = WAS_PATH."samples/NGSS.xml";
 	}
 
 	if (isset($_POST['oer_standard_other']) && isset($_POST['oer_standard_other_url'])){
 	       $files[] = $standard_importer->download_standard($_POST['oer_standard_other_url']);
 	       $other = true;
 	}
-
+	
 	foreach ($files as $file) {
 	    $import = $standard_importer->import_standard($file, $other);
+	    
 	    if ($import['type']=="success") {
 		if (strpos($file,'Math')) {
 		    $message .= "Successfully imported Common Core Mathematics Standards. \n";

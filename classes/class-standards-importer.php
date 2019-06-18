@@ -66,7 +66,7 @@ class was_standards_importer {
             try {
 
                     $filedetails = pathinfo($file);
-
+		    
                     $filename = $filedetails['filename']."-".$date;
 
                     $doc = new DOMDocument();
@@ -83,7 +83,7 @@ class was_standards_importer {
                             $titles = $StandardDocuments->item($m)->getElementsByTagName('title');
                             $standard_title = $core_standard[$url]['title'] = $titles->item($m)->nodeValue;
                     }
-
+		    
                     $Statements = $doc->getElementsByTagName('Statement');
                     $i = 0;
                     foreach( $Statements as $Statement)
@@ -116,7 +116,7 @@ class was_standards_importer {
                             }
                             $i++;
                     }
-
+		    
                     // Get Core Standard
                     foreach($core_standard as $cskey => $csdata)
                     {
@@ -130,7 +130,7 @@ class was_standards_importer {
                             }
                     }
                     // Get Core Standard
-
+		    
                     // Get Sub Standard
                     foreach($xml_arr as $key => $data)
                     {
@@ -156,43 +156,44 @@ class was_standards_importer {
                             $res = $wpdb->get_results( $wpdb->prepare( "SELECT id from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s && url = %s" , $parent , $url ));
                             if(empty($res))
                             {
-                                    $wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_sub_standards values("", %s, %s, %s)' , $parent , $title , $url ));
+                                    $wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_sub_standards values("", %s, %s, %s, 0)' , $parent , $title , $url ));
                             }
                     }
                     // Get Sub Standard
-
-                    // Get Standard Notation
-                    foreach($standard_notation as $st_key => $st_data)
-                    {
-                            $url = esc_url_raw($st_key);
-                            $ischild = $st_data['ischild'];
-                            $notation = sanitize_text_field($st_data['title']);
-                            $description = sanitize_text_field($st_data['description']);
-                            $parent = '';
-
-                            $rsltset = $wpdb->get_results( $wpdb->prepare( "select id from " . $wpdb->prefix. "oer_sub_standards where url=%s" , $ischild ));
-                            if(!empty($rsltset))
-                            {
-                                    $parent = 'sub_standards-'.$rsltset[0]->id;
-                            }
-                            else
-                            {
-                                    $rsltset_sec = $wpdb->get_results( $wpdb->prepare( "select id from " . $wpdb->prefix. "oer_standard_notation where url=%s" , $ischild ));
-                                    if(!empty($rsltset_sec))
-                                    {
-                                            $parent = 'standard_notation-'.$rsltset_sec[0]->id;
-                                    }
-                            }
-
-                            $res = $wpdb->get_results( $wpdb->prepare( "SELECT id from " . $wpdb->prefix. "oer_standard_notation where standard_notation = %s && parent_id = %s && url = %s" , $notation , $parent , $url ));
-                            if(empty($res))
-                            {
-                                    //$description = preg_replace("/[^a-zA-Z0-9]+/", " ", html_entity_decode($description))
-                                    $description = esc_sql($description);
-                                    $wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_standard_notation values("", %s, %s, %s, "", %s)' , $parent , $notation , $description , $url ));
-                            }
-                    }
-
+		    
+		    if (isset($standard_notation)){
+			// Get Standard Notation
+			foreach($standard_notation as $st_key => $st_data)
+			{
+				$url = esc_url_raw($st_key);
+				$ischild = $st_data['ischild'];
+				$notation = sanitize_text_field($st_data['title']);
+				$description = sanitize_text_field($st_data['description']);
+				$parent = '';
+    
+				$rsltset = $wpdb->get_results( $wpdb->prepare( "select id from " . $wpdb->prefix. "oer_sub_standards where url=%s" , $ischild ));
+				if(!empty($rsltset))
+				{
+					$parent = 'sub_standards-'.$rsltset[0]->id;
+				}
+				else
+				{
+					$rsltset_sec = $wpdb->get_results( $wpdb->prepare( "select id from " . $wpdb->prefix. "oer_standard_notation where url=%s" , $ischild ));
+					if(!empty($rsltset_sec))
+					{
+						$parent = 'standard_notation-'.$rsltset_sec[0]->id;
+					}
+				}
+    
+				$res = $wpdb->get_results( $wpdb->prepare( "SELECT id from " . $wpdb->prefix. "oer_standard_notation where standard_notation = %s && parent_id = %s && url = %s" , $notation , $parent , $url ));
+				if(empty($res))
+				{
+					//$description = preg_replace("/[^a-zA-Z0-9]+/", " ", html_entity_decode($description))
+					$description = esc_sql($description);
+					$wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_standard_notation values("", %s, %s, %s, "", %s, 0)' , $parent , $notation , $description , $url ));
+				}
+			}
+		    }
             } catch(Exception $e) {
                     $response = array(
                                       'message' => $e->getMessage(),

@@ -1390,7 +1390,7 @@ if (!function_exists('was_admin_delete_substandards')){
     function was_admin_delete_substandards($parent_id){
         global $wpdb;
 
-        $subs = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $id ) ,ARRAY_A);
+        $subs = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $parent_id ) ,ARRAY_A);
 
         foreach($subs as $sub)
         {
@@ -1445,5 +1445,15 @@ if (!function_exists('was_admin_delete_standards')){
         foreach($stds as $std){
             was_admin_delete_standard($std);
         }
+    }
+}
+
+if (!function_exists('was_search_imported_standards')){
+    function was_search_imported_standards($imported_standards, $standard){
+	foreach($imported_standards as $index => $imported_standard){
+	    if ($imported_standard['other_title']==$standard)
+		return $index;
+	}
+	return false;
     }
 }
