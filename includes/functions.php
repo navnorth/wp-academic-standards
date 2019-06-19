@@ -292,8 +292,7 @@ if (!function_exists('was_child_standards')){
 
                     if(empty($subchildren) && empty($child)) {
                         echo "<input type='checkbox' ".$chck." name='".$meta_key."[]' value='".$value."' onclick='was_check_all(this)' >
-                                ".stripslashes($result['standard_title'])."
-                                <div class='oer_stndrd_desc'></div>";
+                                <div class='oer_stndrd_desc'>".stripslashes($result['standard_title'])."</div>";
                     }
 
                     $id = 'sub_standards-'.$result['id'];

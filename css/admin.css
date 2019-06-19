@@ -303,3 +303,5 @@ label.was-core-standard{
 .float-right { float:right; }
 .standard-heading-inline { margin-bottom:15px; }
 .was_stndrd_desc { display:inline-block; }
+li.oer_sbstndard input[type=checkbox] { margin-top:0; margin-right:5px; }
+li.oer_sbstndard > .oer_stndrd_desc { display:inline-block; margin-left:0; }
