@@ -87,8 +87,8 @@ function was_create_table()
         }
 	
 	// One Time alteration of standard_title field size in sub standards table
-	$sql = "ALTER TABLE ".$table_name." MODIFY COLUMN standard_title VARCHAR(1000)";
-        $wpdb->query($sql);
+	//$sql = "ALTER TABLE ".$table_name." MODIFY COLUMN standard_title VARCHAR(1000)";
+        //$wpdb->query($sql);
 
 	//Change hard-coded table prefix to $wpdb->prefix
 	$table_name = $wpdb->prefix . $subprefix . "standard_notation";
@@ -116,8 +116,8 @@ function was_create_table()
         }
 	
 	// One Time alteration of description field size in standard notation table
-	$sql = "ALTER TABLE ".$table_name." MODIFY COLUMN description VARCHAR(1000)";
-        $wpdb->query($sql);
+	//$sql = "ALTER TABLE ".$table_name." MODIFY COLUMN description VARCHAR(1000)";
+        //$wpdb->query($sql);
         
     was_add_rewrites();
     //Trigger permalink reset
