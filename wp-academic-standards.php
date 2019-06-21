@@ -70,7 +70,7 @@ function was_create_table()
 	  $sql = "CREATE TABLE IF NOT EXISTS $table_name (
 			    id int(20) NOT NULL AUTO_INCREMENT,
 			    parent_id varchar(255) NOT NULL,
-			    standard_title varchar(255) NOT NULL,
+			    standard_title varchar(1000) NOT NULL,
 			    url varchar(255) NOT NULL,
 			    PRIMARY KEY (id)
 			    );";
@@ -85,6 +85,10 @@ function was_create_table()
             $sql = "ALTER TABLE ".$table_name." ADD pos INT(11) NOT NULL";
             $wpdb->query($sql);
         }
+	
+	// One Time alteration of standard_title field size in sub standards table
+	$sql = "ALTER TABLE ".$table_name." MODIFY COLUMN standard_title VARCHAR(1000)";
+        $wpdb->query($sql);
 
 	//Change hard-coded table prefix to $wpdb->prefix
 	$table_name = $wpdb->prefix . $subprefix . "standard_notation";
@@ -94,7 +98,7 @@ function was_create_table()
 			     id int(20) NOT NULL AUTO_INCREMENT,
 			     parent_id varchar(255) NOT NULL,
 			     standard_notation varchar(255) NOT NULL,
-			     description varchar(255) NOT NULL,
+			     description varchar(1000) NOT NULL,
 			     comment varchar(255) NOT NULL,
 			     url varchar(255) NOT NULL,
 			     PRIMARY KEY (id)
@@ -110,6 +114,10 @@ function was_create_table()
             $sql = "ALTER TABLE ".$table_name." ADD pos INT(11) NOT NULL";
             $wpdb->query($sql);
         }
+	
+	// One Time alteration of description field size in standard notation table
+	$sql = "ALTER TABLE ".$table_name." MODIFY COLUMN description VARCHAR(1000)";
+        $wpdb->query($sql);
         
     was_add_rewrites();
     //Trigger permalink reset
