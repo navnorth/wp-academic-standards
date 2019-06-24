@@ -307,7 +307,7 @@ function was_setup_settings_field( $arguments ) {
 add_action( 'wp_loaded', 'was_process_settings_form' );
 function was_process_settings_form(){
     global $message, $type;
-    if (isset($_REQUEST['settings-updated']) && $_REQUEST['page']=="standards-settings") {
+    if (isset($_REQUEST['settings-updated']) && (isset($_REQUEST['page']) && $_REQUEST['page']=="standards-settings")) {
 
         //Import CCSS Standards
         $import_ccss = get_option('was_import_ccss');

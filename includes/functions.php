@@ -918,7 +918,8 @@ if (!function_exists('was_importDefaultStandards')){
         $files = array(
             WAS_PATH."samples/CCSS_Math.xml",
             WAS_PATH."samples/CCSS_ELA.xml",
-            WAS_PATH."samples/NGSS.xml"
+            WAS_PATH."samples/NGSS.xml",
+	    WAS_PATH."samples/D10002A5.xml"
             );
         foreach ($files as $file) {
             $import = was_importStandards($file);
@@ -1044,7 +1045,7 @@ if (!function_exists('was_importStandards')){
                     $res = $wpdb->get_results( $wpdb->prepare( "SELECT id from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s && url = %s" , $parent , $url ));
                     if(empty($res))
                     {
-                        $wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_sub_standards values("", %s, %s, %s)' , $parent , $title , $url ));
+                        $wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_sub_standards values("", %s, %s, %s, 0)' , $parent , $title , $url ));
                     }
                 }
                 // Get Sub Standard
@@ -1077,7 +1078,7 @@ if (!function_exists('was_importStandards')){
                     {
                         //$description = preg_replace("/[^a-zA-Z0-9]+/", " ", html_entity_decode($description))
                         $description = esc_sql($description);
-                        $wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_standard_notation values("", %s, %s, %s, "", %s)' , $parent , $notation , $description , $url ));
+                        $wpdb->get_results( $wpdb->prepare( 'INSERT INTO ' . $wpdb->prefix. 'oer_standard_notation values("", %s, %s, %s, "", %s, 0)' , $parent , $notation , $description , $url ));
                     }
                 }
 

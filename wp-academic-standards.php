@@ -148,17 +148,18 @@ add_action( 'init', 'was_add_rewrites', 10, 0 );
 function was_add_rewrites($root_slug="standards")
 {
 	global $wp_rewrite;
-	add_rewrite_tag( '%standard%', '([^/]*)' );
+	add_rewrite_tag( '%standard%', '([^&]+)' );
 	add_rewrite_tag( '%substandard%' , '([^&]+)' );
 	add_rewrite_tag( '%notation%' , '([^&]+)' );
 	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]', 'top' );
-	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]', 'top' );
-	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^/]*)/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]&notation=$matches[3]', 'top' );
+	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^&]+)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]', 'top' );
+	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^&]+)/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]&notation=$matches[3]', 'top' );
 	add_rewrite_endpoint( 'standard', EP_PERMALINK | EP_PAGES );
 	add_rewrite_endpoint( 'substandard', EP_PERMALINK | EP_PAGES );
 	add_rewrite_endpoint( 'notation', EP_PERMALINK | EP_PAGES );
 
 	$flush_rewrite = get_option('oer_rewrite_rules');
+	
 	if ($flush_rewrite==false) {
 		$wp_rewrite->init();
 		$wp_rewrite->flush_rules();
@@ -188,7 +189,7 @@ function was_assign_standard_template($template) {
 	status_header(200);
 	
 	$slug_chars = strlen($root_slug);
-	
+	var_dump(get_query_var('standard'));
 	if ( substr($url_path,-$slug_chars)==$root_slug && !get_query_var('standard') && !get_query_var('substandard') && !get_query_var('notation') ) {
 		// load the file if exists
 		$wp_query->is_404 = false;
