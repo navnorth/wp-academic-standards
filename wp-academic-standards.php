@@ -189,7 +189,7 @@ function was_assign_standard_template($template) {
 	status_header(200);
 	
 	$slug_chars = strlen($root_slug);
-	var_dump(get_query_var('standard'));
+	
 	if ( substr($url_path,-$slug_chars)==$root_slug && !get_query_var('standard') && !get_query_var('substandard') && !get_query_var('notation') ) {
 		// load the file if exists
 		$wp_query->is_404 = false;

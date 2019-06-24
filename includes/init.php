@@ -150,6 +150,22 @@ function was_setup_settings(){
 			'description' => __('Enable use of CCSS as an optional alignment option for resources.', WAS_SLUG)
 		)
 	);
+	
+	//Add Settings field for Importing California History-Social Science Standards
+	add_settings_field(
+		'was_import_chsss',
+		'',
+		'was_setup_settings_field',
+		'standards-settings',
+		'was_setup_settings',
+		array(
+			'uid' => 'was_import_chsss',
+			'type' => 'checkbox',
+			'value' => '1',
+			'name' =>  __('California History-Social Science Standards', WAS_SLUG),
+			'description' => __('Enable use of California History-Social Science Standards as an optional alignment option for resources.', WAS_SLUG)
+		)
+	);
 
         //Set API Secret for Url2PNG
 	add_settings_field(
@@ -167,6 +183,7 @@ function was_setup_settings(){
 	);
 
         register_setting( 'was_setup_settings' , 'was_import_ccss' );
+	register_setting( 'was_setup_settings' , 'was_import_chsss' );
 	register_setting( 'was_setup_settings' , 'was_standard_slug' );
 }
 
@@ -318,6 +335,16 @@ function was_process_settings_form(){
                 $type .= $response["type"];
             }
         }
+	
+	//Import CHSSS Standards
+        $import_chsss = get_option('was_import_chsss');
+	if ($import_chsss){
+	    $response = was_importCaliforniaHistoryStandards();
+            if ($response) {
+                $message .= $response["message"];
+                $type .= $response["type"];
+            }
+	}
 
         // Standards slug Root
         $standard_root_slug = get_option('was_standard_slug');

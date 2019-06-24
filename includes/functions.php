@@ -918,8 +918,7 @@ if (!function_exists('was_importDefaultStandards')){
         $files = array(
             WAS_PATH."samples/CCSS_Math.xml",
             WAS_PATH."samples/CCSS_ELA.xml",
-            WAS_PATH."samples/NGSS.xml",
-	    WAS_PATH."samples/D10002A5.xml"
+            WAS_PATH."samples/NGSS.xml"
             );
         foreach ($files as $file) {
             $import = was_importStandards($file);
@@ -929,6 +928,24 @@ if (!function_exists('was_importDefaultStandards')){
                 } else {
                             $message .= "Successfully imported Common Core English Language Arts Standards. \n";
                 }
+            }
+            $type = $import['type'];
+        }
+        $response = array( 'message' => $message, 'type' => $type );
+        return $response;
+    }
+}
+
+//Import California History Standards
+if (!function_exists('was_importCaliforniaHistoryStandards')){
+    function was_importCaliforniaHistoryStandards() {
+        $files = array(
+	    WAS_PATH."samples/D10002A5.xml"
+            );
+        foreach ($files as $file) {
+            $import = was_importStandards($file);
+            if ($import['type']=="success") {
+                $message .= "Successfully imported California History-Social Science Standards. \n";
             }
             $type = $import['type'];
         }
