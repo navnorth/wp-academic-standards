@@ -1474,3 +1474,10 @@ if (!function_exists('was_search_imported_standards')){
 	return false;
     }
 }
+
+if (!function_exists('debug_log')){
+    // Log Debugging
+    function debug_log($message) {
+	error_log($message);
+    }
+}
