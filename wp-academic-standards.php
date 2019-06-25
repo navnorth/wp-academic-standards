@@ -148,15 +148,13 @@ add_action( 'init', 'was_add_rewrites', 10, 0 );
 function was_add_rewrites($root_slug="standards")
 {
 	global $wp_rewrite;
+	$root_slug = get_option('was_standard_slug');
 	add_rewrite_tag( '%standard%', '([^&]+)' );
 	add_rewrite_tag( '%substandard%' , '([^&]+)' );
 	add_rewrite_tag( '%notation%' , '([^&]+)' );
-	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]', 'top' );
-	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^&]+)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]', 'top' );
-	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^&]+)/([^/]*)/?$', 'index.php?pagename=standards&standard=$matches[1]&substandard=$matches[2]&notation=$matches[3]', 'top' );
-	add_rewrite_endpoint( 'standard', EP_PERMALINK | EP_PAGES );
-	add_rewrite_endpoint( 'substandard', EP_PERMALINK | EP_PAGES );
-	add_rewrite_endpoint( 'notation', EP_PERMALINK | EP_PAGES );
+	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/?$', 'index.php?standard=$matches[1]', 'top' );
+	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^&]+)/?$', 'index.php?standard=$matches[1]&substandard=$matches[2]', 'top' );
+	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^&]+)/([^/]*)/?$', 'index.php?standard=$matches[1]&substandard=$matches[2]&notation=$matches[3]', 'top' );
 
 	$flush_rewrite = get_option('oer_rewrite_rules');
 	
