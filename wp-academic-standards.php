@@ -3,7 +3,7 @@
  Plugin Name:  WP Academic Standards
  Plugin URI:   https://www.navigationnorth.com
  Description:  Wordpress Academic Standards
- Version:      0.0.1
+ Version:      0.2.1
  Author:       Navigation North
  Author URI:   https://www.navigationnorth.com
  Text Domain:  wp-academic-standards
@@ -35,7 +35,7 @@ define( 'WAS_SLUG','wp-academic-standards' );
 define( 'WAS_FILE',__FILE__);
 define( 'WAS_PLUGIN_NAME', 'WP Academic Standards' );
 define( 'WAS_ADMIN_PLUGIN_NAME', 'WP Academic Standards');
-define( 'WAS_VERSION', '0.0.1' );
+define( 'WAS_VERSION', '0.2.1' );
 
 global $_oer_prefix, $message, $type;
 $_oer_prefix = "oer_";
@@ -77,7 +77,7 @@ function was_create_table()
 	  require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	  dbDelta($sql);
 	}
-        
+
         // Alter substandards table and add pos field
         $row = $wpdb->get_results(  "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '".$table_name."' AND column_name = 'pos'"  );
 
@@ -85,7 +85,7 @@ function was_create_table()
             $sql = "ALTER TABLE ".$table_name." ADD pos INT(11) NOT NULL";
             $wpdb->query($sql);
         }
-	
+
 	// One Time alteration of standard_title field size in sub standards table
 	//$sql = "ALTER TABLE ".$table_name." MODIFY COLUMN standard_title VARCHAR(1000)";
         //$wpdb->query($sql);
@@ -106,7 +106,7 @@ function was_create_table()
 	   require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	   dbDelta($sql);
 	}
-        
+
         // Alter standard notation table and add pos field
         $row = $wpdb->get_results(  "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '".$table_name."' AND column_name = 'pos'"  );
 
@@ -114,11 +114,11 @@ function was_create_table()
             $sql = "ALTER TABLE ".$table_name." ADD pos INT(11) NOT NULL";
             $wpdb->query($sql);
         }
-	
+
 	// One Time alteration of description field size in standard notation table
 	//$sql = "ALTER TABLE ".$table_name." MODIFY COLUMN description VARCHAR(1000)";
         //$wpdb->query($sql);
-        
+
     was_add_rewrites();
     //Trigger permalink reset
     flush_rewrite_rules();
@@ -157,7 +157,7 @@ function was_add_rewrites($root_slug="standards")
 	add_rewrite_rule( '^'.$root_slug.'/([^/]*)/([^&]+)/([^/]*)/?$', 'index.php?standard=$matches[1]&substandard=$matches[2]&notation=$matches[3]', 'top' );
 
 	$flush_rewrite = get_option('oer_rewrite_rules');
-	
+
 	if ($flush_rewrite==false) {
 		$wp_rewrite->init();
 		$wp_rewrite->flush_rules();
@@ -178,16 +178,16 @@ function was_assign_standard_template($template) {
 	global $wp_query;
 
 	$url_path = trim(parse_url(add_query_arg(array()), PHP_URL_PATH), '/');
-        
+
         $root_slug = get_option('was_standard_slug');
         if (!$root_slug || $root_slug==""){
             $root_slug = "standards";
         }
-        
+
 	status_header(200);
-	
+
 	$slug_chars = strlen($root_slug);
-	
+
 	if ( substr($url_path,-$slug_chars)==$root_slug && !get_query_var('standard') && !get_query_var('substandard') && !get_query_var('notation') ) {
 		// load the file if exists
 		$wp_query->is_404 = false;
