@@ -253,6 +253,7 @@ if (!function_exists('was_child_standards')){
     function was_child_standards($id, $oer_standard, $meta_key="oer_standard") {
 	global $wpdb, $chck, $class;
 
+	$collapse = " class='collapse'";
 	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $id ) ,ARRAY_A);
 	if(!empty($oer_standard))
 	{
@@ -287,7 +288,7 @@ if (!function_exists('was_child_standards')){
                     echo "<li class='oer_sbstndard ". $class ."'>";
 
                     if (!empty($subchildren)){
-                        echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_title'])."</a>";
+                        echo "<a data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])."</a>";
                     }
 
                     if(empty($subchildren) && empty($child)) {
@@ -298,10 +299,13 @@ if (!function_exists('was_child_standards')){
                     $id = 'sub_standards-'.$result['id'];
                     was_child_standards($id, $oer_standard, $meta_key);
 
-                    if (!empty($child)) {
-                        echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_title'])."</a>";
+                    if (empty($subchildren) && !empty($child)) {
+                        echo "<a data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])."</a>";
                         $sid = 'sub_standards-'.$result['id'];
                         was_child_standard_notations($sid, $oer_standard, $meta_key);
+		    } elseif (!empty($subchildren) && !empty($child)) {
+			$sid = 'sub_standards-'.$result['id'];
+			was_child_standard_notations($sid, $oer_standard, $meta_key);
                     }
                     echo "</li>";
                 }
@@ -313,7 +317,7 @@ if (!function_exists('was_child_standards')){
 
 /** Get Standard Notation **/
 if (!function_exists('was_child_standard_notations')) {
-    function was_child_standard_notations($id, $oer_standard, $meta_key="oer_standard"){
+    function was_child_standard_notations($id, $oer_standard, $meta_key="oer_standard", $continue = false){
 	global $wpdb;
 
 	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s" , $id ) , ARRAY_A);
@@ -325,6 +329,8 @@ if (!function_exists('was_child_standard_notations')) {
 
 	if(!empty($results))
 	{
+		if ($continue)
+		    $id = $id."-1";
 		echo "<div id='".$id."' class='collapse'>";
 		echo "<ul>";
 			foreach($results as $result)
