@@ -38,6 +38,13 @@ if (!isset($root_slug) || $root_slug==""){
 		</div><!-- #content -->
 	</section><!-- #primary -->
 </div>
+<script type="text/javascript">
+    jQuery(document).ready(function($){
+	$('a[data-toggle="collapse"]').on("click", function(){
+	    $(this).collapse("toggle");
+	});
+    });
+</script>
 <?php
 get_footer();
 ?>
