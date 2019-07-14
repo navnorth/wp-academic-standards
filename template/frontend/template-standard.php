@@ -11,6 +11,13 @@ function standards_body_classes( $classes ) {
      
 }
 
+add_action('wp_head', 'load_bootstrap_32');
+function load_bootstrap_32(){
+    ?>
+    <script type='text/javascript' src='<?php echo WAS_URL."lib/bootstrap/js/bootstrap.min.js" ?>'></script>
+<?php
+}
+
 get_header();
 
 global $wp_query;
@@ -38,13 +45,6 @@ if (!isset($root_slug) || $root_slug==""){
 		</div><!-- #content -->
 	</section><!-- #primary -->
 </div>
-<script type="text/javascript">
-    jQuery(document).ready(function($){
-	$('a[data-toggle="collapse"]').on("click", function(){
-	    $(this).attr('data-target').collapse("toggle");
-	});
-    });
-</script>
 <?php
 get_footer();
 ?>
