@@ -1506,7 +1506,7 @@ if (!function_exists('was_frontend_display_substandards')){
 		
                 echo "<li class='was_frontend-sbstndard ". $class ."'>";
                 if (!empty($subchildren)){
-                    echo "<a data-toggle='collapse' href='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+                    echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
                 }
 
                 if(empty($subchildren) && empty($child)) {
@@ -1517,7 +1517,7 @@ if (!function_exists('was_frontend_display_substandards')){
                 was_frontend_child_standards($id);
 
                 if (empty($subchildren) && !empty($child)) {
-                    echo "<a data-toggle='collapse' href='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+                    echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
                     
                     $sid = 'sub_standards-'.$result['id'];
                     was_frontend_child_standard_notations($sid);
@@ -1539,7 +1539,7 @@ if (!function_exists('was_frontend_child_standards')){
     function was_frontend_child_standards($id, $display=false)
     {
         global $wpdb, $chck, $class;
-        $collapse = " class='collapse'";
+        $collapse = " class='".$id." collapse'";
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s ORDER by pos, id" , $id ) ,ARRAY_A);
 
         if(!empty($results))
@@ -1562,7 +1562,7 @@ if (!function_exists('was_frontend_child_standards')){
 		
                 echo "<li class='was_frontend-sbstndard ". $class ."'>";
                 if (!empty($subchildren)){
-                    echo "<a data-toggle='collapse' href='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+                    echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
                 }
 
                 if(empty($subchildren) && empty($child)) {
@@ -1573,7 +1573,7 @@ if (!function_exists('was_frontend_child_standards')){
                 was_frontend_child_standards($id);
 
                 if (empty($subchildren) && !empty($child)) {
-                    echo "<a data-toggle='collapse' href='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+                    echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
                     $sid = 'sub_standards-'.$result['id'];
                     was_frontend_child_standard_notations($sid);
                 } elseif (!empty($subchildren) && !empty($child)) {
@@ -1603,7 +1603,7 @@ if (!function_exists('was_frontend_child_standard_notations')) {
 
             if ($continue)
                 $id = $id."-1";
-            echo "<div id='".$id."' class='collapse'>";
+            echo "<div id='".$id."' class='".$id." collapse'>";
             echo "<ul>";
             $index = 1;
             foreach($results as $result)
@@ -1613,10 +1613,10 @@ if (!function_exists('was_frontend_child_standard_notations')) {
                 $value = 'standard_notation-'.$result['id'];
 
 		$cnt = was_resource_count_by_notation($result['id']);
-                echo "<li class='".$class."' data-target='#".$id."'>";
+                echo "<li class='".$class."' data-target='.".$id."'>";
                 if(!empty($child))
                 {
-                    echo "<a data-toggle='collapse' href='#".$id."'>".stripslashes($result['standard_notation'])." <span class='res-count'>(".$cnt.")</span></a>";
+                    echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_notation'])." <span class='res-count'>(".$cnt.")</span></a>";
                 } else {
                     echo "<span class='was_stndrd_prefix'><strong>".stripslashes($result['standard_notation'])."</strong> <span class='res-count'>(".$cnt.")</span></span>";
                 }
