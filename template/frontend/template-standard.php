@@ -41,7 +41,7 @@ if (!isset($root_slug) || $root_slug==""){
 <script type="text/javascript">
     jQuery(document).ready(function($){
 	$('a[data-toggle="collapse"]').on("click", function(){
-	    $(this).collapse("toggle");
+	    $(this).attr('data-target').collapse("toggle");
 	});
     });
 </script>
