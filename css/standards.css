@@ -10,3 +10,22 @@ ul.oer-standard li, ul.oer-standards li { list-style-type:none; }
     color: #ffffff;
 }
 .backlink-btn:hover { text-decoration:none; }
+.was-frontend-standard .was_frontend-sbstndard,
+.was-frontend-standard .was_frontend-sbstndard li.was_frontend-standard_notation { list-style:none; position:relative; margin-bottom:5px; }
+.was-frontend-standard .was_frontend-sbstndard a:before,
+.was-frontend-standard .was_frontend-sbstndard .was_frontend-standard_notation a:before {
+    content: '\f101';
+    font-family: 'Font Awesome 5 Pro';
+    font-size: 22px;
+    position: absolute;
+    left: -20px;
+    top: 0;
+    color: #0056b3;
+}
+.was-frontend-standard .was_frontend-sbstndard .was_frontend-standard_notation .was_stndrd_desc { font-size:14px; }
+.was-frontend-standard .was_frontend-sbstndard .was_frontend-standard_notation .was_stndrd_prefix { font-size:16px; }
+.was-frontend-standard .was_frontend-sbstndard a,
+.was-frontend-standard .was_frontend-sbstndard .was_frontend-standard_notation a { cursor:pointer; color:#0056b3 !important; }
+.was-frontend-standard > ul,
+.was-frontend-standard .was_frontend-sbstndard > div > ul,
+.was-frontend-standard .was_frontend-standard_notation div > ul { margin-left:0; margin-top:5px; }

@@ -1481,6 +1481,159 @@ if (!function_exists('was_search_imported_standards')){
     }
 }
 
+if (!function_exists('was_frontend_display_substandards')){
+    function was_frontend_display_substandards($core_standard_id){
+	global $wpdb, $chck, $class;
+	
+	$parent_id = "core_standards-".$core_standard_id;
+        
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s ORDER by pos, id" , $parent_id ) ,ARRAY_A);
+
+        if(!empty($results))
+        {
+            echo "<div id='".$parent_id."' class='was-frontend-standard'>";
+            echo "<ul>";
+            $index = 1;
+
+            foreach($results as $result)
+            {
+                $value = 'sub_standards-'.$result['id'];
+
+                $id = 'sub_standards-'.$result['id'];
+                $subchildren = get_substandard_children($id);
+                $child = check_child_standard($id);
+		$cnt = was_resource_count_by_substandard($result['id']);
+		
+                echo "<li class='was_frontend-sbstndard ". $class ."'>";
+                if (!empty($subchildren)){
+                    echo "<a data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+                }
+
+                if(empty($subchildren) && empty($child)) {
+                    echo stripslashes($result['standard_title']);
+		}
+
+                $id = 'sub_standards-'.$result['id'];
+                was_frontend_child_standards($id);
+
+                if (empty($subchildren) && !empty($child)) {
+                    echo "<a data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+                    
+                    $sid = 'sub_standards-'.$result['id'];
+                    was_frontend_child_standard_notations($sid);
+                } elseif (!empty($subchildren) && !empty($child)) {
+                    $sid = 'sub_standards-'.$result['id'];
+                    was_frontend_child_standard_notations($sid, true);
+                }
+                echo "</li>";
+                $index++;
+            }
+            echo "</ul>";
+            echo "</div>";
+        }
+    }
+}
+
+/** Get Child Standards **/
+if (!function_exists('was_frontend_child_standards')){
+    function was_frontend_child_standards($id, $display=false)
+    {
+        global $wpdb, $chck, $class;
+        $collapse = " class='collapse'";
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s ORDER by pos, id" , $id ) ,ARRAY_A);
+
+        if(!empty($results))
+        {
+            if ($display==true)
+                $collapse = "";
+
+            echo "<div id='".$id."'".$collapse.">";
+            echo "<ul>";
+            $index = 1;
+
+            foreach($results as $result)
+            {
+                $value = 'sub_standards-'.$result['id'];
+
+                $id = 'sub_standards-'.$result['id'];
+                $subchildren = get_substandard_children($id);
+                $child = check_child_standard($id);
+		$cnt = was_resource_count_by_substandard($result['id']);
+		
+                echo "<li class='was_frontend-sbstndard ". $class ."'>";
+                if (!empty($subchildren)){
+                    echo "<a data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+                }
+
+                if(empty($subchildren) && empty($child)) {
+                    echo stripslashes($result['standard_title']);	
+		}
+
+                $id = 'sub_standards-'.$result['id'];
+                was_frontend_child_standards($id);
+
+                if (empty($subchildren) && !empty($child)) {
+                    echo "<a data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+                    $sid = 'sub_standards-'.$result['id'];
+                    was_frontend_child_standard_notations($sid);
+                } elseif (!empty($subchildren) && !empty($child)) {
+                    $sid = 'sub_standards-'.$result['id'];
+                    was_frontend_child_standard_notations($sid, true);
+                }
+                echo "</li>";
+                $index++;
+            }
+            echo "</ul>";
+            echo "</div>";
+        }
+    }
+}
+
+/** Get Standard Notation **/
+if (!function_exists('was_frontend_child_standard_notations')) {
+    function was_frontend_child_standard_notations($id, $continue = false)
+    {
+        global $wpdb, $class;
+
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s ORDER by pos, id" , $id ) , ARRAY_A);
+
+        if(!empty($results))
+        {
+            $class = "was_frontend-standard_notation";
+
+            if ($continue)
+                $id = $id."-1";
+            echo "<div id='".$id."' class='collapse'>";
+            echo "<ul>";
+            $index = 1;
+            foreach($results as $result)
+            {
+                $id = 'standard_notation-'.$result['id'];
+                $child = check_child_standard($id);
+                $value = 'standard_notation-'.$result['id'];
+
+		$cnt = was_resource_count_by_notation($result['id']);
+                echo "<li class='".$class."' data-target='#".$id."'>";
+                if(!empty($child))
+                {
+                    echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_notation'])." <span class='res-count'>(".$cnt.")</span></a>";
+                } else {
+                    echo "<span class='was_stndrd_prefix'><strong>".stripslashes($result['standard_notation'])."</strong> <span class='res-count'>(".$cnt.")</span></span>";
+                }
+
+                echo "<div class='was_stndrd_desc'> ". stripslashes($result['description']);
+                echo "</div>";
+                echo "</li>";
+
+                was_frontend_child_standard_notations($id);
+                $index++;
+            }
+            echo "</ul>";
+            echo "</div>";
+        }
+    }
+}
+
 if (!function_exists('debug_log')){
     // Log Debugging
     function debug_log($message) {

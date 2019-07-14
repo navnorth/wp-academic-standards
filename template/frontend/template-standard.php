@@ -32,16 +32,7 @@ if (!isset($root_slug) || $root_slug==""){
 		    <div class="oer-allftrdrsrc">
 			<div class="oer-snglrsrchdng"><h2><?php printf(__("%s", WAS_SLUG), $standard->standard_name); ?></h2></div>
 			<div class="oer-allftrdrsrccntr">
-			    <?php if ($sub_standards) {  ?>
-			    <ul class="oer-standards">
-				<?php foreach($sub_standards as $sub_standard) {
-				    $cnt = was_resource_count_by_substandard($sub_standard->id);
-				    $slug = $root_slug."/".$standard_name_slug."/".sanitize_title($sub_standard->standard_title);
-				?>
-				<li><a href="<?php echo home_url($slug); ?>"><i class="fa fa-plus"></i> <?php echo $sub_standard->standard_title; ?></a> <span class="res-count"><?php echo $cnt; ?></span></li>
-				<?php } ?>
-			    </ul>
-			    <?php } ?>
+			    <?php was_frontend_display_substandards($standard->id); ?>
 			</div>
 		    </div>
 		</div><!-- #content -->
