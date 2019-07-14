@@ -14,6 +14,7 @@ function standards_body_classes( $classes ) {
 add_action('wp_head', 'load_bootstrap_32');
 function load_bootstrap_32(){
     ?>
+    <link rel='stylesheet' href='<?php echo WAS_URL."lib/bootstrap/js/bootstrap.min.js" ?>' type='text/css' />
     <script type='text/javascript' src='<?php echo WAS_URL."lib/bootstrap/js/bootstrap.min.js" ?>'></script>
 <?php
 }
