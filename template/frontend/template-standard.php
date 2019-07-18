@@ -18,13 +18,14 @@ $standard_name_slug = $wp_query->query_vars['standard'];
 $standard = was_standard_by_slug($standard_name_slug);
 $sub_standards = was_substandards($standard->id);
 
-$root_slug = get_option('was_standard_slug');
+/*$root_slug = get_option('was_standard_slug');
 if (!isset($root_slug) || $root_slug==""){
     $root_slug ="standards";
-}
+}*/
+$root_slug = "frameworks-standards";
 ?>
 <div class="oer-backlink">
-    <a class="backlink-btn" href="<?php echo home_url($root_slug); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back to Standards",WAS_SLUG); ?></a>
+    <a class="backlink-btn" href="<?php echo home_url($root_slug); ?>"><?php _e("<i class='fa fa-angle-double-left'></i> Back to Framework",WAS_SLUG); ?></a>
 </div>
 <div class="oer-cntnr">
 	<section id="primary" class="site-content">
