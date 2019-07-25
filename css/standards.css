@@ -29,3 +29,7 @@ ul.oer-standard li, ul.oer-standards li { list-style-type:none; }
 .was-frontend-standard > ul,
 .was-frontend-standard .was_frontend-sbstndard > div > ul,
 .was-frontend-standard .was_frontend-standard_notation div > ul { margin-left:0; margin-top:5px; }
+.curriculum-list li { list-style:none; }
+.curriculum-list li a { font-size:14px; }
+.was-frontend-standard .was_frontend-sbstndard .curriculum-list li a:before,
+.was-frontend-standard .was_frontend-sbstndard .was_frontend-standard_notation .curriculum-list li a:before { content:''; }

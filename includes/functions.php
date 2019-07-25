@@ -447,6 +447,32 @@ if (!function_exists('was_resource_count_by_standard')){
 }
 
 /**
+ * Get Curriculum Count By Standard
+ **/
+if (!function_exists('was_curriculum_count_by_standard')){
+    function was_curriculum_count_by_standard($standard_id){
+
+        $cnt = 0;
+
+        $substandards = was_substandards($standard_id);
+
+        if(count($substandards)>0){
+                foreach($substandards as $substandard){
+                        $cnt += was_curriculum_count_by_substandard($substandard->id);
+                }
+        }
+        $notations = was_standard_notations($standard_id);
+
+        if ($notations){
+                foreach($notations as $notation){
+                        $cnt += was_curriculum_count_by_notation($notation->id);
+                }
+        }
+        return $cnt;
+    }
+}
+
+/**
  * Get Resource Count By Sub-Standard
  **/
 if (!function_exists('was_resource_count_by_substandard')){
@@ -465,6 +491,31 @@ if (!function_exists('was_resource_count_by_substandard')){
         if ($notations){
             foreach($notations as $notation){
                 $cnt += was_resource_count_by_notation($notation->id);
+            }
+        }
+        return $cnt;
+    }
+}
+
+/**
+ * Get Curriculum Count By Sub-Standard
+ **/
+if (!function_exists('was_curriculum_count_by_substandard')){
+    function was_curriculum_count_by_substandard($substandard_id){
+        $cnt = 0;
+
+        $child_substandards = was_substandards($substandard_id, false);
+
+        if(count($child_substandards)>0){
+            foreach($child_substandards as $child_substandard){
+                $cnt += was_curriculum_count_by_substandard($child_substandard->id, false);
+            }
+        }
+        $notations = was_standard_notations($substandard_id);
+
+        if ($notations){
+            foreach($notations as $notation){
+                $cnt += was_curriculum_count_by_notation($notation->id);
             }
         }
         return $cnt;
@@ -502,6 +553,44 @@ if (!function_exists('was_resource_count_by_notation')){
         if ($child_notations){
                 foreach ($child_notations as $child_notation){
                         $cnt += was_resource_count_by_notation($child_notation->id);
+                }
+        }
+
+        return $cnt;
+    }
+}
+
+/**
+ * Get Inquiry Set Count By Notation
+ **/
+if (!function_exists('was_curriculum_count_by_notation')){
+    function was_curriculum_count_by_notation($notation_id){
+        $cnt = 0;
+
+        $notation = "standard_notation-".$notation_id;
+
+        //later in the request
+        $args = array(
+                'post_type'  => 'lesson-plans', //or a post type of your choosing
+                'posts_per_page' => -1,
+                'meta_query' => array(
+                        array(
+                        'key' => 'oer_lp_standards',
+                        'value' => $notation,
+                        'compare' => 'like'
+                        )
+                )
+        );
+
+        $query = new WP_Query($args);
+	
+        $cnt += count($query->posts);
+	
+        $child_notations = was_child_notations($notation_id);
+
+        if ($child_notations){
+                foreach ($child_notations as $child_notation){
+                        $cnt += was_curriculum_count_by_notation($child_notation->id);
                 }
         }
 
@@ -864,6 +953,60 @@ if (!function_exists('was_resources_by_notation')) {
                 array(
                 'key' => 'oer_standard',
                 'value' => $notation,
+                'compare' => 'like'
+                )
+            )
+        );
+
+        $query = new WP_Query($args);
+
+        return $query->posts;
+    }
+}
+
+/**
+ * Get Curriculum by notation
+ **/
+if (!function_exists('was_curriculum_by_notation')) {
+    function was_curriculum_by_notation($notation_id) {
+
+        $notation = "standard_notation-".$notation_id;
+
+        //later in the request
+        $args = array(
+            'post_type'  => 'lesson-plans', //or a post type of your choosing
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                'key' => 'oer_lp_standards',
+                'value' => $notation,
+                'compare' => 'like'
+                )
+            )
+        );
+
+        $query = new WP_Query($args);
+
+        return $query->posts;
+    }
+}
+
+/**
+ * Get Curriculum by substandard
+ **/
+if (!function_exists('was_curriculum_by_substandard')) {
+    function was_curriculum_by_substandard($substandard_id) {
+
+        $substandard = "sub_standards-".$substandard_id;
+
+        //later in the request
+        $args = array(
+            'post_type'  => 'lesson-plans', //or a post type of your choosing
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                array(
+                'key' => 'oer_lp_standards',
+                'value' => $substandard,
                 'compare' => 'like'
                 )
             )
@@ -1503,10 +1646,14 @@ if (!function_exists('was_frontend_display_substandards')){
                 $subchildren = get_substandard_children($id);
                 $child = check_child_standard($id);
 		$cnt = was_resource_count_by_substandard($result['id']);
+		$cnt += was_curriculum_count_by_substandard($result['id']);
 		
                 echo "<li class='was_frontend-sbstndard ". $class ."'>";
                 if (!empty($subchildren)){
-                    echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+		    if ($cnt>0)
+			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+		    else
+			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])."</a>";
                 }
 
                 if(empty($subchildren) && empty($child)) {
@@ -1517,7 +1664,10 @@ if (!function_exists('was_frontend_display_substandards')){
                 was_frontend_child_standards($id);
 
                 if (empty($subchildren) && !empty($child)) {
-                    echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+		    if ($cnt>0)
+			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+		    else
+			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])."</a>";
                     
                     $sid = 'sub_standards-'.$result['id'];
                     was_frontend_child_standard_notations($sid);
@@ -1559,21 +1709,40 @@ if (!function_exists('was_frontend_child_standards')){
                 $subchildren = get_substandard_children($id);
                 $child = check_child_standard($id);
 		$cnt = was_resource_count_by_substandard($result['id']);
+		$cnt += was_curriculum_count_by_substandard($result['id']);
 		
                 echo "<li class='was_frontend-sbstndard ". $class ."'>";
                 if (!empty($subchildren)){
-                    echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+		    if ($cnt>0)
+			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+		    else
+			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])."</a>";
                 }
 
                 if(empty($subchildren) && empty($child)) {
-                    echo stripslashes($result['standard_title']);	
+                    echo stripslashes($result['standard_title']);
+		    
+		    
+		    $curriculum = was_curriculum_by_substandards($result['id']);
+		    if ($curriculum){
+			echo '<ul class="curriculum-list">';
+			foreach($curriculum as $curr){
+			    $curr_url = get_permalink($curr->ID);
+			    echo '<li><a href="'.$curr_url.'">'.$curr->post_title.'</a></li>';
+			}
+			echo '</ul>';
+		    }
 		}
 
                 $id = 'sub_standards-'.$result['id'];
                 was_frontend_child_standards($id);
 
                 if (empty($subchildren) && !empty($child)) {
-                    echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+		    if ($cnt>0)
+			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])." <span class='res-count'>(".$cnt.")</span></a>";
+		    else
+			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])."</a>";
+			
                     $sid = 'sub_standards-'.$result['id'];
                     was_frontend_child_standard_notations($sid);
                 } elseif (!empty($subchildren) && !empty($child)) {
@@ -1613,15 +1782,35 @@ if (!function_exists('was_frontend_child_standard_notations')) {
                 $value = 'standard_notation-'.$result['id'];
 
 		$cnt = was_resource_count_by_notation($result['id']);
+		$cnt += was_curriculum_count_by_notation($result['id']);
                 echo "<li class='".$class."' data-target='.".$id."'>";
                 if(!empty($child))
                 {
-                    echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_notation'])." <span class='res-count'>(".$cnt.")</span></a>";
+		    if ($cnt>0)
+			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_notation'])." <span class='res-count'>(".$cnt.")</span></a>";
+		    else
+			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_notation'])."</a>";
                 } else {
-                    echo "<span class='was_stndrd_prefix'><strong>".stripslashes($result['standard_notation'])."</strong> <span class='res-count'>(".$cnt.")</span></span>";
+		    if ($cnt>0)
+			echo "<span class='was_stndrd_prefix'><strong>".stripslashes($result['standard_notation'])."</strong> <span class='res-count'>(".$cnt.")</span></span>";
+		    else
+			echo "<span class='was_stndrd_prefix'><strong>".stripslashes($result['standard_notation'])."</strong></span>";
+		    
                 }
 
                 echo "<div class='was_stndrd_desc'> ". stripslashes($result['description']);
+		
+		if (empty($child)){
+		    $curriculum = was_curriculum_by_notation($result['id']);
+		    if ($curriculum){
+			echo '<ul class="curriculum-list">';
+			foreach($curriculum as $curr){
+			    $curr_url = get_permalink($curr->ID);
+			    echo '<li><a href="'.$curr_url.'">'.$curr->post_title.'</a></li>';
+			}
+			echo '</ul>';
+		    }
+		}
                 echo "</div>";
                 echo "</li>";
 
