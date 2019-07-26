@@ -455,14 +455,14 @@ if (!function_exists('was_curriculum_count_by_standard')){
         $cnt = 0;
 
         $substandards = was_substandards($standard_id);
-
+	
         if(count($substandards)>0){
                 foreach($substandards as $substandard){
                         $cnt += was_curriculum_count_by_substandard($substandard->id);
                 }
         }
         $notations = was_standard_notations($standard_id);
-
+	
         if ($notations){
                 foreach($notations as $notation){
                         $cnt += was_curriculum_count_by_notation($notation->id);
@@ -1768,11 +1768,11 @@ if (!function_exists('was_frontend_child_standard_notations')) {
 
         if(!empty($results))
         {
-            $class = "was_frontend-standard_notation";
+            $class = "was_frontend-standard_notation ". $id;
 
             if ($continue)
                 $id = $id."-1";
-            echo "<div id='".$id."' class='".$id." collapse'>";
+            echo "<div id='".$id."' class='".$class." collapse'>";
             echo "<ul>";
             $index = 1;
             foreach($results as $result)
