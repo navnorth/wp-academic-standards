@@ -1013,7 +1013,7 @@ if (!function_exists('was_curriculum_by_substandard')) {
         );
 
         $query = new WP_Query($args);
-
+	
         return $query->posts;
     }
 }
@@ -1718,12 +1718,12 @@ if (!function_exists('was_frontend_child_standards')){
 		    else
 			echo "<a data-toggle='collapse' data-target='.".$id."'>".stripslashes($result['standard_title'])."</a>";
                 }
-
+		
                 if(empty($subchildren) && empty($child)) {
                     echo stripslashes($result['standard_title']);
 		    
 		    
-		    $curriculum = was_curriculum_by_substandards($result['id']);
+		    $curriculum = was_curriculum_by_substandard($result['id']);
 		    if ($curriculum){
 			echo '<ul class="curriculum-list">';
 			foreach($curriculum as $curr){
@@ -1784,6 +1784,7 @@ if (!function_exists('was_frontend_child_standard_notations')) {
 		$cnt = was_resource_count_by_notation($result['id']);
 		$cnt += was_curriculum_count_by_notation($result['id']);
                 echo "<li class='".$class."' data-target='.".$id."'>";
+		
                 if(!empty($child))
                 {
 		    if ($cnt>0)
