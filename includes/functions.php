@@ -618,34 +618,6 @@ if (!function_exists('was_curriculum_count_by_notation')){
 }
 
 /**
- * Get Inquiry Set Count By Notation
- **/
-if (!function_exists('was_curriculum_get_count')){
-    function was_curriculum_get_count($standard_id){
-        $cnt = 0;
-
-        //later in the request
-        $args = array(
-                'post_type'  => 'lesson-plans', //or a post type of your choosing
-                'posts_per_page' => -1,
-                'meta_query' => array(
-                        array(
-                        'key' => 'oer_lp_standards',
-                        'value' => $standard_id,
-                        'compare' => 'like'
-                        )
-                )
-        );
-
-        $query = new WP_Query($args);
-	
-        $cnt += count($query->posts);
-	
-        return $cnt;
-    }
-}
-
-/**
  * Get child standards of a core standard
  **/
 if (!function_exists('was_substandards')) {
