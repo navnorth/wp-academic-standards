@@ -1647,7 +1647,9 @@ if (!function_exists('was_frontend_display_substandards')){
                 $child = check_child_standard($id);
 		$cnt = was_resource_count_by_substandard($result['id']);
 		$cnt += was_curriculum_count_by_substandard($result['id']);
-		
+		echo '<div style="display:none;">';
+		var_dump($cnt);
+		echo '</div>';
                 echo "<li class='was_frontend-sbstndard ". $class ."'>";
                 if (!empty($subchildren)){
 		    if ($cnt>0)

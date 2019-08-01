@@ -32,6 +32,11 @@ if (!isset($root_slug) || $root_slug==""){
 				<?php foreach($standards as $standard) {
 				    $cnt = was_resource_count_by_standard($standard->id);
 				    $cnt += was_curriculum_count_by_standard($standard->id);
+				    ?>
+				    <div style="display:none">
+				    <?php var_dump($cnt); ?>
+				    </div>
+				    <?php
 				    $slug = $root_slug."/".sanitize_title($standard->standard_name);
 				?>
 				<li><a href="<?php echo home_url($slug); ?>"><i class="fa fa-plus"></i> <?php echo $standard->standard_name; ?></a> <?php if ($cnt>0): ?><span class="res-count"><?php echo $cnt; ?></span><?php endif; ?></li>
