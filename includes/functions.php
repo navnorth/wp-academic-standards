@@ -1709,7 +1709,7 @@ if (!function_exists('was_frontend_child_standards')){
     {
         global $wpdb, $chck, $class;
         $collapse = " class='".$id." collapse'";
-        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s ORDER by pos, id" , $id ) ,ARRAY_A);
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s ORDER by id" , $id ) ,ARRAY_A);
 
         if(!empty($results))
         {
