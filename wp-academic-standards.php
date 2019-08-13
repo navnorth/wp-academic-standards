@@ -3,7 +3,7 @@
  Plugin Name:  WP Academic Standards
  Plugin URI:   https://www.navigationnorth.com
  Description:  Wordpress Academic Standards
- Version:      0.2.2
+ Version:      0.2.3
  Author:       Navigation North
  Author URI:   https://www.navigationnorth.com
  Text Domain:  wp-academic-standards
@@ -35,7 +35,7 @@ define( 'WAS_SLUG','wp-academic-standards' );
 define( 'WAS_FILE',__FILE__);
 define( 'WAS_PLUGIN_NAME', 'WP Academic Standards' );
 define( 'WAS_ADMIN_PLUGIN_NAME', 'WP Academic Standards');
-define( 'WAS_VERSION', '0.2.2' );
+define( 'WAS_VERSION', '0.2.3' );
 
 global $_oer_prefix, $message, $type;
 $_oer_prefix = "oer_";

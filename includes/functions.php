@@ -504,8 +504,27 @@ if (!function_exists('was_curriculum_count_by_substandard')){
     function was_curriculum_count_by_substandard($substandard_id){
         $cnt = 0;
 
-        $child_substandards = was_substandards($substandard_id, false);
+	$std_id = "sub_standards-".$substandard_id;
+	
+	//later in the request
+        $args = array(
+                'post_type'  => 'lesson-plans', //or a post type of your choosing
+                'posts_per_page' => -1,
+                'meta_query' => array(
+                        array(
+                        'key' => 'oer_lp_standards',
+                        'value' => $std_id,
+                        'compare' => 'like'
+                        )
+                )
+        );
 
+        $query = new WP_Query($args);
+	
+        $cnt += count($query->posts);
+	
+        $child_substandards = was_substandards($substandard_id, false);
+	
         if(count($child_substandards)>0){
             foreach($child_substandards as $child_substandard){
                 $cnt += was_curriculum_count_by_substandard($child_substandard->id, false);
