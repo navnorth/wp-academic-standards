@@ -1481,3 +1481,88 @@ if (!function_exists('debug_log')){
 	error_log($message);
     }
 }
+
+/**
+ * Get Core Standard by Notation
+ **/
+if (!function_exists('oer_std_get_standard_by_notation')){
+    function oer_std_get_standard_by_notation($notation){
+        global $wpdb;
+        
+        $std = null;
+        $notations = explode("-", $notation);
+        $table = "oer_".$notations[0];
+        $notation_id = $notations[1];
+        
+        $query = "SELECT * FROM {$wpdb->prefix}".$table." WHERE id = '%s'";
+        $standard_notation = $wpdb->get_results($wpdb->prepare($query, $notation_id));
+        
+        if ($standard_notation){
+            $substandard_id = $standard_notation[0]->parent_id;
+            $substandard = oer_std_get_parent_standard($substandard_id);
+            
+            if (strpos($substandard[0]['parent_id'],"core_standards")!==false){
+                $pIds = explode("-",$substandard[0]['parent_id']);
+                
+                if (count($pIds)>1){
+                    $parent_id=(int)$pIds[1];
+                    $std = oer_std_get_standard_by_id($parent_id);
+                }
+            }
+        }
+        
+        return $std;
+    }
+}
+
+/** Get Parent Standard **/
+if (!function_exists('oer_std_get_parent_standard')) {
+    function oer_std_get_parent_standard($standard_id) {
+        global $wpdb, $_oer_prefix;
+        
+        $stds = explode("-",$standard_id);
+        $table = $stds[0];
+        
+        $prefix = substr($standard_id,0,strpos($standard_id,"_")+1);
+        
+        $table_name = $wpdb->prefix.$_oer_prefix.$table;
+        
+        $id = $stds[1];
+        $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $table_name. " where id = %s" , $id ) , ARRAY_A);
+        
+        foreach($results as $result) {
+    
+            $stdrds = explode("-",$result['parent_id']);
+            $tbl = $stdrds[0];
+            
+            $tbls = array('sub_standards','standard_notation');
+            
+            if (in_array($tbl,$tbls)){
+                $results = oer_std_get_parent_standard($result['parent_id']);
+            }
+    
+        }
+        return $results;
+    }
+}
+
+/**
+ * Get Standard By Id
+ **/
+if (!function_exists('oer_std_get_standard_by_id')){
+    function oer_std_get_standard_by_id($id){
+        global $wpdb;
+        
+        $std = null;
+        
+        $query = "SELECT * FROM {$wpdb->prefix}oer_core_standards WHERE id = %d";
+        
+        $standards = $wpdb->get_results($wpdb->prepare($query,$id));
+        
+        foreach($standards as $standard){
+                $std = $standard;
+        }
+        
+        return $std;
+    }
+}
