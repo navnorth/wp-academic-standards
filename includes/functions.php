@@ -286,7 +286,7 @@ if (!function_exists('was_child_standards')){
 
                     echo "<li class='oer_sbstndard ". $class ."'>";
 
-                    if (!empty($subchildren)){
+                    if (!empty($subchildren) && empty($child)){
                         echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_title'])."</a>";
                     }
 
@@ -294,15 +294,16 @@ if (!function_exists('was_child_standards')){
                         echo "<input type='checkbox' ".$chck." name='".$meta_key."[]' value='".$value."' onclick='was_check_all(this)' >
                                 <div class='oer_stndrd_desc'>".stripslashes($result['standard_title'])."</div>";
                     }
-
-                    $id = 'sub_standards-'.$result['id'];
-                    was_child_standards($id, $oer_standard, $meta_key);
-
+                    
                     if (!empty($child)) {
                         echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_title'])."</a>";
                         $sid = 'sub_standards-'.$result['id'];
                         was_child_standard_notations($sid, $oer_standard, $meta_key);
                     }
+                    
+                    $id = 'sub_standards-'.$result['id'];
+                    was_child_standards($id, $oer_standard, $meta_key);
+
                     echo "</li>";
                 }
                 echo "</ul>";
@@ -350,12 +351,12 @@ if (!function_exists('was_child_standard_notations')) {
 					echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_notation'])."</a>";
 				}
 
-				if (empty($child))
+				if (empty($child)){
 					echo "<input type='checkbox' ".$chck." name='".$meta_key."[]' value='".$value."' onclick='was_check_myChild(this)'>";
 
-				echo  stripslashes($result['standard_notation'])."
+				  echo  stripslashes($result['standard_notation'])."
 					<div class='oer_stndrd_desc'> ". stripslashes($result['description'])." </div>";
-
+        }
 				was_child_standard_notations($id, $oer_standard,$meta_key);
 
 				echo "</li>";
