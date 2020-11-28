@@ -305,3 +305,9 @@ label.was-core-standard{
 .was_stndrd_desc { display:inline-block; }
 li.oer_sbstndard input[type=checkbox] { margin-top:0; margin-right:8px; }
 li.oer_sbstndard > .oer_stndrd_desc { display:inline; margin-left:0; }
+li.was_sbstndard a {cursor:pointer;}
+li.was_sbstndard a.nochild {
+    color: unset;
+    text-decoration: unset;
+		cursor: unset;
+}

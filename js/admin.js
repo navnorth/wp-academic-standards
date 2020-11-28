@@ -47,7 +47,7 @@ jQuery(document).ready(function($) {
         $("#addStandardModal").modal("show");
     });
     
-    $("#admin-standard-list").on("click", ".std-del a", function(){
+    $("#admin-standard-children-list").on("click", ".std-del a", function(){
         var std_id = $(this).attr('data-stdid');
         
         if (confirm("Are you sure you want to delete this standard?")==true) {
@@ -55,11 +55,11 @@ jQuery(document).ready(function($) {
         }
     });
     
-    $("#admin-standard-list").on("click", ".std-up a", function(){
+    $("#admin-standard-children-list").on("click", ".std-up a", function(){
         $(this).moveUp();
     });
     
-    $("#admin-standard-list").on("click", ".std-down a", function(){
+    $("#admin-standard-children-list").on("click", ".std-down a", function(){
         $(this).moveDown();
     });
     
@@ -237,8 +237,6 @@ function update_standard(details, type) {
         data
     ).done(function( response ){
         response = JSON.parse(response);
-        console.log(type);
-        console.log(response);
         var message;
         if (response.success===false) {
             message = "Updating standard failed."
@@ -267,7 +265,6 @@ function update_standard(details, type) {
                 jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_desc').text(response.standard.description);
                 break;
         }
-        console.log(standard);
     });
 }
 
@@ -392,8 +389,8 @@ function display_standards() {
         ajaxurl,
         data
     ).done(function( response ){
-        jQuery("#admin-standard-list").html("");
-        jQuery("#admin-standard-list").html(response);
+        jQuery("#admin-standard-children-list").html("");
+        jQuery("#admin-standard-children-list").html(response);
     });
 }
 
