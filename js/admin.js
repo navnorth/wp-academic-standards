@@ -309,12 +309,19 @@ function add_standard(details, type) {
             case "standard_notation":
                 childCount = details['siblings'];
                 standardNotation = getStandardNotationDisplay(details, response.id, childCount);
+                
                 if (jQuery('#' + details['parent_id'] + '-1').is(":visible")){
                     jQuery('#' + details['parent_id'] + '-1 ul li.was_standard_notation:last-child .std-down').removeClass("hidden-block").show();
                     jQuery('#' + details['parent_id'] + '-1 ul').append(standardNotation);
                 } else {
-                    jQuery('#' + details['parent_id'] + ' ul li.was_standard_notation:last-child .std-down').removeClass("hidden-block").show();
-                    jQuery('#' + details['parent_id'] + ' ul').append(standardNotation);
+                    if (jQuery('#' + details['parent_id']).is(":visible")){
+                        jQuery('#' + details['parent_id'] + ' ul li.was_standard_notation:last-child .std-down').removeClass("hidden-block").show();
+                        jQuery('#' + details['parent_id'] + ' ul').append(standardNotation);
+                    } else {
+                        jQuery('input[data-value="' + details['parent_id'] + '"').closest('li').append('<div id="' + details['parent_id'] + '" class="collapse"><ul>' + standardNotation + '</ul></div>');
+                        if (jQuery('input[data-value="' + details['parent_id'] + '"').next("a").hasClass('nochild'))
+                            jQuery('input[data-value="' + details['parent_id'] + '"').next("a").removeClass('nochild');
+                    }
                 }
                 break;
         }
@@ -334,9 +341,9 @@ function getSubStandardDisplay(standard, stdid, lastIndex) {
     var substd = "sub_standards-" + stdid;
     var html = '<li class="was_sbstndard">';
     lastIndex++;
-    html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + standard['parent_id'] + '" data-count="' + lastIndex + '" value="' + lastIndex + '">';
-    html += standard['standard_title'].replace(/\\/g,'');
-    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + stdid + '"><i class="fas fa-plus"></i></a></span>';
+    html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + substd + '" data-count="' + lastIndex + '" value="' + lastIndex + '">';
+    html += '<a class="nochild" data-toggle="collapse" data-target="#' + substd + ',#' + substd + '-1">' + standard['standard_title'].replace(/\\/g,'') + '</a>';
+    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + substd + '"><i class="fas fa-plus"></i></a></span>';
     html += '</li>';
     return html;
 }
@@ -350,7 +357,7 @@ function getStandardNotationDisplay(standard,stdid, lastIndex) {
     html += '<div class="was_stndrd_desc">';
     html += standard['description'].replace(/\\/g,'');
     html += '</div>';
-    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + stdid + '"><i class="fas fa-plus"></i></a></span>';
+    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + substd + '"><i class="fas fa-plus"></i></a></span>';
     html += '</li>';
     return html;
 }
