@@ -58,7 +58,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" id="btnSaveStandards" class="btn btn-default btn-sm" data-postid="<?php echo $post->ID; ?>" data-dismiss="modal">Add</button>
+        <button type="button" id="btnSaveStandards" class="btn btn-default btn-sm" data-postid="<?php if (is_object($post)) echo $post->ID; ?>" data-dismiss="modal">Add</button>
       </div>
     </div>
   </div>
