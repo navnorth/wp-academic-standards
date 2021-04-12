@@ -253,7 +253,7 @@ if (!function_exists('was_child_standards')){
     function was_child_standards($id, $oer_standard, $meta_key="oer_standard") {
 	global $wpdb, $chck, $class;
 
-	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $id ) ,ARRAY_A);
+	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s  ORDER by pos, id" , $id ) ,ARRAY_A);
 	if(!empty($oer_standard))
 	{
 	    $stndrd_arr = explode(",",$oer_standard);
