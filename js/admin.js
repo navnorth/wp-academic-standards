@@ -174,7 +174,12 @@ jQuery(document).ready(function($) {
         move_position(parent);
     }
     
-    
+    /** Move Loader Background **/
+    if ($('.loader').length>0){
+        var loader = $('.loader');
+        console.log(loader);
+        $('#wpcontent').append(loader);
+    }
 });
 
 // display core standard details on edit
