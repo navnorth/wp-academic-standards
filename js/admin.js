@@ -177,7 +177,6 @@ jQuery(document).ready(function($) {
     /** Move Loader Background **/
     if ($('.loader').length>0){
         var loader = $('.loader');
-        console.log(loader);
         $('#wpcontent').append(loader);
     }
 });
