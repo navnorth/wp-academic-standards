@@ -4,14 +4,19 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 // Load Admin Scripts
 add_action( 'admin_enqueue_scripts' , 'was_load_admin_scripts' );
 function was_load_admin_scripts(){
-    $font_awesome = array('font-awesome', 'fontawesome');
-    if (was_stylesheet_installed($font_awesome)===false)
-        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.css');
-    wp_enqueue_style( 'admin-css', WAS_URL.'css/admin.css');
-    wp_enqueue_style( 'bootstrap-css', WAS_URL.'lib/bootstrap/css/bootstrap.min.css');
-    wp_enqueue_script( 'bootstrap-js', WAS_URL.'lib/bootstrap/js/bootstrap.min.js', array('jquery'));
-    wp_enqueue_script( 'admin-js', WAS_URL.'js/admin.js', array('jquery'));
-    wp_localize_script( 'admin-js', 'WPURLS', array( "site_url" => site_url(), "admin_url" => admin_url() ) );
+	global $pagenow, $post;
+	
+	// Add validation to only load bootstrap and other js and css files on standards and resource admin related pages 
+	if ((isset($post) && $post->post_type=="resource") || ($pagenow=="admin.php" && ($_GET['page']=="wp-academic-standards" || $_GET['page']=="import-standards" || $_GET['page']=="standards-settings"))){
+	    $font_awesome = array('font-awesome', 'fontawesome');
+	    if (was_stylesheet_installed($font_awesome)===false)
+	        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.css');
+	    wp_enqueue_style( 'admin-css', WAS_URL.'css/admin.css');
+	    wp_enqueue_style( 'bootstrap-css', WAS_URL.'lib/bootstrap/css/bootstrap.min.css');
+	    wp_enqueue_script( 'bootstrap-js', WAS_URL.'lib/bootstrap/js/bootstrap.min.js', array('jquery'));
+	    wp_enqueue_script( 'admin-js', WAS_URL.'js/admin.js', array('jquery'));
+	    wp_localize_script( 'admin-js', 'WPURLS', array( "site_url" => site_url(), "admin_url" => admin_url() ) );
+    }
 }
 
 // Load Frontend Scripts
