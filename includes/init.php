@@ -369,12 +369,18 @@ function was_process_settings_form(){
 
 add_action( "admin_footer" , "was_edit_standard_modal" );
 function was_edit_standard_modal(){
-    include_once(WAS_PATH."template/admin/modals/edit_standard_modal.php");
+	global $pagenow;
+	if ($pagenow=="admin.php" && $_GET['page']=="wp-academic-standards"){
+    	include_once(WAS_PATH."template/admin/modals/edit_standard_modal.php");
+	}
 }
 
 add_action( "admin_footer" , "was_add_standard_modal" );
 function was_add_standard_modal(){
-    include_once(WAS_PATH."template/admin/modals/add_standard_modal.php");
+	global $pagenow;
+	if ($pagenow=="admin.php" && $_GET['page']=="wp-academic-standards"){
+    	include_once(WAS_PATH."template/admin/modals/add_standard_modal.php");
+    }
 }
 
 add_action('wp_ajax_get_standard_details', 'was_get_standard_details');
