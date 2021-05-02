@@ -10,7 +10,7 @@ function was_load_admin_scripts(){
 	if ((isset($post) && $post->post_type=="resource") || ($pagenow=="admin.php" && ($_GET['page']=="wp-academic-standards" || $_GET['page']=="import-standards" || $_GET['page']=="standards-settings"))){
 	    $font_awesome = array('font-awesome', 'fontawesome');
 	    if (was_stylesheet_installed($font_awesome)===false)
-	        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.css');
+	        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.min.css');
 	    wp_enqueue_style( 'admin-css', WAS_URL.'css/admin.css');
 	    wp_enqueue_style( 'bootstrap-css', WAS_URL.'lib/bootstrap/css/bootstrap.min.css');
 	    wp_enqueue_script( 'bootstrap-js', WAS_URL.'lib/bootstrap/js/bootstrap.min.js', array('jquery'));
@@ -25,7 +25,7 @@ function was_load_frontend_scripts()
 {
     $font_awesome = array('font-awesome', 'fontawesome');
     if (was_stylesheet_installed($font_awesome)===false)
-        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.css');
+        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.min.css');
     wp_enqueue_style('was-styles', WAS_URL.'css/standards.css');
 }
 
