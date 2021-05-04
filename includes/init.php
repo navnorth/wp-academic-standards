@@ -16,7 +16,12 @@ function was_load_admin_scripts(){
 	    wp_enqueue_script( 'bootstrap-js', WAS_URL.'lib/bootstrap/js/bootstrap.min.js', array('jquery'));
 	    wp_enqueue_script( 'admin-js', WAS_URL.'js/admin.js', array('jquery'));
 	    wp_localize_script( 'admin-js', 'WPURLS', array( "site_url" => site_url(), "admin_url" => admin_url() ) );
-    }
+    }else{
+			// WP CUrriculum Depends on this script
+			if(isset($post) && $post->post_type=="oer-curriculum"){ 
+				wp_enqueue_script( 'admin-js', WAS_URL.'js/admin.js', array('jquery'));
+			}
+		}
 }
 
 // Load Frontend Scripts
