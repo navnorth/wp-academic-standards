@@ -106,7 +106,7 @@ function was_import_standards(){
 	}
 
 	if (isset($_POST['oer_standard_other']) && isset($_POST['oer_standard_other_url'])){
-	       $files[] = $standard_importer->download_standard($_POST['oer_standard_other_url']);
+	       $files[] = esc_url_raw($standard_importer->download_standard($_POST['oer_standard_other_url']));
 	       $other = true;
 	}
 	
@@ -550,7 +550,7 @@ function was_delete_standard(){
     $success = null;
 
     if (isset($_POST['standard_id'])){
-        $standard_id = $_POST['standard_id'];
+        $standard_id = sanitize_text_field($_POST['standard_id']);
     }
 
     if ($standard_id){
@@ -579,7 +579,7 @@ function was_update_standard_position(){
     }
 
     if (isset($_POST['position'])){
-        $pos = $_POST['position'];
+        $pos = sanitize_text_field($_POST['position']);
     }
 
 
@@ -587,7 +587,7 @@ function was_update_standard_position(){
         $stds = explode("-", $standard_id);
         if (!empty($stds)){
             $table = $stds[0];
-            $id = $stds[1];
+            $id = sanitize_text_field($stds[1]);
 
             $success = $wpdb->update(
                 $wpdb->prefix."oer_".$table,

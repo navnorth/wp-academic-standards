@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 global $wpdb;
 
 if (isset($_REQUEST['std'])) {
-    $standard = $_REQUEST['std'];
+    $standard = sanitize_text_field($_REQUEST['std']);
     $root_standard = was_standard_details($standard);
 ?>
 <div class="wrap">
