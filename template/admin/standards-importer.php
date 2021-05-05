@@ -23,7 +23,7 @@ if (!current_user_can('manage_options')) {
 <div class="wrap">
 	<?php settings_errors(); ?>
 <div id="importAcademicStandards" class="container">
-	<form method="post" id="standards_form" action="<?php echo esc_url( admin_url('admin.php') ); ?>" onsubmit="return importWASStandards('#standards_form','#standards_submit')">
+	<form method="post" id="standards_form" action="<?php echo esc_url( admin_url('admin.php') ); ?>" onsubmit="return was_importWASStandards('#standards_form','#standards_submit')">
 		<fieldset>
 			<legend><div class="oer_heading"><?php _e("Import Academic Standards", WAS_SLUG); ?></div></legend>
 			<?php if ($message) { ?>

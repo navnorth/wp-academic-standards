@@ -41,7 +41,7 @@ function add_standards_menu(){
                   __("Standards",WAS_SLUG),
                   "edit_posts",
                   "wp-academic-standards",
-                  "wp_academic_standards_page",
+                  "was_academic_standards_page",
                   "dashicons-awards",
                   26);
     add_submenu_page("wp-academic-standards",
@@ -58,7 +58,7 @@ function add_standards_menu(){
                      "was_standards_settings_page");
 }
 
-function wp_academic_standards_page(){
+function was_academic_standards_page(){
     include_once(WAS_PATH."/template/admin/standards.php");
 }
 
@@ -73,8 +73,8 @@ function was_standards_settings_page(){
 /**
  * Process Import Standards
  **/
-add_action("admin_action_import_standards","import_was_standards");
-function import_was_standards(){
+add_action("admin_action_import_standards","was_import_standards");
+function was_import_standards(){
     require_once(WAS_PATH."classes/class-standards-importer.php");
     $standard_importer = new was_standards_importer;
 
