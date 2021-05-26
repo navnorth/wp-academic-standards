@@ -393,7 +393,7 @@ function was_get_standard_details(){
 	$std_id = null;
 
 	if (isset($_POST['std_id'])){
-		$std_id = $_POST['std_id'];
+		$std_id = sanitize_text_field($_POST['std_id']);
 	}
 
 	if (!$std_id){
@@ -414,7 +414,7 @@ function was_update_standard(){
     $success = null;
 
     if (isset($_POST['details'])){
-        $standard = $_POST['details'];
+        $standard = sanitize_text_field($_POST['details']);
     }
 
     if (array_key_exists("standard_name", $standard)){
@@ -480,7 +480,7 @@ function was_add_standard(){
     $lastid = null;
 
     if (isset($_POST['details'])){
-        $standard = $_POST['details'];
+        $standard = sanitize_text_field($_POST['details']);
     }
 
     if (array_key_exists("standard_title", $standard)){
@@ -575,7 +575,7 @@ function was_update_standard_position(){
     $id = 0;
 
     if (isset($_POST['standard_id'])){
-        $standard_id = $_POST['standard_id'];
+        $standard_id = sanitize_text_field($_POST['standard_id']);
     }
 
     if (isset($_POST['position'])){
