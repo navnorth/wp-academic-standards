@@ -412,9 +412,22 @@ function was_update_standard(){
     global $wpdb;
     $standard = null;
     $success = null;
-
+    $standard_id = 0;
+    $standard_name = "";
+    $standard_url = "";
+    
     if (isset($_POST['details'])){
-        $standard = sanitize_text_field($_POST['details']);
+    	if (isset($_POST['details']['id']))
+    		$standard_id = sanitize_text_field($_POST['details']['id']);
+    	if (isset($_POST['details']['standard_name']))
+    		$standard_name = sanitize_text_field($_POST['details']['standard_name']);
+    	if (isset($_POST['details']['standard_url']))
+    		$standard_url = sanitize_url($_POST['details']['standard_url']);
+        $standard = array(
+        			"id" => $standard_id,
+        			"standard_name" => $standard_name,
+        			"standard_url" => $standard_url
+        			);
     }
 
     if (array_key_exists("standard_name", $standard)){
@@ -478,11 +491,17 @@ function was_add_standard(){
     $standard = null;
     $success = null;
     $lastid = null;
-
+    $standard_name = "";
+    $standard_url = "";
+    
     if (isset($_POST['details'])){
-        $standard = sanitize_text_field($_POST['details']);
+    	if (isset($_POST['details']['standard_name']))
+    		$standard_name = sanitize_text_field($_POST['details']['standard_name']);
+    	if (isset($_POST['details']['standard_url']))
+    		$standard_url = sanitize_url($_POST['details']['standard_url']);
+        $standard = array( "standard_name" => $standard_name, "standard_url" => $standard_url );
     }
-
+    
     if (array_key_exists("standard_title", $standard)){
         $success = $wpdb->insert(
             $wpdb->prefix."oer_sub_standards",
