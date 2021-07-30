@@ -415,26 +415,53 @@ function was_update_standard(){
     $standard_id = 0;
     $standard_name = "";
     $standard_url = "";
+    $standard_title = "";
+    $standard_notation = "";
+    $description = "";
+    $comment = "";
+    $url = "";
     
+    // Sanitize Standard Fields before updating record
     if (isset($_POST['details'])){
-    	if (isset($_POST['details']['id']))
+    	if (isset($_POST['details']['id'])){
     		$standard_id = sanitize_text_field($_POST['details']['id']);
-    	if (isset($_POST['details']['standard_name']))
+    		$standard['id']  = $standard_id;
+    	}
+    	if (isset($_POST['details']['standard_name'])){
     		$standard_name = sanitize_text_field($_POST['details']['standard_name']);
-    	if (isset($_POST['details']['standard_url']))
+    		$standard['standard_name'] = $standard_name;
+    	}
+    	if (isset($_POST['details']['standard_url'])){
     		$standard_url = sanitize_url($_POST['details']['standard_url']);
-        $standard = array(
-        			"id" => $standard_id,
-        			"standard_name" => $standard_name,
-        			"standard_url" => $standard_url
-        			);
+    		$standard['standard_url']  = $standard_url;
+    	}
+    	if (isset($_POST['details']['standard_title'])){
+    		$standard_title = sanitize_text_field($_POST['details']['standard_title']);
+    		$standard['standard_title']  = $standard_title;
+    	}
+    	if (isset($_POST['details']['standard_notation'])){
+    		$standard_notation = sanitize_text_field($_POST['details']['standard_notation']);
+    		$standard['standard_notation'] = $standard_notation;	
+    	}
+    	if (isset($_POST['details']['description'])){
+    		$description = sanitize_text_field($_POST['details']['description']);
+    		$standard['description'] = $description;	
+    	}
+    	if (isset($_POST['details']['comment'])){
+    		$comment = sanitize_text_field($_POST['details']['comment']);
+    		$standard['comment'] = $comment;	
+    	}
+    	if (isset($_POST['details']['url'])){
+    		$url = sanitize_url($_POST['details']['url']);
+    		$standard['url'] = $url;	
+    	}
     }
 
     if (array_key_exists("standard_name", $standard)){
         $success = $wpdb->update(
             $wpdb->prefix."oer_core_standards",
             array(
-                "standard_name" => sanitize_text_field($standard['standard_name']),
+                "standard_name" => $standard['standard_name'],
                 "standard_url" => $standard['standard_url']
             ),
             array( "id" => $standard['id'] ),
@@ -448,7 +475,7 @@ function was_update_standard(){
         $success = $wpdb->update(
             $wpdb->prefix."oer_sub_standards",
             array(
-                "standard_title" => sanitize_text_field($standard['standard_title']),
+                "standard_title" => $standard['standard_title'],
                 "url" => $standard['url']
             ),
             array( "id" => $standard['id'] ),
@@ -462,7 +489,7 @@ function was_update_standard(){
         $success = $wpdb->update(
             $wpdb->prefix."oer_standard_notation",
             array(
-                "standard_notation" => sanitize_text_field($standard['standard_notation']),
+                "standard_notation" => $standard['standard_notation'],
                 "description" => $standard['description'],
                 "comment" => $standard['comment'],
                 "url" => $standard['url']
@@ -492,14 +519,48 @@ function was_add_standard(){
     $success = null;
     $lastid = null;
     $standard_name = "";
+    $standard_title = "";
     $standard_url = "";
+    $parent_id = "";
+    $standard_notation = "";
+    $description = "";
+    $comment = "";
+    $url = "";
     
+    // Sanitize Standard Fields before adding new record
     if (isset($_POST['details'])){
-    	if (isset($_POST['details']['standard_name']))
+    	if (isset($_POST['details']['standard_name'])){
     		$standard_name = sanitize_text_field($_POST['details']['standard_name']);
-    	if (isset($_POST['details']['standard_url']))
+    		$standard['standard_name'] = $standard_name;
+    	}
+    	if (isset($_POST['details']['standard_title'])){
+    		$standard_title = sanitize_text_field($_POST['details']['standard_title']);
+    		$standard['standard_title'] = $standard_title;
+    	}
+    	if (isset($_POST['details']['parent_id'])){
+    		$parent_id = sanitize_text_field($_POST['details']['parent_id']);
+    		$standard['parent_id'] = $parent_id;	
+    	}
+    	if (isset($_POST['details']['standard_url'])){
     		$standard_url = sanitize_url($_POST['details']['standard_url']);
-        $standard = array( "standard_name" => $standard_name, "standard_url" => $standard_url );
+    		$standard['standard_url'] = $standard_url;	
+    	}
+    	if (isset($_POST['details']['standard_notation'])){
+    		$standard_notation = sanitize_text_field($_POST['details']['standard_notation']);
+    		$standard['standard_notation'] = $standard_notation;	
+    	}
+    	if (isset($_POST['details']['description'])){
+    		$description = sanitize_text_field($_POST['details']['description']);
+    		$standard['description'] = $description;	
+    	}
+    	if (isset($_POST['details']['comment'])){
+    		$comment = sanitize_text_field($_POST['details']['comment']);
+    		$standard['comment'] = $comment;	
+    	}
+    	if (isset($_POST['details']['url'])){
+    		$url = sanitize_url($_POST['details']['url']);
+    		$standard['url'] = $url;	
+    	}
     }
     
     if (array_key_exists("standard_title", $standard)){
@@ -507,7 +568,7 @@ function was_add_standard(){
             $wpdb->prefix."oer_sub_standards",
             array(
                 "parent_id" => $standard['parent_id'],
-                "standard_title" => sanitize_text_field($standard['standard_title']),
+                "standard_title" => $standard['standard_title'],
                 "url" => $standard['standard_url']
             ),
             array(
@@ -521,7 +582,7 @@ function was_add_standard(){
             $wpdb->prefix."oer_standard_notation",
             array(
                 "parent_id" => $standard['parent_id'],
-                "standard_notation" => sanitize_text_field($standard['standard_notation']),
+                "standard_notation" => $standard['standard_notation'],
                 "description" => $standard['description'],
                 "comment" => $standard['comment'],
                 "url" => $standard['url']
@@ -538,7 +599,7 @@ function was_add_standard(){
         $success = $wpdb->insert(
             $wpdb->prefix."oer_core_standards",
             array(
-                "standard_name" => sanitize_text_field($standard['standard_name']),
+                "standard_name" => $standard['standard_name'],
                 "standard_url" => $standard['standard_url']
             ),
             array(

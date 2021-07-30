@@ -219,7 +219,7 @@ function was_display_standard_details(id) {
                         jQuery("#editStandardModal #standard_notation").val(details.standard_notation.replace(/\\/g,''));
                         jQuery("#editStandardModal #description").val(details.description.replace(/\\/g,''));
                         jQuery("#editStandardModal #comment").val(details.comment.replace(/\\/g,''));
-                        jQuery("#editStandardModal #notation_url").val(details.notation_url);
+                        jQuery("#editStandardModal #notation_url").val(details.url);
                         block_name = "edit-standard-notation";
                         break;
                 }   
