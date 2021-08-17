@@ -271,9 +271,15 @@ p.submit { margin-top:0; padding: 15px; }
 	border: 1px solid #cdcdcd;
 	background: #cdcdcd;
 }
+/*
 .was-standard-list .collapse, .oer-standard-list .collapse, #admin-standard-children-list .collapse {
 	padding:5px 25px;
 }
+*/
+.was_sub_standards_wrapper{
+		padding:0px 25px;
+}
+
 /** end of Admin Standards Listing **/
 /** Import Standards Styles **/
 label.was-core-standard{

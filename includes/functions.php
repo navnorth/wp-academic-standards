@@ -54,7 +54,8 @@ if (!function_exists('was_children_standards')){
         {
             if ($display==true)
                 $collapse = "";
-
+            
+            echo '<div class="was_sub_standards_wrapper">';
             echo "<div id='".$id."'".$collapse.">";
             echo "<ul>";
             $index = 1;
@@ -105,6 +106,7 @@ if (!function_exists('was_children_standards')){
             }
             echo "</ul>";
             echo "</div>";
+            echo "</div>";
         }
     }
 }
@@ -123,6 +125,7 @@ if (!function_exists('was_children_standard_notations')) {
 
             if ($continue)
                 $id = $id."-1";
+            echo '<div class="was_sub_standards_wrapper">';
             echo "<div id='".$id."' class='collapse'>";
             echo "<ul>";
             $index = 1;
@@ -159,6 +162,7 @@ if (!function_exists('was_children_standard_notations')) {
                 $index++;
             }
             echo "</ul>";
+            echo "</div>";
             echo "</div>";
         }
     }
