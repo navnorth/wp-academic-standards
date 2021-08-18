@@ -645,6 +645,29 @@ function was_delete_standard(){
     die();
 }
 
+add_action('wp_ajax_delete_sub_standard', 'was_delete_sub_standard');
+function was_delete_sub_standard(){
+    global $wpdb;
+    $standard_id = null;
+    $success = null;
+
+    if (isset($_POST['standard_id'])){
+        $standard_id = sanitize_text_field($_POST['standard_id']);
+    }
+
+    if ($standard_id){
+				echo 'joel #2222';
+        $success = $wpdb->delete(
+            $wpdb->prefix."oer_sub_standards",
+            array("id" => $standard_id)
+        );
+    }
+    echo $success;
+
+    die();
+}
+
+
 add_action("wp_ajax_update_standard_position", "was_update_standard_position");
 function was_update_standard_position(){
     global $wpdb;
@@ -686,4 +709,17 @@ function was_update_standard_position(){
 
     die();
 }
+
+function was_preloader_func() {
+    ?>
+		<div class="was_preloader_wrapper" style="display:none;">
+				<div class="was_preloader_wrapper_table">
+					<div class="was_preloader_wrapper_cell">
+						<div class="was_lds_ring"><div></div><div></div><div></div><div></div></div>
+					</div>
+				</div>
+		</div>
+		<?php
+}
+add_action( 'admin_footer', 'was_preloader_func' );
 ?>

@@ -49,9 +49,9 @@ jQuery(document).ready(function($) {
     
     $("#admin-standard-children-list").on("click", ".std-del a", function(){
         var std_id = $(this).attr('data-stdid');
-        
+        var std_type = $(this).attr('stdtyp');
         if (confirm("Are you sure you want to delete this standard?")==true) {
-            was_delete_standard(std_id);
+            was_delete_standard(std_id,std_type);
         }
     });
     
@@ -336,7 +336,7 @@ function was_getCoreStandardDisplay(standard, stdid) {
     var corestd = "core_standards-" + stdid;
     var html = '<li class="core-standard">';
     html += '<a href="' + WPURLS.admin_url + "admin.php?page=wp-academic-standards&std=core_standards-" + stdid + '" data-toggle="collapse" data-id="' + stdid + '" data-target="#core_standards-' + stdid + '">' + standard['standard_name'].replace(/\\/g,'') + '</a>';
-    html += ' <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="' + corestd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + corestd + '"><i class="far fa-trash-alt"></i></a></span>';
+    html += ' <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="' + corestd + '" data-stdid="' + stdid + '" stdtyp="cst"><i class="far fa-edit"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + corestd + '"><i class="far fa-trash-alt"></i></a></span>';
     html += '</li>';
     return html;
 }
@@ -347,7 +347,7 @@ function was_getSubStandardDisplay(standard, stdid, lastIndex) {
     lastIndex++;
     html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + substd + '" data-count="' + lastIndex + '" value="' + lastIndex + '">';
     html += '<a class="nochild" data-toggle="collapse" data-target="#' + substd + ',#' + substd + '-1">' + standard['standard_title'].replace(/\\/g,'') + '</a>';
-    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + substd + '"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + substd + '"><i class="far fa-trash-alt"></i></a></span>';
+    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + substd + '"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + substd + '" stdtyp="sbs"><i class="far fa-trash-alt"></i></a></span>';
     html += '</li>';
     return html;
 }
@@ -361,15 +361,17 @@ function was_getStandardNotationDisplay(standard,stdid, lastIndex) {
     html += '<div class="was_stndrd_desc">';
     html += standard['description'].replace(/\\/g,'');
     html += '</div>';
-    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + substd + '"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + substd + '"><i class="far fa-trash-alt"></i></a></span>';
+    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + substd + '"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + substd + '" stdtyp="stn"><i class="far fa-trash-alt"></i></a></span>';
     html += '</li>';
     return html;
 }
 
-function was_delete_standard(id) {
-        data = {
-            action: "delete_standard",
-            standard_id: id
+function was_delete_standard(id,typ) {
+        jQuery('.was_preloader_wrapper').show();
+        if(typ == 'sbs'){
+          data = {action: "delete_sub_standard",standard_id: id}
+        }else{
+          data = {action: "delete_standard",standard_id: id}
         }
         
         jQuery.post(
@@ -387,11 +389,14 @@ function was_delete_standard(id) {
             setTimeout(function(){
                 jQuery('.standards-notice-success').hide();
             },5000);
-            was_display_standards();
+            was_display_standards(function(){
+              jQuery('.was_preloader_wrapper').hide();
+            });
         });
 }
 
-function was_display_standards() {
+
+function was_display_standards(callback) {
     data =  {
         action: "load_admin_standards"
     }
@@ -402,6 +407,9 @@ function was_display_standards() {
     ).done(function( response ){
         jQuery("#admin-standard-children-list").html("");
         jQuery("#admin-standard-children-list").html(response);
+        if (callback && typeof(callback) === "function") {
+          callback();
+      	}
     });
 }
 
