@@ -47,11 +47,19 @@ jQuery(document).ready(function($) {
         $("#addStandardModal").modal("show");
     });
     
+    $("#admin-standard-list").on("click", ".std-del a", function(){
+        var std_id = $(this).attr('data-stdid');
+        var std_type = $(this).attr('stdtyp');
+        if (confirm("Are you sure you want to delete this standard?")==true) {
+            was_delete_standard(std_id,std_type,this);
+        }
+    });
+    
     $("#admin-standard-children-list").on("click", ".std-del a", function(){
         var std_id = $(this).attr('data-stdid');
         var std_type = $(this).attr('stdtyp');
         if (confirm("Are you sure you want to delete this standard?")==true) {
-            was_delete_standard(std_id,std_type);
+            was_delete_standard(std_id,std_type,this);
         }
     });
     
@@ -313,7 +321,14 @@ function was_add_standard(details, type) {
             case "standard_notation":
                 childCount = details['siblings'];
                 standardNotation = was_getStandardNotationDisplay(details, response.id, childCount);
+                var childreadyhtml = '<div class="was_sub_standards_wrapper"><div id="standard_notation-'+response.id+'"><ul></ul></div></div>';
+
+                jQuery('#' + details['parent_id'] + ' > ul').append(standardNotation+childreadyhtml);
                 
+                
+                
+                
+                /*
                 if (jQuery('#' + details['parent_id'] + '-1').is(":visible")){
                     jQuery('#' + details['parent_id'] + '-1 ul li.was_standard_notation:last-child .std-down').removeClass("hidden-block").show();
                     jQuery('#' + details['parent_id'] + '-1 ul').append(standardNotation);
@@ -322,14 +337,24 @@ function was_add_standard(details, type) {
                         jQuery('#' + details['parent_id'] + ' ul li.was_standard_notation:last-child .std-down').removeClass("hidden-block").show();
                         jQuery('#' + details['parent_id'] + ' ul').append(standardNotation);
                     } else {
-                        jQuery('input[data-value="' + details['parent_id'] + '"').closest('li').append('<div id="' + details['parent_id'] + '" class="collapse"><ul>' + standardNotation + '</ul></div>');
+                        jQuery('input[data-value="' + details['parent_id'] + '"').closest('li').append('<div id="' + details['parent_id'] + '"><ul>' + standardNotation + '</ul></div>');
                         if (jQuery('input[data-value="' + details['parent_id'] + '"').next("a").hasClass('nochild'))
                             jQuery('input[data-value="' + details['parent_id'] + '"').next("a").removeClass('nochild');
                     }
                 }
+                */
                 break;
         }
     });
+}
+
+function was_getCoreStandardDisplayCollapse(standard, stdid) {
+    var corestd = "core_standards-" + stdid;
+    var html = '<li class="core-standard">';
+    html += '<a href="' + WPURLS.admin_url + "admin.php?page=wp-academic-standards&std=core_standards-" + stdid + '" data-toggle="collapse" data-id="' + stdid + '" data-target="#core_standards-' + stdid + '">' + standard['standard_name'].replace(/\\/g,'') + '</a>';
+    html += ' <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="' + corestd + '" data-stdid="' + stdid + '" stdtyp="cst"><i class="far fa-edit"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + corestd + '"><i class="far fa-trash-alt"></i></a></span>';
+    html += '</li>';
+    return html;
 }
 
 function was_getCoreStandardDisplay(standard, stdid) {
@@ -366,33 +391,58 @@ function was_getStandardNotationDisplay(standard,stdid, lastIndex) {
     return html;
 }
 
-function was_delete_standard(id,typ) {
+function was_delete_standard(id,typ,obj) {
         jQuery('.was_preloader_wrapper').show();
         if(typ == 'sbs'){
           data = {action: "delete_sub_standard",standard_id: id}
+        }else if(typ == 'cst'){
+          data = {action: "delete_core_standard",standard_id: id}
         }else{
           data = {action: "delete_standard",standard_id: id}
         }
         
-        jQuery.post(
-            ajaxurl,
-            data
-        ).done(function( response ){
-            var message;
-            if (response===false) {
-                message = "Deleting standard failed."
-            } else {
+        jQuery.ajax({
+      		type:'POST',
+      		url: ajaxurl,
+      		data: data,
+      		success:function(response){
+            response = JSON.parse(response);
+            var message; var notice_class;
+            
+            switch(response['textstatus']) {
+              case 'failed':
+                message = "Deleting standard failed.";
+                notice_class = 'notice-error';
+                break;
+              case 'has_children':
+                message = "Unable to delete: target standard has children."
+                notice_class = 'notice-warning';
+                break;
+              default:
                 message = "Standard successfully deleted.";
+                notice_class = 'notice-success';
+                
+                var licount = jQuery(obj).closest('ul').find('li').length;
+                
+                if(licount > 1){
+                  console.log('HERE1!');
+                  jQuery(obj).closest('li').remove();
+                }else{
+                  console.log('HERE!');
+                  jQuery(obj).closest('ul').find('.was_sub_standards_wrapper').remove();
+                  jQuery(obj).closest('ul').empty();
+                }
             }
+
+            jQuery('.standards-notice-success').removeClass(['notice_error','notice-warning','notice-success']).addClass(notice_class);
             jQuery('.standards-notice-success').empty().append("<p>"+message+"</p>");
             jQuery('.standards-notice-success').show();
-            setTimeout(function(){
-                jQuery('.standards-notice-success').hide();
-            },5000);
-            was_display_standards(function(){
-              jQuery('.was_preloader_wrapper').hide();
-            });
-        });
+            
+            setTimeout(function(){ jQuery('.was_preloader_wrapper').hide(); },1000);
+            setTimeout(function(){ jQuery('.standards-notice-success').hide(); },5000);
+      		}
+      	});    
+        
 }
 
 

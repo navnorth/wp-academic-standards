@@ -49,14 +49,14 @@ if (!function_exists('was_children_standards')){
         global $wpdb, $chck, $class;
         $collapse = " class='collapse'";
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s ORDER by pos, id" , $id ) ,ARRAY_A);
-
+        
         if(!empty($results))
         {
             if ($display==true)
                 $collapse = "";
             
             echo '<div class="was_sub_standards_wrapper">';
-            echo "<div id='".$id."'".$collapse.">";
+            echo "<div id='".$id."'>";
             echo "<ul>";
             $index = 1;
 
@@ -107,6 +107,13 @@ if (!function_exists('was_children_standards')){
             echo "</ul>";
             echo "</div>";
             echo "</div>";
+        }else{
+          echo '<div class="was_sub_standards_wrapper">';
+          echo "<div id='".$id."'>";
+          echo "<ul>";
+          echo "</ul>";
+          echo "</div>";
+          echo "</div>";
         }
     }
 }
@@ -119,14 +126,13 @@ if (!function_exists('was_children_standard_notations')) {
 
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s ORDER by pos, id" , $id ) , ARRAY_A);
 
-        if(!empty($results))
-        {
+        if(!empty($results)){
             $class = "was_standard_notation";
 
             if ($continue)
                 $id = $id."-1";
             echo '<div class="was_sub_standards_wrapper">';
-            echo "<div id='".$id."' class='collapse'>";
+            echo "<div id='".$id."'>";
             echo "<ul>";
             $index = 1;
             foreach($results as $result)
@@ -164,6 +170,13 @@ if (!function_exists('was_children_standard_notations')) {
             echo "</ul>";
             echo "</div>";
             echo "</div>";
+        }else{
+          echo '<div class="was_sub_standards_wrapper">';
+          echo "<div id='".$id."'>";
+          echo "<ul>";
+          echo "</ul>";
+          echo "</div>";
+          echo "</div>";
         }
     }
 }
@@ -193,7 +206,7 @@ if (!function_exists('was_display_admin_standards')){
                         <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="<?php echo $value; ?>" data-stdid="<?php echo $row['id']; ?>"><i class="far fa-edit"></i></a></span>
                         <span class="std-add std-icon"><a data-target="#addStandardModal" class="std-add-icon" data-parent="<?php echo $value; ?>"><i class="fas fa-plus"></i></a></span>
                         <span class="std-del std-icon">
-                          <a class="std-del-icon" data-stdid="<?php echo $row['id']; ?>" data-value="<?php echo $value; ?>" stdtyp="sbs">
+                          <a class="std-del-icon" data-stdid="<?php echo $row['id']; ?>" data-value="<?php echo $value; ?>" stdtyp="cst">
                             <i class="far fa-trash-alt"></i>
                           </a>
                         </span>
@@ -224,7 +237,7 @@ if (!function_exists('was_display_admin_core_standards')){
                     <a href="<?php echo admin_url("admin.php?page=wp-academic-standards&std=core_standards-".$row['id']); ?>" data-id="<?php echo $row['id']; ?>"><?php echo stripslashes(esc_html($row['standard_name'])); ?></a>
                         <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="<?php echo $value; ?>" data-stdid="<?php echo $row['id']; ?>"><i class="far fa-edit"></i></a></span>
                         <span class="std-del std-icon">
-                          <a class="std-del-icon" data-stdid="<?php echo $row['id']; ?>" data-value="<?php echo $value; ?>" stdtyp="sbs">
+                          <a class="std-del-icon" data-stdid="<?php echo $row['id']; ?>" data-value="<?php echo $value; ?>" stdtyp="cst">
                             <i class="far fa-trash-alt"></i>
                           </a>
                         </span>

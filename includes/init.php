@@ -623,25 +623,53 @@ function was_load_admin_standards(){
 	die();
 }
 
+add_action('wp_ajax_delete_core_standard', 'was_delete_core_standard');
+function was_delete_core_standard(){
+    global $wpdb;
+    $standard_id = null;
+		$ret = array();
+    if (isset($_POST['standard_id'])){
+        $standard_id = sanitize_text_field($_POST['standard_id']);
+    }
+    if ($standard_id){
+				$_child_count = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_sub_standards WHERE parent_id = 'core_standards-".$standard_id."'");
+				if($_child_count == 0){
+	        $ret['status'] = $wpdb->delete(
+	            $wpdb->prefix."oer_core_standards",
+	            array("id" => $standard_id)
+	        );
+					$ret['textstatus'] = $ret['status']?'success':'failed';
+				}else{
+					$ret['status'] = 'failed';
+					$ret['textstatus'] = 'has_children';
+				}
+    }
+    echo json_encode($ret);
+    die();
+}
+
 add_action('wp_ajax_delete_standard', 'was_delete_standard');
 function was_delete_standard(){
     global $wpdb;
     $standard_id = null;
-    $success = null;
-
+    $ret = array();
     if (isset($_POST['standard_id'])){
         $standard_id = sanitize_text_field($_POST['standard_id']);
     }
-
     if ($standard_id){
-        $success = $wpdb->delete(
-            $wpdb->prefix."oer_standard_notation",
-            array("id" => $standard_id)
-        );
+				$_child_count = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_standard_notation WHERE parent_id = 'sub_standards-".$standard_id."' OR parent_id = 'standard_notation-".$standard_id."'" );
+				if($_child_count == 0){
+	        $ret['status'] = $wpdb->delete(
+	            $wpdb->prefix."oer_standard_notation",
+	            array("id" => $standard_id)
+	        );
+					$ret['textstatus'] = $ret['status']?'success':'failed';
+				}else{
+					$ret['status'] = 'failed';
+					$ret['textstatus'] = 'has_children';
+				}
     }
-
-    echo $success;
-
+    echo json_encode($ret);
     die();
 }
 
@@ -656,7 +684,6 @@ function was_delete_sub_standard(){
     }
 
     if ($standard_id){
-				echo 'joel #2222';
         $success = $wpdb->delete(
             $wpdb->prefix."oer_sub_standards",
             array("id" => $standard_id)
