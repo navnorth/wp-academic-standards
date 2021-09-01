@@ -87,10 +87,7 @@ if (!function_exists('was_children_standards')){
                 if(empty($subchildren) && empty($child)) {
                     echo "<a class='nochild' data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])."</a>";
                     echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="'.$result['id'].'" data-value="'.$id.'" stdtyp="sbs"><i class="far fa-trash-alt"></i></a></span>';
-		}
-
-                $id = 'sub_standards-'.$result['id'];
-                was_children_standards($id);
+		            }
 
                 if (empty($subchildren) && !empty($child)) {
                     echo "<a data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])."</a>";
@@ -101,6 +98,31 @@ if (!function_exists('was_children_standards')){
                     $sid = 'sub_standards-'.$result['id'];
                     was_children_standard_notations($sid, true);
                 }
+                
+                /*
+                echo '<div class="was_sub_standards_wrapper">';
+                echo "<div id='".$id."'>";
+                echo "<ul>";
+                echo "</ul>";
+                echo "</div>";
+                echo "</div>";
+                */
+                
+                
+                
+                if (empty($subchildren) && !empty($child)) {
+                  was_children_standards($id);
+                }else{
+                  echo '<div class="was_sub_standards_wrapper">';
+                  echo "<div id='".$id."'>";
+                  echo "<ul>";
+                  echo "</ul>";
+                  echo "</div>";
+                  echo "</div>";
+                }
+                
+                
+                
                 echo "</li>";
                 $index++;
             }
@@ -108,12 +130,14 @@ if (!function_exists('was_children_standards')){
             echo "</div>";
             echo "</div>";
         }else{
+          /*
           echo '<div class="was_sub_standards_wrapper">';
           echo "<div id='".$id."'>";
           echo "<ul>";
           echo "</ul>";
           echo "</div>";
           echo "</div>";
+          */
         }
     }
 }
@@ -132,7 +156,7 @@ if (!function_exists('was_children_standard_notations')) {
             if ($continue)
                 $id = $id."-1";
             echo '<div class="was_sub_standards_wrapper">';
-            echo "<div id='".$id."'>";
+            echo "<div id='".$id."' class='collapse show'>";
             echo "<ul>";
             $index = 1;
             foreach($results as $result)
@@ -154,7 +178,7 @@ if (!function_exists('was_children_standard_notations')) {
                 echo "<input type='hidden' name='pos[]' class='std-pos' data-value='".$value."' data-count='".count($results)."' value='".$index."'>";
                 if(!empty($child))
                 {
-                    echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_notation'])."</a>";
+                    echo "<a class='was_stndrd_prefix' data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_notation'])."</a>";
                 } else {
                     echo "<span class='was_stndrd_prefix'><strong>".stripslashes($result['standard_notation'])."</strong></span>";
                 }
@@ -162,21 +186,37 @@ if (!function_exists('was_children_standard_notations')) {
                 echo "<div class='was_stndrd_desc'> ". stripslashes($result['description']);
                 echo "</div>";
                 echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit std-icon"><a data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add std-icon"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="'.$result['id'].'" data-value="'.$id.'" stdtyp="stn"><i class="far fa-trash-alt"></i></a></span>';
+                
+                
+                
+                
+                if(!empty($child)){
+                  was_children_standard_notations($id);
+                }else{
+                  echo '<div class="was_sub_standards_wrapper">';
+                  echo "<div id='".$id."'>";
+                  echo "<ul>";
+                  echo "</ul>";
+                  echo "</div>";
+                  echo "</div>";
+                }
+                
                 echo "</li>";
 
-                was_children_standard_notations($id);
                 $index++;
             }
             echo "</ul>";
             echo "</div>";
             echo "</div>";
         }else{
+          /*
           echo '<div class="was_sub_standards_wrapper">';
           echo "<div id='".$id."'>";
           echo "<ul>";
           echo "</ul>";
           echo "</div>";
           echo "</div>";
+          */
         }
     }
 }
