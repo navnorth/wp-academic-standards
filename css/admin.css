@@ -315,6 +315,7 @@ li.was_sbstndard a.nochild {
     text-decoration: unset;
 		cursor: unset;
 }
+li.was_sbstndard a.was_stndrd_prefix { margin-right: 5px;}
 
 /* GENERAL PRELOADER */
 .was_lds_ring {display: inline-block; position: relative; width: 72px; height: 73px;}

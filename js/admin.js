@@ -50,16 +50,20 @@ jQuery(document).ready(function($) {
     $("#admin-standard-list").on("click", ".std-del a", function(){
         var std_id = $(this).attr('data-stdid');
         var std_type = $(this).attr('stdtyp');
+        var std_value = $(this).attr('data-value');
+        console.log('std_value: '+std_value);
         if (confirm("Are you sure you want to delete this standard?")==true) {
-            was_delete_standard(std_id,std_type,this);
+            was_delete_standard(std_id,std_type,std_value,this);
         }
     });
     
     $("#admin-standard-children-list").on("click", ".std-del a", function(){
         var std_id = $(this).attr('data-stdid');
         var std_type = $(this).attr('stdtyp');
+        var std_value = $(this).attr('data-value');
+        console.log('std_value: '+std_value);
         if (confirm("Are you sure you want to delete this standard?")==true) {
-            was_delete_standard(std_id,std_type,this);
+            was_delete_standard(std_id,std_type,std_value,this);
         }
     });
     
@@ -165,17 +169,23 @@ jQuery(document).ready(function($) {
       current = $(this).parent().parent();
       parent = $(this).parent().parent().parent().parent();
       current.insertBefore(prev);
-      jQuery(this).closest('.was_sub_standards_wrapper').find('ul').children('li').each(function(i, li) {
+      var licount = jQuery(this).closest('.was_sub_standards_wrapper').find('ul').first().children('li').length;
+      jQuery(this).closest('.was_sub_standards_wrapper').find('ul').first().children('li').each(function(i, li) {  
         jQuery(li).find('input:first').val(i + 1);
-        if(jQuery(li).is( ':first-child' )){ 
-          jQuery(li).find('.std-up').addClass("hidden-block").hide(); console.log(i+' - First');
-          jQuery(li).find('.std-down').removeClass("hidden-block").show(); console.log(i+' - First'); 
-        }else if(jQuery(li).is( ':last-child' )){ 
-          jQuery(li).find('.std-up').removeClass("hidden-block").show(); console.log(i+' - Last'); 
-          jQuery(li).find('.std-down').addClass("hidden-block").hide(); console.log(i+' - Last'); 
+        if(licount > 0){
+          if(jQuery(li).is( ':first-child' )){ 
+            jQuery(li).find('.std-up').first().addClass("hidden-block").hide(); console.log(i+' First');
+            jQuery(li).find('.std-down').first().removeClass("hidden-block").show(); 
+          }else if(jQuery(li).is( ':last-child' )){ 
+            jQuery(li).find('.std-up').first().removeClass("hidden-block").show(); console.log(i+' Last');
+            jQuery(li).find('.std-down').first().addClass("hidden-block").hide();
+          }else{
+            jQuery(li).find('.std-up').first().removeClass("hidden-block").show(); console.log(i);
+            jQuery(li).find('.std-down').first().removeClass("hidden-block").show();
+          }
         }else{
-          jQuery(li).find('.std-up').removeClass("hidden-block").show();
-          jQuery(li).find('.std-down').removeClass("hidden-block").show(); console.log(i); 
+          jQuery(li).find('.std-up').first().addClass("hidden-block").hide(); console.log(i+' single');
+          jQuery(li).find('.std-down').first().addClass("hidden-block").hide();
         }
       });
       was_move_position(parent);
@@ -209,17 +219,23 @@ jQuery(document).ready(function($) {
         current = $(this).parent().parent();
         parent = $(this).parent().parent().parent().parent();
         $(this).parent().parent().insertAfter(next);
-        jQuery(this).closest('.was_sub_standards_wrapper').find('ul').children('li').each(function(i, li) {
+        var licount = jQuery(this).closest('.was_sub_standards_wrapper').find('ul').first().children('li').length;
+        jQuery(this).closest('.was_sub_standards_wrapper').find('ul').first().children('li').each(function(i, li) {  
           jQuery(li).find('input:first').val(i + 1);
-          if(jQuery(li).is( ':first-child' )){ 
-            jQuery(li).find('.std-up').addClass("hidden-block").hide(); console.log(i+' - First');
-            jQuery(li).find('.std-down').removeClass("hidden-block").show(); console.log(i+' - First'); 
-          }else if(jQuery(li).is( ':last-child' )){ 
-            jQuery(li).find('.std-up').removeClass("hidden-block").show(); console.log(i+' - Last'); 
-            jQuery(li).find('.std-down').addClass("hidden-block").hide(); console.log(i+' - Last'); 
+          if(licount > 0){
+            if(jQuery(li).is( ':first-child' )){ 
+              jQuery(li).find('.std-up').first().addClass("hidden-block").hide(); console.log(i+' First');
+              jQuery(li).find('.std-down').first().removeClass("hidden-block").show(); 
+            }else if(jQuery(li).is( ':last-child' )){ 
+              jQuery(li).find('.std-up').first().removeClass("hidden-block").show(); console.log(i+' Last');
+              jQuery(li).find('.std-down').first().addClass("hidden-block").hide();
+            }else{
+              jQuery(li).find('.std-up').first().removeClass("hidden-block").show(); console.log(i);
+              jQuery(li).find('.std-down').first().removeClass("hidden-block").show();
+            }
           }else{
-            jQuery(li).find('.std-up').removeClass("hidden-block").show();
-            jQuery(li).find('.std-down').removeClass("hidden-block").show(); console.log(i); 
+            jQuery(li).find('.std-up').first().addClass("hidden-block").hide(); console.log(i+' single');
+            jQuery(li).find('.std-down').first().addClass("hidden-block").hide();
           }
         });
         was_move_position(parent);
@@ -397,12 +413,22 @@ function was_add_standard(details, type) {
                   }
                 });
 
-                //var cnt = jQuery('#' + details['parent_id']).find('ul').children('li').length;
+                var cnt = jQuery('#' + details['parent_id']).find('ul').children('li').length;
+                if(cnt > 0){
+                  jQuery('input[data-value="'+details['parent_id']+'"]').siblings('.was_stndrd_prefix').removeClass('nochild');
+                  jQuery('#' + details['parent_id']).addClass(['collapse','show']).show();
+                }else{
+                  jQuery('input[data-value="'+details['parent_id']+'"]').siblings('.was_stndrd_prefix').addClass('nochild');
+                }
+                
                 /*
-                var grabbed_title = jQuery('#' + details['parent_id']).find('ul').children('li').find('.was_stndrd_prefix');
-                var anchor_html = "<a class='was_stndrd_prefix' data-toggle='collapse' data-target='#standard_notation-"+response.id+"'>"+grabbed_title+"</a>";
-                jQuery('#' + details['parent_id']).find('ul').children('li').find('.was_stndrd_prefix').replaceWith(anchor_html);
+                console.log(details['parent_id']);
+                var grabbed_title = jQuery('input[data-value="'+details['parent_id']+'"]').siblings('.was_stndrd_prefix').text();
+                var anchor_html = "<a class='was_stndrd_prefix' data-toggle='collapse' data-target='#"+details['parent_id']+"'>"+grabbed_title+"</a>";
+                jQuery('input[data-value="'+details['parent_id']+'"]').siblings('.was_stndrd_prefix').replaceWith(anchor_html);
+                console.log(grabbed_title);
                 */
+                
                 
                 /*
                 if (jQuery('#' + details['parent_id'] + '-1').is(":visible")){
@@ -447,10 +473,10 @@ function was_getSubStandardDisplay(standard, stdid, lastIndex) {
     var html = '<li class="was_sbstndard">';
     lastIndex++;
     html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + substd + '" data-count="' + lastIndex + '" value="' + lastIndex + '">';
-    //html += '<a class="was_stndrd_prefix nochild" data-toggle="collapse" data-target="#' + substd + ',#' + substd + '-1">' + standard['standard_title'].replace(/\\/g,'') + '</a>';
-    html += '<span class="was_stndrd_prefix"><strong>' + standard['standard_title'].replace(/\\/g,'') + '</strong></span>';
+    html += '<a class="was_stndrd_prefix nochild" data-toggle="collapse" data-target="#' + substd + ',#' + substd + '-1">' + standard['standard_title'].replace(/\\/g,'') + '</a>';
+    //html += '<span class="was_stndrd_prefix"><strong>' + standard['standard_title'].replace(/\\/g,'') + '</strong></span>';
     html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + substd + '"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + substd + '" stdtyp="sbs"><i class="far fa-trash-alt"></i></a></span>';
-    html += ' <div class="was_sub_standards_wrapper"><div id="standard_notation-'+stdid+'" class="collapse show"><ul></ul></div></div>';
+    html += ' <div class="was_sub_standards_wrapper"><div id="'+substd+'" class="collapse show"><ul></ul></div></div>';
     html += '</li>';
     return html;
 }
@@ -460,27 +486,26 @@ function was_getStandardNotationDisplay(standard,stdid, lastIndex) {
     var html = '<li class="was_standard_notation">';
     lastIndex++;
     html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + stdid + '" data-count="' + lastIndex + '" value="' + lastIndex + '">';
-
-    //html += "<a class='was_stndrd_prefix' data-toggle='collapse' data-target='#standard_notation-"+stdid+"'>"+standard['standard_notation'].replace(/\\/g,'')+"</a>"
-    html += '<span class="was_stndrd_prefix"><strong>' + standard['standard_notation'].replace(/\\/g,'') + '</strong></span>';
-    
+    html += "<a class='was_stndrd_prefix nochild' data-toggle='collapse' data-target='#standard_notation-"+stdid+"'>"+standard['standard_notation'].replace(/\\/g,'')+"</a>"
+    //html += '<span class="was_stndrd_prefix"><strong>' + standard['standard_notation'].replace(/\\/g,'') + '</strong></span>';
     html += '<div class="was_stndrd_desc">';
     html += standard['description'].replace(/\\/g,'');
     html += '</div>';
     html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + substd + '"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + substd + '" stdtyp="stn"><i class="far fa-trash-alt"></i></a></span>';
-    html += ' <div class="was_sub_standards_wrapper"><div id="standard_notation-'+stdid+'" class="collapse show"><ul></ul></div></div>';
+    html += ' <div class="was_sub_standards_wrapper"><div id="'+substd+'" class="collapse show"><ul></ul></div></div>';
     html += '</li>';
     return html;
 }
 
-function was_delete_standard(id,typ,obj) {
+function was_delete_standard(id,typ,std_value,obj) {
+  console.log('parent:'+std_value);
         jQuery('.was_preloader_wrapper').show();
         if(typ == 'sbs'){
-          data = {action: "delete_sub_standard",standard_id: id}
+          data = {action: "delete_sub_standard",standard_id: id, standard_value: std_value}
         }else if(typ == 'cst'){
-          data = {action: "delete_core_standard",standard_id: id}
+          data = {action: "delete_core_standard",standard_id: id, standard_value: std_value}
         }else{
-          data = {action: "delete_standard",standard_id: id}
+          data = {action: "delete_standard",standard_id: id, standard_value: std_value}
         }
         
         jQuery.ajax({
@@ -490,7 +515,7 @@ function was_delete_standard(id,typ,obj) {
       		success:function(response){
             response = JSON.parse(response);
             var message; var notice_class;
-            
+            console.log('Children: '+ response['children']);
             switch(response['textstatus']) {
               case 'failed':
                 message = "Deleting standard failed.";
@@ -504,14 +529,19 @@ function was_delete_standard(id,typ,obj) {
                 message = "Standard successfully deleted.";
                 notice_class = 'notice-success';
                 
-                var licount = jQuery(obj).closest('ul').find('li').length;
-                
+                var licount = jQuery(obj).closest('ul').children('li').length;
+                console.log('licount: '+licount);
                 if(licount > 1){
+                  jQuery(obj).closest('.was_sub_standards_wrapper').siblings('.was_stndrd_prefix').removeClass('nochild');
                   jQuery(obj).closest('li').remove();
+                  
                 }else{
                   //jQuery(obj).closest('ul').find('.was_sub_standards_wrapper').remove();
+                  jQuery(obj).closest('.was_sub_standards_wrapper').siblings('.was_stndrd_prefix').addClass('nochild');
                   jQuery(obj).closest('ul').empty();
+                  
                 }
+                
                 
                 jQuery(obj).closest('ul').children('li').each(function(i, li) {              
                   jQuery(li).find('input:first').val(i + 1);
@@ -526,7 +556,7 @@ function was_delete_standard(id,typ,obj) {
                     jQuery(li).find('.std-down').removeClass("hidden-block").show(); console.log(i); 
                   }
                 });
-                
+              
                 
             }
 

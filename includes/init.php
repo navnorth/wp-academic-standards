@@ -627,12 +627,16 @@ add_action('wp_ajax_delete_core_standard', 'was_delete_core_standard');
 function was_delete_core_standard(){
     global $wpdb;
     $standard_id = null;
+		$std_value = null;
 		$ret = array();
     if (isset($_POST['standard_id'])){
         $standard_id = sanitize_text_field($_POST['standard_id']);
     }
+		if (isset($_POST['standard_value'])){
+        $std_value = sanitize_text_field($_POST['standard_value']);
+    }
     if ($standard_id){
-				$_child_count = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_sub_standards WHERE parent_id = 'core_standards-".$standard_id."'");
+				$_child_count = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_sub_standards WHERE parent_id = '".$std_value."'");
 				if($_child_count == 0){
 	        $ret['status'] = $wpdb->delete(
 	            $wpdb->prefix."oer_core_standards",
@@ -652,12 +656,16 @@ add_action('wp_ajax_delete_standard', 'was_delete_standard');
 function was_delete_standard(){
     global $wpdb;
     $standard_id = null;
+		$std_value = null;
     $ret = array();
     if (isset($_POST['standard_id'])){
         $standard_id = sanitize_text_field($_POST['standard_id']);
     }
+		if (isset($_POST['standard_value'])){
+        $std_value = sanitize_text_field($_POST['standard_value']);
+    }
     if ($standard_id){
-				$_child_count = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_standard_notation WHERE parent_id = 'sub_standards-".$standard_id."' OR parent_id = 'standard_notation-".$standard_id."'" );
+				$_child_count = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_standard_notation WHERE parent_id = '".$std_value."'" );
 				if($_child_count == 0){
 	        $ret['status'] = $wpdb->delete(
 	            $wpdb->prefix."oer_standard_notation",
@@ -677,20 +685,31 @@ add_action('wp_ajax_delete_sub_standard', 'was_delete_sub_standard');
 function was_delete_sub_standard(){
     global $wpdb;
     $standard_id = null;
-    $success = null;
-
+		$std_value = null;
+    $ret = array();
     if (isset($_POST['standard_id'])){
         $standard_id = sanitize_text_field($_POST['standard_id']);
     }
-
+		if (isset($_POST['standard_value'])){
+        $std_value = sanitize_text_field($_POST['standard_value']);
+    }
     if ($standard_id){
-        $success = $wpdb->delete(
+    		$_child_count_1 = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_sub_standards WHERE parent_id = '".$std_value."'" );
+				$_child_count_2 = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_standard_notation WHERE parent_id = '".$std_value."'" );
+				$_child_count = $_child_count_1 + $_child_count_2;
+				$ret['children'] = $_child_count; 
+		    if($_child_count == 0){
+					$ret['status'] = $wpdb->delete(
             $wpdb->prefix."oer_sub_standards",
             array("id" => $standard_id)
-        );
+        	);
+					$ret['textstatus'] = $ret['status']?'success':'failed';
+				}else{
+					$ret['status'] = 'failed';
+					$ret['textstatus'] = 'has_children';
+				}
     }
-    echo $success;
-
+    echo json_encode($ret);
     die();
 }
 
