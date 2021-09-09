@@ -171,7 +171,8 @@ jQuery(document).ready(function($) {
       current.insertBefore(prev);
       var licount = jQuery(this).closest('.was_sub_standards_wrapper').find('ul').first().children('li').length;
       jQuery(this).closest('.was_sub_standards_wrapper').find('ul').first().children('li').each(function(i, li) {  
-        jQuery(li).find('input:first').val(i + 1);
+        //jQuery(li).find('input:first').val(i + 1);
+        jQuery(li).find('input.std-pos').val(i + 1);
         if(licount > 0){
           if(jQuery(li).is( ':first-child' )){ 
             jQuery(li).find('.std-up').first().addClass("hidden-block").hide(); console.log(i+' First');
@@ -221,7 +222,8 @@ jQuery(document).ready(function($) {
         $(this).parent().parent().insertAfter(next);
         var licount = jQuery(this).closest('.was_sub_standards_wrapper').find('ul').first().children('li').length;
         jQuery(this).closest('.was_sub_standards_wrapper').find('ul').first().children('li').each(function(i, li) {  
-          jQuery(li).find('input:first').val(i + 1);
+          //jQuery(li).find('input:first').val(i + 1);
+          jQuery(li).find('input.std-pos').val(i + 1);
           if(licount > 0){
             if(jQuery(li).is( ':first-child' )){ 
               jQuery(li).find('.std-up').first().addClass("hidden-block").hide(); console.log(i+' First');
@@ -331,7 +333,7 @@ function was_update_standard(details, type) {
             case "standard_notation":
                 console.log(type + " - " + details['id'] + " - " + response.standard.standard_notation);
                 jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_prefix').html("");
-                jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_prefix').html("<strong>" + response.standard.standard_notation + "</strong>");
+                jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_prefix').html(response.standard.standard_notation);
                 jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_desc').text("");
                 jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_desc').text(response.standard.description);
                 break;
@@ -350,6 +352,7 @@ function was_add_standard(details, type) {
         ajaxurl,
         data
     ).done(function( response ){
+        console.log(response);
         var message;
         response = JSON.parse(response);
         if (response.success===false) {
@@ -415,6 +418,10 @@ function was_add_standard(details, type) {
 
                 var cnt = jQuery('#' + details['parent_id']).find('ul').children('li').length;
                 if(cnt > 0){
+                  if(cnt == 1){
+                    jQuery('#' + details['parent_id']).find('ul').children('li').find('.std-up').hide();
+                    jQuery('#' + details['parent_id']).find('ul').children('li').find('.std-down').hide();
+                  }
                   jQuery('input[data-value="'+details['parent_id']+'"]').siblings('.was_stndrd_prefix').removeClass('nochild');
                   jQuery('#' + details['parent_id']).addClass(['collapse','show']).show();
                 }else{
@@ -485,7 +492,7 @@ function was_getStandardNotationDisplay(standard,stdid, lastIndex) {
     var substd = "standard_notation-" + stdid;
     var html = '<li class="was_standard_notation">';
     lastIndex++;
-    html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + stdid + '" data-count="' + lastIndex + '" value="' + lastIndex + '">';
+    html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + substd + '" data-count="' + lastIndex + '" value="' + lastIndex + '">';
     html += "<a class='was_stndrd_prefix nochild' data-toggle='collapse' data-target='#standard_notation-"+stdid+"'>"+standard['standard_notation'].replace(/\\/g,'')+"</a>"
     //html += '<span class="was_stndrd_prefix"><strong>' + standard['standard_notation'].replace(/\\/g,'') + '</strong></span>';
     html += '<div class="was_stndrd_desc">';
@@ -498,7 +505,8 @@ function was_getStandardNotationDisplay(standard,stdid, lastIndex) {
 }
 
 function was_delete_standard(id,typ,std_value,obj) {
-  console.log('parent:'+std_value);
+  
+  console.log('parent:'+jQuery(obj).parent().parent().parent().parent().attr('id'));
         jQuery('.was_preloader_wrapper').show();
         if(typ == 'sbs'){
           data = {action: "delete_sub_standard",standard_id: id, standard_value: std_value}
@@ -529,23 +537,26 @@ function was_delete_standard(id,typ,std_value,obj) {
                 message = "Standard successfully deleted.";
                 notice_class = 'notice-success';
                 
-                var licount = jQuery(obj).closest('ul').children('li').length;
+                var parent_ul = jQuery(obj).closest('ul');
+                var licount = parent_ul.children('li').length;
                 console.log('licount: '+licount);
                 if(licount > 1){
                   jQuery(obj).closest('.was_sub_standards_wrapper').siblings('.was_stndrd_prefix').removeClass('nochild');
                   jQuery(obj).closest('li').remove();
                   
                 }else{
-                  //jQuery(obj).closest('ul').find('.was_sub_standards_wrapper').remove();
+                  //parent_ul.find('.was_sub_standards_wrapper').remove();
                   jQuery(obj).closest('.was_sub_standards_wrapper').siblings('.was_stndrd_prefix').addClass('nochild');
-                  jQuery(obj).closest('ul').empty();
+                  parent_ul.empty();
                   
                 }
                 
-                
-                jQuery(obj).closest('ul').children('li').each(function(i, li) {              
-                  jQuery(li).find('input:first').val(i + 1);
-                  if(jQuery(li).is( ':first-child' )){ 
+                var licount = parent_ul.children('li').length;
+                console.log('licount: '+licount);
+                parent_ul.children('li').each(function(i, li) {              
+                  //jQuery(li).find('input:first').val(i + 1);
+                  jQuery(li).find('.std-pos').val(i + 1);
+                  if(jQuery(li).is( ':first-child' )){
                     jQuery(li).find('.std-up').addClass("hidden-block").hide(); console.log(i+' - First');
                     jQuery(li).find('.std-down').removeClass("hidden-block").show(); console.log(i+' - First'); 
                   }else if(jQuery(li).is( ':last-child' )){ 
@@ -556,7 +567,18 @@ function was_delete_standard(id,typ,std_value,obj) {
                     jQuery(li).find('.std-down').removeClass("hidden-block").show(); console.log(i); 
                   }
                 });
-              
+                
+                var cnt = parent_ul.children('li').length;
+                console.log('AFTER DELETE: 11111 '+cnt);
+                  if(cnt == 1){
+                    console.log('AFTER DELETE: 22222');
+                    parent_ul.find('.std-up').hide();
+                    parent_ul.find('.std-down').hide();
+                  }
+
+
+                
+
                 
             }
 

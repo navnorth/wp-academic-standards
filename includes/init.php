@@ -526,7 +526,7 @@ function was_add_standard(){
     $description = "";
     $comment = "";
     $url = "";
-    
+    $pos = 0;
     // Sanitize Standard Fields before adding new record
     if (isset($_POST['details'])){
     	if (isset($_POST['details']['standard_name'])){
@@ -539,7 +539,7 @@ function was_add_standard(){
     	}
     	if (isset($_POST['details']['parent_id'])){
     		$parent_id = sanitize_text_field($_POST['details']['parent_id']);
-    		$standard['parent_id'] = $parent_id;	
+    		$standard['parent_id'] = $parent_id;
     	}
     	if (isset($_POST['details']['standard_url'])){
     		$standard_url = sanitize_url($_POST['details']['standard_url']);
@@ -564,20 +564,26 @@ function was_add_standard(){
     }
     
     if (array_key_exists("standard_title", $standard)){
+				$_max_pos = $wpdb->get_var("SELECT MAX(pos) FROM ".$wpdb->prefix."oer_sub_standards WHERE parent_id = '".$standard['parent_id']."'");
+				$pos = $_max_pos + 1;
         $success = $wpdb->insert(
             $wpdb->prefix."oer_sub_standards",
             array(
                 "parent_id" => $standard['parent_id'],
                 "standard_title" => $standard['standard_title'],
-                "url" => $standard['standard_url']
+                "url" => $standard['standard_url'],
+								"pos" => $pos
             ),
             array(
                 "%s",
                 "%s",
-                "%s"
+								"%s",
+                "%d"
             )
         );
     } elseif (array_key_exists("standard_notation", $standard)) {
+				$_max_pos = $wpdb->get_var("SELECT MAX(pos) FROM ".$wpdb->prefix."oer_standard_notation WHERE parent_id = '".$standard['parent_id']."'");
+				$pos = $_max_pos + 1;
         $success = $wpdb->insert(
             $wpdb->prefix."oer_standard_notation",
             array(
@@ -585,33 +591,39 @@ function was_add_standard(){
                 "standard_notation" => $standard['standard_notation'],
                 "description" => $standard['description'],
                 "comment" => $standard['comment'],
-                "url" => $standard['url']
+                "url" => $standard['url'],
+								"pos" => $pos
             ),
             array(
                 "%s",
                 "%s",
                 "%s",
                 "%s",
-                "%s"
+								"%s",
+                "%d"
             )
         );
     } elseif (array_key_exists("standard_name", $standard)){
+				$_max_pos = $wpdb->get_var("SELECT MAX(pos) FROM ".$wpdb->prefix."oer_core_standards WHERE parent_id = '".$standard['parent_id']."'");
+				$pos = $_max_pos + 1;
         $success = $wpdb->insert(
             $wpdb->prefix."oer_core_standards",
             array(
                 "standard_name" => $standard['standard_name'],
-                "standard_url" => $standard['standard_url']
+                "standard_url" => $standard['standard_url'],
+								"pos" => $pos
             ),
             array(
                 "%s",
-                "%s"
+								"%s",
+                "%d"
             )
         );
     }
 
     $lastid = $wpdb->insert_id;
-
-    echo json_encode(array("success"=>$success, "id" => $lastid));
+		
+    echo json_encode(array("success"=>$success, "id" => $lastid, "pos" => $pos));
 
     die();
 }
