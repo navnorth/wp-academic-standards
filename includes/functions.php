@@ -305,14 +305,16 @@ if (!function_exists('was_selectable_admin_standards')){
              ?>
             <ul class='oer-standard-list'>
             <?php
+              $lev = 0;
               foreach($results as $row){
+                $lev = 0;
                 $value = 'core_standards-'.$row['id'];
                 ?>
                 <li class='core-standard'>
                   <a data-toggle='collapse' data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo stripslashes($row['standard_name']); ?></a>
+                  <?php was_child_standards($value, $standards, $lev, $meta_key); ?>
                 </li>
             <?php
-                was_child_standards($value, $standards, $meta_key);
               }
         }
     }
@@ -320,7 +322,7 @@ if (!function_exists('was_selectable_admin_standards')){
 
 /** Get Child Standards **/
 if (!function_exists('was_child_standards')){
-    function was_child_standards($id, $oer_standard, $meta_key="oer_standard") {
+    function was_child_standards($id, $oer_standard, $lev, $meta_key="oer_standard") {
 	global $wpdb, $chck, $class;
 
 	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s  ORDER by pos, id" , $id ) ,ARRAY_A);
@@ -333,6 +335,7 @@ if (!function_exists('was_child_standards')){
 	{
             echo "<div id='".$id."' class='collapse'>";
                 echo "<ul>";
+                ++$lev;
                 foreach($results as $result)
                 {
                     $value = 'sub_standards-'.$result['id'];
@@ -354,7 +357,7 @@ if (!function_exists('was_child_standards')){
                     $subchildren = was_get_substandard_children($id);
                     $child = was_check_child_standard($id);
 
-                    echo "<li class='oer_sbstndard ". $class ."'>";
+                    echo "<li class='lev".$lev." oer_sbstndard ". $class ."'>";
 
                     if (!empty($subchildren) && empty($child)){
                         echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_title'])."</a>";
@@ -368,11 +371,11 @@ if (!function_exists('was_child_standards')){
                     if (!empty($child)) {
                         echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_title'])."</a>";
                         $sid = 'sub_standards-'.$result['id'];
-                        was_child_standard_notations($sid, $oer_standard, $meta_key);
+                        was_child_standard_notations($sid, $oer_standard, $lev, $meta_key);
                     }
                     
                     $id = 'sub_standards-'.$result['id'];
-                    was_child_standards($id, $oer_standard, $meta_key);
+                    was_child_standards($id, $oer_standard, $lev, $meta_key);
 
                     echo "</li>";
                 }
@@ -384,7 +387,7 @@ if (!function_exists('was_child_standards')){
 
 /** Get Standard Notation **/
 if (!function_exists('was_child_standard_notations')) {
-    function was_child_standard_notations($id, $oer_standard, $meta_key="oer_standard"){
+    function was_child_standard_notations($id, $oer_standard, $lev, $meta_key="oer_standard"){
 	global $wpdb;
 
 	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s" , $id ) , ARRAY_A);
@@ -398,6 +401,7 @@ if (!function_exists('was_child_standard_notations')) {
 	{
 		echo "<div id='".$id."' class='collapse'>";
 		echo "<ul>";
+      ++$lev;
 			foreach($results as $result)
 			{
 				$chck = '';
@@ -415,7 +419,7 @@ if (!function_exists('was_child_standard_notations')) {
 					}
 				}
 
-				echo "<li class='".$class."'>";
+				echo "<li class='lev".$lev." ".$class."'>";
 				if(!empty($child))
 				{
 					echo "<a data-toggle='collapse' data-target='#".$id."'>".stripslashes($result['standard_notation'])."</a>";
@@ -427,7 +431,7 @@ if (!function_exists('was_child_standard_notations')) {
 				  echo  stripslashes($result['standard_notation'])."
 					<div class='oer_stndrd_desc'> ". stripslashes($result['description'])." </div>";
         }
-				was_child_standard_notations($id, $oer_standard,$meta_key);
+				was_child_standard_notations($id, $oer_standard, $lev ,$meta_key);
 
 				echo "</li>";
 			}
