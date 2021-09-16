@@ -29,18 +29,18 @@ class was_standards_importer {
 	if(!file_exists($path))
 	{
 		mkdir($path, 0777, true);
-		debug_log("WAS : create samples directory");
+		was_debug_log("WAS : create samples directory");
 	}
 
 	if(!file_exists($file = $path.$filename))
 	{
-		debug_log("WAS : start downloading ". $url ." to local");
+		was_debug_log("WAS : start downloading ". $url ." to local");
 
 		$fp = fopen($file,'wb');
 		fwrite($fp, $raw);
 		fclose($fp);
 
-		debug_log("WAS : end of download");
+		was_debug_log("WAS : end of download");
 	}
 	return $file;
     }
@@ -59,7 +59,7 @@ class was_standards_importer {
 	set_time_limit(0);
 
 	// Log start of import process
-	debug_log("Academic Standards Importer: Start Bulk Import of Standards");
+	was_debug_log("Academic Standards Importer: Start Bulk Import of Standards");
 
 	if( isset($file) )
 	{
@@ -200,11 +200,11 @@ class was_standards_importer {
                                       'type' => 'error'
                                       );
                     // Log any error during import process
-                    debug_log($e->getMessage());
+                    was_debug_log($e->getMessage());
                     return $response;
             }
             // Log Finished Import
-            debug_log("Academic Standards Importer: Finished Bulk Import of Standards");
+            was_debug_log("Academic Standards Importer: Finished Bulk Import of Standards");
 	    
 	    // save other title or url
 	    if ($other==true){

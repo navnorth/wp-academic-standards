@@ -12,7 +12,7 @@ jQuery(document).ready(function($) {
     
     $("#admin-standard-list,#admin-standard-children-list").on("click", ".std-edit a", function(){
         var std_val = $(this).attr('data-value');
-        display_standard_details(std_val);
+        was_display_standard_details(std_val);
         $("#editStandardModal").modal("show");
     });
     
@@ -47,19 +47,19 @@ jQuery(document).ready(function($) {
         $("#addStandardModal").modal("show");
     });
     
-    $("#admin-standard-list").on("click", ".std-del a", function(){
+    $("#admin-standard-children-list").on("click", ".std-del a", function(){
         var std_id = $(this).attr('data-stdid');
         
         if (confirm("Are you sure you want to delete this standard?")==true) {
-            delete_standard(std_id);
+            was_delete_standard(std_id);
         }
     });
     
-    $("#admin-standard-list").on("click", ".std-up a", function(){
+    $("#admin-standard-children-list").on("click", ".std-up a", function(){
         $(this).moveUp();
     });
     
-    $("#admin-standard-list").on("click", ".std-down a", function(){
+    $("#admin-standard-children-list").on("click", ".std-down a", function(){
         $(this).moveDown();
     });
     
@@ -95,7 +95,7 @@ jQuery(document).ready(function($) {
             };
             std = "standard_notation";
         }
-        update_standard(edit_data, std);
+        was_update_standard(edit_data, std);
     });
     
     $("#btnSaveStandards").on("click", function(){
@@ -125,7 +125,7 @@ jQuery(document).ready(function($) {
             }
             std = "core_standards";
         }
-        add_standard(add_data, std);
+        was_add_standard(add_data, std);
     });
     
     // move standard up
@@ -148,7 +148,7 @@ jQuery(document).ready(function($) {
         parent = $(this).parent().parent().parent().parent();
         
         current.insertBefore(prev);
-        move_position(parent);
+        was_move_position(parent);
     }
     
     // move standard down
@@ -171,14 +171,18 @@ jQuery(document).ready(function($) {
         parent = $(this).parent().parent().parent().parent();
         $(this).parent().parent().insertAfter(next);
         
-        move_position(parent);
+        was_move_position(parent);
     }
     
-    
+    /** Move Loader Background **/
+    if ($('.loader').length>0){
+        var loader = $('.loader');
+        $('#wpcontent').append(loader);
+    }
 });
 
 // display core standard details on edit
-function display_standard_details(id) {
+function was_display_standard_details(id) {
     data = {
         action: 'get_standard_details',
         std_id: id
@@ -215,7 +219,7 @@ function display_standard_details(id) {
                         jQuery("#editStandardModal #standard_notation").val(details.standard_notation.replace(/\\/g,''));
                         jQuery("#editStandardModal #description").val(details.description.replace(/\\/g,''));
                         jQuery("#editStandardModal #comment").val(details.comment.replace(/\\/g,''));
-                        jQuery("#editStandardModal #notation_url").val(details.notation_url);
+                        jQuery("#editStandardModal #notation_url").val(details.url);
                         block_name = "edit-standard-notation";
                         break;
                 }   
@@ -225,7 +229,7 @@ function display_standard_details(id) {
 }
 
 /** Update Standard **/
-function update_standard(details, type) {
+function was_update_standard(details, type) {
     
     data =  {
         action: "update_standard",
@@ -237,8 +241,6 @@ function update_standard(details, type) {
         data
     ).done(function( response ){
         response = JSON.parse(response);
-        console.log(type);
-        console.log(response);
         var message;
         if (response.success===false) {
             message = "Updating standard failed."
@@ -267,12 +269,11 @@ function update_standard(details, type) {
                 jQuery('.was_standard_notation[data-target*="#' + type + '-' + details['id'] + '"] .was_stndrd_desc').text(response.standard.description);
                 break;
         }
-        console.log(standard);
     });
 }
 
 /** Add Standard **/
-function add_standard(details, type) {
+function was_add_standard(details, type) {
     data =  {
         action: "add_standard",
         details: details
@@ -300,31 +301,38 @@ function add_standard(details, type) {
         
         switch (type) {
             case "core_standards":
-                coreStandard = getCoreStandardDisplay(details, response.id);
+                coreStandard = was_getCoreStandardDisplay(details, response.id);
                 jQuery('ul.was-standard-list').append(coreStandard);
                 break;
             case "sub_standards":
                 childCount = details['siblings'];
-                subStandard = getSubStandardDisplay(details, response.id, childCount);
+                subStandard = was_getSubStandardDisplay(details, response.id, childCount);
                 jQuery('#' + details['parent_id'] + ' ul li.was_sbstndard:last-child .std-down').removeClass("hidden-block").show();
                 jQuery('#' + details['parent_id'] + ' ul').append(subStandard);
                 break;
             case "standard_notation":
                 childCount = details['siblings'];
-                standardNotation = getStandardNotationDisplay(details, response.id, childCount);
+                standardNotation = was_getStandardNotationDisplay(details, response.id, childCount);
+                
                 if (jQuery('#' + details['parent_id'] + '-1').is(":visible")){
                     jQuery('#' + details['parent_id'] + '-1 ul li.was_standard_notation:last-child .std-down').removeClass("hidden-block").show();
                     jQuery('#' + details['parent_id'] + '-1 ul').append(standardNotation);
                 } else {
-                    jQuery('#' + details['parent_id'] + ' ul li.was_standard_notation:last-child .std-down').removeClass("hidden-block").show();
-                    jQuery('#' + details['parent_id'] + ' ul').append(standardNotation);
+                    if (jQuery('#' + details['parent_id']).is(":visible")){
+                        jQuery('#' + details['parent_id'] + ' ul li.was_standard_notation:last-child .std-down').removeClass("hidden-block").show();
+                        jQuery('#' + details['parent_id'] + ' ul').append(standardNotation);
+                    } else {
+                        jQuery('input[data-value="' + details['parent_id'] + '"').closest('li').append('<div id="' + details['parent_id'] + '" class="collapse"><ul>' + standardNotation + '</ul></div>');
+                        if (jQuery('input[data-value="' + details['parent_id'] + '"').next("a").hasClass('nochild'))
+                            jQuery('input[data-value="' + details['parent_id'] + '"').next("a").removeClass('nochild');
+                    }
                 }
                 break;
         }
     });
 }
 
-function getCoreStandardDisplay(standard, stdid) {
+function was_getCoreStandardDisplay(standard, stdid) {
     var corestd = "core_standards-" + stdid;
     var html = '<li class="core-standard">';
     html += '<a href="' + WPURLS.admin_url + "admin.php?page=wp-academic-standards&std=core_standards-" + stdid + '" data-toggle="collapse" data-id="' + stdid + '" data-target="#core_standards-' + stdid + '">' + standard['standard_name'].replace(/\\/g,'') + '</a>';
@@ -333,18 +341,18 @@ function getCoreStandardDisplay(standard, stdid) {
     return html;
 }
 
-function getSubStandardDisplay(standard, stdid, lastIndex) {
+function was_getSubStandardDisplay(standard, stdid, lastIndex) {
     var substd = "sub_standards-" + stdid;
     var html = '<li class="was_sbstndard">';
     lastIndex++;
-    html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + standard['parent_id'] + '" data-count="' + lastIndex + '" value="' + lastIndex + '">';
-    html += standard['standard_title'].replace(/\\/g,'');
-    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + stdid + '"><i class="fas fa-plus"></i></a></span>';
+    html += '<input type="hidden" name="pos[]" class="std-pos" data-value="' + substd + '" data-count="' + lastIndex + '" value="' + lastIndex + '">';
+    html += '<a class="nochild" data-toggle="collapse" data-target="#' + substd + ',#' + substd + '-1">' + standard['standard_title'].replace(/\\/g,'') + '</a>';
+    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + substd + '"><i class="fas fa-plus"></i></a></span>';
     html += '</li>';
     return html;
 }
 
-function getStandardNotationDisplay(standard,stdid, lastIndex) {
+function was_getStandardNotationDisplay(standard,stdid, lastIndex) {
     var substd = "standard_notation-" + stdid;
     var html = '<li class="was_standard_notation">';
     lastIndex++;
@@ -353,12 +361,12 @@ function getStandardNotationDisplay(standard,stdid, lastIndex) {
     html += '<div class="was_stndrd_desc">';
     html += standard['description'].replace(/\\/g,'');
     html += '</div>';
-    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + stdid + '"><i class="fas fa-plus"></i></a></span>';
+    html += ' <span class="std-up std-icon"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon hidden-block"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="' + substd + '" data-stdid="' + stdid + '"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="' + substd + '"><i class="fas fa-plus"></i></a></span>';
     html += '</li>';
     return html;
 }
 
-function delete_standard(id) {
+function was_delete_standard(id) {
         data = {
             action: "delete_standard",
             standard_id: id
@@ -379,11 +387,11 @@ function delete_standard(id) {
             setTimeout(function(){
                 jQuery('.standards-notice-success').hide();
             },5000);
-            display_standards();
+            was_display_standards();
         });
 }
 
-function display_standards() {
+function was_display_standards() {
     data =  {
         action: "load_admin_standards"
     }
@@ -392,21 +400,21 @@ function display_standards() {
         ajaxurl,
         data
     ).done(function( response ){
-        jQuery("#admin-standard-list").html("");
-        jQuery("#admin-standard-list").html(response);
+        jQuery("#admin-standard-children-list").html("");
+        jQuery("#admin-standard-children-list").html(response);
     });
 }
 
-function move_position(parent) {
+function was_move_position(parent) {
     id = parent.attr("id");
     parent.find("ul").first().children("li").each(function(){
         std_id = jQuery(this).find('.std-pos').attr('data-value');
         pos = jQuery(this).find('.std-pos').val();
-        update_position(std_id,pos);
+        was_update_position(std_id,pos);
     });
 }
 
-function update_position(standard_id,pos) {
+function was_update_position(standard_id,pos) {
     data = {
         action: "update_standard_position",
         standard_id: standard_id,
@@ -422,24 +430,24 @@ function update_position(standard_id,pos) {
 }
 
 // Get File Extension
-function getFileExtension(filename) {
+function was_getFileExtension(filename) {
     return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
 }
 
 // Get URL Remote Extension
-function getRemoteExtension(url) {
+function was_getRemoteExtension(url) {
     var extension = url.match(/\.([^\./\?]+)($|\?)/)[1]
     return extension
 }
 
 //Import Standards
-function importWASStandards(frm,btn) {
+function was_importWASStandards(frm,btn) {
     if (jQuery(frm).find(':checkbox:checked').length==0){
         return(false);
     }
     
     if (jQuery(frm).find(':checkbox:checked').length){
-        var ext = getRemoteExtension(jQuery('#oer_standard_other_url').val())
+        var ext = was_getRemoteExtension(jQuery('#oer_standard_other_url').val())
         if (ext!=="xml") {
             jQuery(frm).find(".field-error").show();
             setTimeout(function(){
@@ -498,7 +506,7 @@ function was_check_myChild(ref) {
 }
 
 //Show Loader
-function wasShowLoader(form) {
+function was_ShowLoader(form) {
 	setTimeout(function() {
 		var Top = document.documentElement.scrollTop || document.body.scrollTop;
 		jQuery('.loader .loader-img').css({'padding-top':Top + 'px'});

@@ -2,8 +2,8 @@
 /*
  * Template Name: Notation Page Template
  */
-add_filter( 'body_class','standards_body_classes' );
-function standards_body_classes( $classes ) {
+add_filter( 'body_class','was_notation_body_classes' );
+function was_notation_body_classes( $classes ) {
  
     $classes[] = 'notation-template';
      

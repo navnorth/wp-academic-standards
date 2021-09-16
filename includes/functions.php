@@ -2,8 +2,8 @@
 global $wpdb;
 
 /** Check Child Standard Notation **/
-if (!function_exists('check_child_standard')) {
-    function check_child_standard($id)
+if (!function_exists('was_check_child_standard')) {
+    function was_check_child_standard($id)
     {
             global $wpdb;
             $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_standard_notation where parent_id = %s" , $id ) , ARRAY_A);
@@ -12,8 +12,8 @@ if (!function_exists('check_child_standard')) {
 }
 
 /** Get Substandard Children **/
-if (!function_exists('get_substandard_children')){
-    function get_substandard_children($id)
+if (!function_exists('was_get_substandard_children')){
+    function was_get_substandard_children($id)
     {
         global $wpdb;
         $results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $id ) , ARRAY_A);
@@ -22,8 +22,8 @@ if (!function_exists('get_substandard_children')){
 }
 
 // Get Title or Description of Standard or Notation
-if (!function_exists('get_standard_label')) {
-    function get_standard_label($slug){
+if (!function_exists('was_get_standard_label')) {
+    function was_get_standard_label($slug){
         global $wpdb;
 
         $slugs = explode("-", $slug);
@@ -43,8 +43,8 @@ if (!function_exists('get_standard_label')) {
 }
 
 /** Get Sub Standard **/
-if (!function_exists('child_standards')){
-    function child_standards($id, $display=false)
+if (!function_exists('was_children_standards')){
+    function was_children_standards($id, $display=false)
     {
         global $wpdb, $chck, $class;
         $collapse = " class='collapse'";
@@ -66,8 +66,8 @@ if (!function_exists('child_standards')){
                 $value = 'sub_standards-'.$result['id'];
 
                 $id = 'sub_standards-'.$result['id'];
-                $subchildren = get_substandard_children($id);
-                $child = check_child_standard($id);
+                $subchildren = was_get_substandard_children($id);
+                $child = was_check_child_standard($id);
 
                 if ($index==1){
                     $hiddenUp = "hidden-block";
@@ -84,21 +84,21 @@ if (!function_exists('child_standards')){
                 }
 
                 if(empty($subchildren) && empty($child)) {
-                    echo stripslashes($result['standard_title']);
+                    echo "<a class='nochild' data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])."</a>";
                     echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span>';
 		}
 
                 $id = 'sub_standards-'.$result['id'];
-                child_standards($id);
+                was_children_standards($id);
 
                 if (empty($subchildren) && !empty($child)) {
                     echo "<a data-toggle='collapse' data-target='#".$id.",#".$id."-1'>".stripslashes($result['standard_title'])."</a>";
                     echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit"><a class="std-edit-icon" data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span>';
                     $sid = 'sub_standards-'.$result['id'];
-                    child_standard_notations($sid);
+                    was_children_standard_notations($sid);
                 } elseif (!empty($subchildren) && !empty($child)) {
                     $sid = 'sub_standards-'.$result['id'];
-                    child_standard_notations($sid, true);
+                    was_children_standard_notations($sid, true);
                 }
                 echo "</li>";
                 $index++;
@@ -110,8 +110,8 @@ if (!function_exists('child_standards')){
 }
 
 /** Get Standard Notation **/
-if (!function_exists('child_standard_notations')) {
-    function child_standard_notations($id, $continue = false)
+if (!function_exists('was_children_standard_notations')) {
+    function was_children_standard_notations($id, $continue = false)
     {
         global $wpdb, $class;
 
@@ -131,7 +131,7 @@ if (!function_exists('child_standard_notations')) {
                 $hiddenUp = "";
                 $hiddenDown = "";
                 $id = 'standard_notation-'.$result['id'];
-                $child = check_child_standard($id);
+                $child = was_check_child_standard($id);
                 $value = 'standard_notation-'.$result['id'];
 
                 if ($index==1){
@@ -155,7 +155,7 @@ if (!function_exists('child_standard_notations')) {
                 echo '<span class="std-up std-icon '.$hiddenUp.'"><a href="#"><i class="fas fa-arrow-up"></i></a></span><span class="std-down std-icon '.$hiddenDown.'"><a href="#"><i class="fas fa-arrow-down"></i></a></span> <span class="std-edit std-icon"><a data-target="#editStandardModal" data-value="'.$id.'" data-stdid="'.$result['id'].'"><i class="far fa-edit"></i></a></span> <span class="std-add std-icon"><a data-target="#addStandardModal" class="std-add-icon" data-parent="'.$id.'"><i class="fas fa-plus"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="'.$result['id'].'" data-value="'.$id.'"><i class="far fa-trash-alt"></i></a></span>';
                 echo "</li>";
 
-                child_standard_notations($id);
+                was_children_standard_notations($id);
                 $index++;
             }
             echo "</ul>";
@@ -190,7 +190,7 @@ if (!function_exists('was_display_admin_standards')){
                         <span class="std-add std-icon"><a data-target="#addStandardModal" class="std-add-icon" data-parent="<?php echo $value; ?>"><i class="fas fa-plus"></i></a></span>
                 </li>
             <?php
-                child_standards($value);
+                was_children_standards($value);
             }
             ?>
         </ul>
@@ -212,7 +212,7 @@ if (!function_exists('was_display_admin_core_standards')){
                 $value = 'core_standards-'.$row['id'];
                 ?>
                 <li class='core-standard'>
-                    <a href="<?php echo admin_url("admin.php?page=wp-academic-standards&std=core_standards-".$row['id']); ?>" data-toggle='collapse' data-id="<?php echo $row['id']; ?>" data-target='#core_standards-<?php echo $row['id']; ?>'><?php echo stripslashes(esc_html($row['standard_name'])); ?></a>
+                    <a href="<?php echo admin_url("admin.php?page=wp-academic-standards&std=core_standards-".$row['id']); ?>" data-id="<?php echo $row['id']; ?>"><?php echo stripslashes(esc_html($row['standard_name'])); ?></a>
                         <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="<?php echo $value; ?>" data-stdid="<?php echo $row['id']; ?>"><i class="far fa-edit"></i></a></span>
                 </li>
             <?php
@@ -253,7 +253,7 @@ if (!function_exists('was_child_standards')){
     function was_child_standards($id, $oer_standard, $meta_key="oer_standard") {
 	global $wpdb, $chck, $class;
 
-	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s" , $id ) ,ARRAY_A);
+	$results = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix. "oer_sub_standards where parent_id = %s  ORDER by pos, id" , $id ) ,ARRAY_A);
 	if(!empty($oer_standard))
 	{
 	    $stndrd_arr = explode(",",$oer_standard);
@@ -281,8 +281,8 @@ if (!function_exists('was_child_standards')){
                     }
 
                     $id = 'sub_standards-'.$result['id'];
-                    $subchildren = get_substandard_children($id);
-                    $child = check_child_standard($id);
+                    $subchildren = was_get_substandard_children($id);
+                    $child = was_check_child_standard($id);
 
                     echo "<li class='oer_sbstndard ". $class ."'>";
 
@@ -333,7 +333,7 @@ if (!function_exists('was_child_standard_notations')) {
 				$chck = '';
 				$class = '';
 				$id = 'standard_notation-'.$result['id'];
-				$child = check_child_standard($id);
+				$child = was_check_child_standard($id);
 				$value = 'standard_notation-'.$result['id'];
 
 				if(!empty($oer_standard))
@@ -902,7 +902,7 @@ if (!function_exists('was_show_setup_settings')){
             </div>
         </div>
         <div class="was-plugin-row">
-            <form method="post" class="was_settings_form" action="options.php"  onsubmit="return wasShowLoader(this)">
+            <form method="post" class="was_settings_form" action="options.php"  onsubmit="return was_ShowLoader(this)">
                 <?php settings_fields("was_setup_settings"); ?>
                 <?php do_settings_sections("standards-settings"); ?>
                 <?php submit_button('Save', 'primary setup-continue'); ?>
@@ -968,7 +968,7 @@ if (!function_exists('was_importStandards')){
 	set_time_limit(0);
 
 	// Log start of import process
-	debug_log("Academic Standards Importer: Start Bulk Import of Standards");
+	was_debug_log("Academic Standards Importer: Start Bulk Import of Standards");
 
 	if( isset($file) ){
             try {
@@ -1106,11 +1106,11 @@ if (!function_exists('was_importStandards')){
                 'type' => 'error'
                 );
                 // Log any error during import process
-                debug_log($e->getMessage());
+                was_debug_log($e->getMessage());
                 return $response;
             }
             // Log Finished Import
-            debug_log("Academic Standards Importer: Finished Bulk Import of Standards");
+            was_debug_log("Academic Standards Importer: Finished Bulk Import of Standards");
             // Get Standard Notation
             $response = array(
                     'message' => 'successful',
@@ -1415,8 +1415,8 @@ if (!function_exists('was_admin_delete_substandards')){
             $value = 'sub_standards-'.$sub['id'];
 
             $id = 'sub_standards-'.$sub['id'];
-            $subchildren = get_substandard_children($id);
-            $child = check_child_standard($id);
+            $subchildren = was_get_substandard_children($id);
+            $child = was_check_child_standard($id);
 
             if (!empty($subchildren))
                 was_admin_delete_substandards($id);
@@ -1445,7 +1445,7 @@ if (!function_exists('was_admin_delete_standard_notations')){
             foreach($results as $result)
             {
                 $id = 'standard_notation-'.$result['id'];
-                $child = check_child_standard($id);
+                $child = was_check_child_standard($id);
                 $value = 'standard_notation-'.$result['id'];
 
                 if ($child)
@@ -1476,9 +1476,9 @@ if (!function_exists('was_search_imported_standards')){
     }
 }
 
-if (!function_exists('debug_log')){
+if (!function_exists('was_debug_log')){
     // Log Debugging
-    function debug_log($message) {
+    function was_debug_log($message) {
 	error_log($message);
     }
 }
@@ -1486,8 +1486,8 @@ if (!function_exists('debug_log')){
 /**
  * Get Core Standard by Notation
  **/
-if (!function_exists('oer_std_get_standard_by_notation')){
-    function oer_std_get_standard_by_notation($notation){
+if (!function_exists('was_oer_std_get_standard_by_notation')){
+    function was_oer_std_get_standard_by_notation($notation){
         global $wpdb;
         
         $std = null;
@@ -1500,14 +1500,14 @@ if (!function_exists('oer_std_get_standard_by_notation')){
         
         if ($standard_notation){
             $substandard_id = $standard_notation[0]->parent_id;
-            $substandard = oer_std_get_parent_standard($substandard_id);
+            $substandard = was_oer_std_get_parent_standard($substandard_id);
             
             if (strpos($substandard[0]['parent_id'],"core_standards")!==false){
                 $pIds = explode("-",$substandard[0]['parent_id']);
                 
                 if (count($pIds)>1){
                     $parent_id=(int)$pIds[1];
-                    $std = oer_std_get_standard_by_id($parent_id);
+                    $std = was_oer_std_get_standard_by_id($parent_id);
                 }
             }
         }
@@ -1517,8 +1517,8 @@ if (!function_exists('oer_std_get_standard_by_notation')){
 }
 
 /** Get Parent Standard **/
-if (!function_exists('oer_std_get_parent_standard')) {
-    function oer_std_get_parent_standard($standard_id) {
+if (!function_exists('was_oer_std_get_parent_standard')) {
+    function was_oer_std_get_parent_standard($standard_id) {
         global $wpdb, $_oer_prefix;
         
         $stds = explode("-",$standard_id);
@@ -1539,7 +1539,7 @@ if (!function_exists('oer_std_get_parent_standard')) {
             $tbls = array('sub_standards','standard_notation');
             
             if (in_array($tbl,$tbls)){
-                $results = oer_std_get_parent_standard($result['parent_id']);
+                $results = was_oer_std_get_parent_standard($result['parent_id']);
             }
     
         }
@@ -1550,8 +1550,8 @@ if (!function_exists('oer_std_get_parent_standard')) {
 /**
  * Get Standard By Id
  **/
-if (!function_exists('oer_std_get_standard_by_id')){
-    function oer_std_get_standard_by_id($id){
+if (!function_exists('was_oer_std_get_standard_by_id')){
+    function was_oer_std_get_standard_by_id($id){
         global $wpdb;
         
         $std = null;

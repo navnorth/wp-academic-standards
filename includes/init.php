@@ -4,14 +4,24 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 // Load Admin Scripts
 add_action( 'admin_enqueue_scripts' , 'was_load_admin_scripts' );
 function was_load_admin_scripts(){
-    $font_awesome = array('font-awesome', 'fontawesome');
-    if (was_stylesheet_installed($font_awesome)===false)
-        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.css');
-    wp_enqueue_style( 'admin-css', WAS_URL.'css/admin.css');
-    wp_enqueue_style( 'bootstrap-css', WAS_URL.'lib/bootstrap/css/bootstrap.min.css');
-    wp_enqueue_script( 'bootstrap-js', WAS_URL.'lib/bootstrap/js/bootstrap.min.js', array('jquery'));
-    wp_enqueue_script( 'admin-js', WAS_URL.'js/admin.js', array('jquery'));
-    wp_localize_script( 'admin-js', 'WPURLS', array( "site_url" => site_url(), "admin_url" => admin_url() ) );
+	global $pagenow, $post;
+	
+	// Add validation to only load bootstrap and other js and css files on standards and resource admin related pages 
+	if ((isset($post) && $post->post_type=="resource") || ($pagenow=="admin.php" && ($_GET['page']=="wp-academic-standards" || $_GET['page']=="import-standards" || $_GET['page']=="standards-settings"))){
+	    $font_awesome = array('font-awesome', 'fontawesome');
+	    if (was_stylesheet_installed($font_awesome)===false)
+	        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.min.css');
+	    wp_enqueue_style( 'admin-css', WAS_URL.'css/admin.css');
+	    wp_enqueue_style( 'bootstrap-css', WAS_URL.'lib/bootstrap/css/bootstrap.min.css');
+	    wp_enqueue_script( 'bootstrap-js', WAS_URL.'lib/bootstrap/js/bootstrap.min.js', array('jquery'));
+	    wp_enqueue_script( 'admin-js', WAS_URL.'js/admin.js', array('jquery'));
+	    wp_localize_script( 'admin-js', 'WPURLS', array( "site_url" => site_url(), "admin_url" => admin_url() ) );
+    }else{
+			// WP CUrriculum Depends on this script
+			if(isset($post) && $post->post_type=="oer-curriculum"){ 
+				wp_enqueue_script( 'admin-js', WAS_URL.'js/admin.js', array('jquery'));
+			}
+		}
 }
 
 // Load Frontend Scripts
@@ -20,7 +30,7 @@ function was_load_frontend_scripts()
 {
     $font_awesome = array('font-awesome', 'fontawesome');
     if (was_stylesheet_installed($font_awesome)===false)
-        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.css');
+        wp_enqueue_style( 'fontawesome', WAS_URL.'lib/fontawesome/css/all.min.css');
     wp_enqueue_style('was-styles', WAS_URL.'css/standards.css');
 }
 
@@ -31,7 +41,7 @@ function add_standards_menu(){
                   __("Standards",WAS_SLUG),
                   "edit_posts",
                   "wp-academic-standards",
-                  "wp_academic_standards_page",
+                  "was_academic_standards_page",
                   "dashicons-awards",
                   26);
     add_submenu_page("wp-academic-standards",
@@ -48,7 +58,7 @@ function add_standards_menu(){
                      "was_standards_settings_page");
 }
 
-function wp_academic_standards_page(){
+function was_academic_standards_page(){
     include_once(WAS_PATH."/template/admin/standards.php");
 }
 
@@ -63,8 +73,8 @@ function was_standards_settings_page(){
 /**
  * Process Import Standards
  **/
-add_action("admin_action_import_standards","import_was_standards");
-function import_was_standards(){
+add_action("admin_action_import_standards","was_import_standards");
+function was_import_standards(){
     require_once(WAS_PATH."classes/class-standards-importer.php");
     $standard_importer = new was_standards_importer;
 
@@ -96,7 +106,7 @@ function import_was_standards(){
 	}
 
 	if (isset($_POST['oer_standard_other']) && isset($_POST['oer_standard_other_url'])){
-	       $files[] = $standard_importer->download_standard($_POST['oer_standard_other_url']);
+	       $files[] = esc_url_raw($standard_importer->download_standard($_POST['oer_standard_other_url']));
 	       $other = true;
 	}
 	
@@ -364,12 +374,18 @@ function was_process_settings_form(){
 
 add_action( "admin_footer" , "was_edit_standard_modal" );
 function was_edit_standard_modal(){
-    include_once(WAS_PATH."template/admin/modals/edit_standard_modal.php");
+	global $pagenow;
+	if ($pagenow=="admin.php" && $_GET['page']=="wp-academic-standards"){
+    	include_once(WAS_PATH."template/admin/modals/edit_standard_modal.php");
+	}
 }
 
 add_action( "admin_footer" , "was_add_standard_modal" );
 function was_add_standard_modal(){
-    include_once(WAS_PATH."template/admin/modals/add_standard_modal.php");
+	global $pagenow;
+	if ($pagenow=="admin.php" && $_GET['page']=="wp-academic-standards"){
+    	include_once(WAS_PATH."template/admin/modals/add_standard_modal.php");
+    }
 }
 
 add_action('wp_ajax_get_standard_details', 'was_get_standard_details');
@@ -377,7 +393,7 @@ function was_get_standard_details(){
 	$std_id = null;
 
 	if (isset($_POST['std_id'])){
-		$std_id = $_POST['std_id'];
+		$std_id = sanitize_text_field($_POST['std_id']);
 	}
 
 	if (!$std_id){
@@ -396,16 +412,56 @@ function was_update_standard(){
     global $wpdb;
     $standard = null;
     $success = null;
-
+    $standard_id = 0;
+    $standard_name = "";
+    $standard_url = "";
+    $standard_title = "";
+    $standard_notation = "";
+    $description = "";
+    $comment = "";
+    $url = "";
+    
+    // Sanitize Standard Fields before updating record
     if (isset($_POST['details'])){
-        $standard = $_POST['details'];
+    	if (isset($_POST['details']['id'])){
+    		$standard_id = sanitize_text_field($_POST['details']['id']);
+    		$standard['id']  = $standard_id;
+    	}
+    	if (isset($_POST['details']['standard_name'])){
+    		$standard_name = sanitize_text_field($_POST['details']['standard_name']);
+    		$standard['standard_name'] = $standard_name;
+    	}
+    	if (isset($_POST['details']['standard_url'])){
+    		$standard_url = sanitize_url($_POST['details']['standard_url']);
+    		$standard['standard_url']  = $standard_url;
+    	}
+    	if (isset($_POST['details']['standard_title'])){
+    		$standard_title = sanitize_text_field($_POST['details']['standard_title']);
+    		$standard['standard_title']  = $standard_title;
+    	}
+    	if (isset($_POST['details']['standard_notation'])){
+    		$standard_notation = sanitize_text_field($_POST['details']['standard_notation']);
+    		$standard['standard_notation'] = $standard_notation;	
+    	}
+    	if (isset($_POST['details']['description'])){
+    		$description = sanitize_text_field($_POST['details']['description']);
+    		$standard['description'] = $description;	
+    	}
+    	if (isset($_POST['details']['comment'])){
+    		$comment = sanitize_text_field($_POST['details']['comment']);
+    		$standard['comment'] = $comment;	
+    	}
+    	if (isset($_POST['details']['url'])){
+    		$url = sanitize_url($_POST['details']['url']);
+    		$standard['url'] = $url;	
+    	}
     }
 
     if (array_key_exists("standard_name", $standard)){
         $success = $wpdb->update(
             $wpdb->prefix."oer_core_standards",
             array(
-                "standard_name" => sanitize_text_field($standard['standard_name']),
+                "standard_name" => $standard['standard_name'],
                 "standard_url" => $standard['standard_url']
             ),
             array( "id" => $standard['id'] ),
@@ -419,7 +475,7 @@ function was_update_standard(){
         $success = $wpdb->update(
             $wpdb->prefix."oer_sub_standards",
             array(
-                "standard_title" => sanitize_text_field($standard['standard_title']),
+                "standard_title" => $standard['standard_title'],
                 "url" => $standard['url']
             ),
             array( "id" => $standard['id'] ),
@@ -433,7 +489,7 @@ function was_update_standard(){
         $success = $wpdb->update(
             $wpdb->prefix."oer_standard_notation",
             array(
-                "standard_notation" => sanitize_text_field($standard['standard_notation']),
+                "standard_notation" => $standard['standard_notation'],
                 "description" => $standard['description'],
                 "comment" => $standard['comment'],
                 "url" => $standard['url']
@@ -462,17 +518,57 @@ function was_add_standard(){
     $standard = null;
     $success = null;
     $lastid = null;
-
+    $standard_name = "";
+    $standard_title = "";
+    $standard_url = "";
+    $parent_id = "";
+    $standard_notation = "";
+    $description = "";
+    $comment = "";
+    $url = "";
+    
+    // Sanitize Standard Fields before adding new record
     if (isset($_POST['details'])){
-        $standard = $_POST['details'];
+    	if (isset($_POST['details']['standard_name'])){
+    		$standard_name = sanitize_text_field($_POST['details']['standard_name']);
+    		$standard['standard_name'] = $standard_name;
+    	}
+    	if (isset($_POST['details']['standard_title'])){
+    		$standard_title = sanitize_text_field($_POST['details']['standard_title']);
+    		$standard['standard_title'] = $standard_title;
+    	}
+    	if (isset($_POST['details']['parent_id'])){
+    		$parent_id = sanitize_text_field($_POST['details']['parent_id']);
+    		$standard['parent_id'] = $parent_id;	
+    	}
+    	if (isset($_POST['details']['standard_url'])){
+    		$standard_url = sanitize_url($_POST['details']['standard_url']);
+    		$standard['standard_url'] = $standard_url;	
+    	}
+    	if (isset($_POST['details']['standard_notation'])){
+    		$standard_notation = sanitize_text_field($_POST['details']['standard_notation']);
+    		$standard['standard_notation'] = $standard_notation;	
+    	}
+    	if (isset($_POST['details']['description'])){
+    		$description = sanitize_text_field($_POST['details']['description']);
+    		$standard['description'] = $description;	
+    	}
+    	if (isset($_POST['details']['comment'])){
+    		$comment = sanitize_text_field($_POST['details']['comment']);
+    		$standard['comment'] = $comment;	
+    	}
+    	if (isset($_POST['details']['url'])){
+    		$url = sanitize_url($_POST['details']['url']);
+    		$standard['url'] = $url;	
+    	}
     }
-
+    
     if (array_key_exists("standard_title", $standard)){
         $success = $wpdb->insert(
             $wpdb->prefix."oer_sub_standards",
             array(
                 "parent_id" => $standard['parent_id'],
-                "standard_title" => sanitize_text_field($standard['standard_title']),
+                "standard_title" => $standard['standard_title'],
                 "url" => $standard['standard_url']
             ),
             array(
@@ -486,7 +582,7 @@ function was_add_standard(){
             $wpdb->prefix."oer_standard_notation",
             array(
                 "parent_id" => $standard['parent_id'],
-                "standard_notation" => sanitize_text_field($standard['standard_notation']),
+                "standard_notation" => $standard['standard_notation'],
                 "description" => $standard['description'],
                 "comment" => $standard['comment'],
                 "url" => $standard['url']
@@ -503,7 +599,7 @@ function was_add_standard(){
         $success = $wpdb->insert(
             $wpdb->prefix."oer_core_standards",
             array(
-                "standard_name" => sanitize_text_field($standard['standard_name']),
+                "standard_name" => $standard['standard_name'],
                 "standard_url" => $standard['standard_url']
             ),
             array(
@@ -534,7 +630,7 @@ function was_delete_standard(){
     $success = null;
 
     if (isset($_POST['standard_id'])){
-        $standard_id = $_POST['standard_id'];
+        $standard_id = sanitize_text_field($_POST['standard_id']);
     }
 
     if ($standard_id){
@@ -559,11 +655,11 @@ function was_update_standard_position(){
     $id = 0;
 
     if (isset($_POST['standard_id'])){
-        $standard_id = $_POST['standard_id'];
+        $standard_id = sanitize_text_field($_POST['standard_id']);
     }
 
     if (isset($_POST['position'])){
-        $pos = $_POST['position'];
+        $pos = sanitize_text_field($_POST['position']);
     }
 
 
@@ -571,7 +667,7 @@ function was_update_standard_position(){
         $stds = explode("-", $standard_id);
         if (!empty($stds)){
             $table = $stds[0];
-            $id = $stds[1];
+            $id = sanitize_text_field($stds[1]);
 
             $success = $wpdb->update(
                 $wpdb->prefix."oer_".$table,

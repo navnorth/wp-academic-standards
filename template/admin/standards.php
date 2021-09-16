@@ -8,11 +8,13 @@ if (isset($_REQUEST['std'])){
     if (isset($_REQUEST['delete'])){
         $standard_title = null;
         
-        $standard = was_standard_by_id($_REQUEST['delete']);
+        $std_id = sanitize_text_field($_REQUEST['delete']);
+
+        $standard = was_standard_by_id($std_id);
         if ($standard)
             $standard_title = $standard->standard_name;
             
-        was_admin_delete_standard($_REQUEST['delete']);
+        was_admin_delete_standard($std_id);
         
         $imported_standards = get_option("oer_standard_others");
         

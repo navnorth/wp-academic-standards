@@ -2,8 +2,8 @@
 /*
  * Template Name: Substandard Page Template
  */
-add_filter( 'body_class','standards_body_classes' );
-function standards_body_classes( $classes ) {
+add_filter( 'body_class','was_substandard_body_classes' );
+function was_substandard_body_classes( $classes ) {
  
     $classes[] = 'substandards-template';
      

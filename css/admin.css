@@ -256,8 +256,6 @@ tr.hide-title-setting td { padding:0 10px 15px !important; }
 	text-align: center;
 	background: rgba(60,60,60,0.5);
 	display:none;
-	margin-left: -20px;
-	padding-right: 20px;
 }
 .loader .loader-img { display: table; overflow: hidden; height:100%; width:100%; }
 .loader .loader-img div { display:table-cell; top:30%; position:relative; }
@@ -305,3 +303,9 @@ label.was-core-standard{
 .was_stndrd_desc { display:inline-block; }
 li.oer_sbstndard input[type=checkbox] { margin-top:0; margin-right:8px; }
 li.oer_sbstndard > .oer_stndrd_desc { display:inline; margin-left:0; }
+li.was_sbstndard a {cursor:pointer;}
+li.was_sbstndard a.nochild {
+    color: unset;
+    text-decoration: unset;
+		cursor: unset;
+}
