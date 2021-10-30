@@ -130,14 +130,14 @@ if (!function_exists('was_children_standards')){
             echo "</div>";
             echo "</div>";
         }else{
-          /*
+          
           echo '<div class="was_sub_standards_wrapper">';
           echo "<div id='".$id."'>";
           echo "<ul>";
           echo "</ul>";
           echo "</div>";
           echo "</div>";
-          */
+          
         }
     }
 }

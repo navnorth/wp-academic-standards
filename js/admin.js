@@ -113,6 +113,7 @@ jQuery(document).ready(function($) {
     $("#btnSaveStandards").on("click", function(){
         var add_data, std;
         if ($("#add-sub-standard").is(":visible")) {
+          console.log('SUB STANDARD SAVED');
             add_data = {
                 siblings: $("#add-sub-standard #sibling_count").val(),
                 parent_id: $("#add-sub-standard #standard_parent_id").val(),
@@ -121,6 +122,7 @@ jQuery(document).ready(function($) {
             }
             std = "sub_standards";
         } else if ($("#add-standard-notation").is(":visible")) {
+          console.log('STANDARD NOTATION SAVED');
             add_data = {
                 siblings: $("#add-standard-notation #sibling_count").val(),
                 parent_id: $("#add-standard-notation #standard_parent_id").val(),
@@ -131,6 +133,7 @@ jQuery(document).ready(function($) {
             }
             std = "standard_notation";
         } else if ($("#add-core-standard").is(":visible")) {
+          console.log('CORE STANDARD SAVE');
             add_data = {
                 standard_name: $("#add-core-standard #standard_name").val(),
                 standard_url: $("#add-core-standard #standard_url").val()
@@ -394,6 +397,20 @@ function was_add_standard(details, type) {
                     jQuery(li).find('.std-down').first().removeClass("hidden-block").show(); console.log(i); 
                   }
                 });
+                
+                
+                var cnt = jQuery('#' + details['parent_id']).find('ul').children('li').length;
+                if(cnt > 0){
+                  if(cnt == 1){
+                    jQuery('#' + details['parent_id']).find('ul').children('li').find('.std-up').hide();
+                    jQuery('#' + details['parent_id']).find('ul').children('li').find('.std-down').hide();
+                  }
+                  jQuery('input[data-value="'+details['parent_id']+'"]').siblings('.was_stndrd_prefix').removeClass('nochild');
+                  jQuery('#' + details['parent_id']).addClass(['collapse','show']).show();
+                }else{
+                  jQuery('input[data-value="'+details['parent_id']+'"]').siblings('.was_stndrd_prefix').addClass('nochild');
+                }
+                
                 was_move_position(jQuery('#'+details['parent_id']));
                 break;
             case "standard_notation":
@@ -461,7 +478,7 @@ function was_add_standard(details, type) {
 function was_getCoreStandardDisplayCollapse(standard, stdid) {
     var corestd = "core_standards-" + stdid;
     var html = '<li class="core-standard">';
-    html += '<a href="' + WPURLS.admin_url + "admin.php?page=wp-academic-standards&std=core_standards-" + stdid + '" data-toggle="collapse" data-id="' + stdid + '" data-target="#core_standards-' + stdid + '">' + standard['standard_name'].replace(/\\/g,'') + '</a>';
+    html += '<a href="' + WPURLS.admin_url + "admin.php?page=wp-academic-standards&std=core_standards-" + stdid + '" data-id="' + stdid + '" data-target="#core_standards-' + stdid + '">' + standard['standard_name'].replace(/\\/g,'') + '</a>';
     html += ' <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="' + corestd + '" data-stdid="' + stdid + '" stdtyp="cst"><i class="far fa-edit"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + corestd + '" stdtyp="cst"><i class="far fa-trash-alt"></i></a></span>';
     html += '</li>';
     return html;
@@ -470,7 +487,7 @@ function was_getCoreStandardDisplayCollapse(standard, stdid) {
 function was_getCoreStandardDisplay(standard, stdid) {
     var corestd = "core_standards-" + stdid;
     var html = '<li class="core-standard">';
-    html += '<a href="' + WPURLS.admin_url + "admin.php?page=wp-academic-standards&std=core_standards-" + stdid + '" data-toggle="collapse" data-id="' + stdid + '" data-target="#core_standards-' + stdid + '">' + standard['standard_name'].replace(/\\/g,'') + '</a>';
+    html += '<a href="' + WPURLS.admin_url + "admin.php?page=wp-academic-standards&std=core_standards-" + stdid + '"  data-id="' + stdid + '" data-target="#core_standards-' + stdid + '">' + standard['standard_name'].replace(/\\/g,'') + '</a>';
     html += ' <span class="std-edit std-icon"><a data-target="#editStandardModal" class="std-edit-icon" data-value="' + corestd + '" data-stdid="' + stdid + '" stdtyp="cst"><i class="far fa-edit"></i></a></span><span class="std-del std-icon"><a class="std-del-icon" data-stdid="' + stdid + '" data-value="' + corestd + '" stdtyp="cst"><i class="far fa-trash-alt"></i></a></span>';
     html += '</li>';
     return html;
@@ -722,3 +739,6 @@ function was_ShowLoader(form) {
 	} ,1000);
 	return true;
 }
+
+//reload page on browser back
+if(performance.navigation.type == 2){location.reload(true);}
