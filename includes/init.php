@@ -526,7 +526,8 @@ function was_add_standard(){
     $description = "";
     $comment = "";
     $url = "";
-    
+    $pos = 0;
+		$typ = "";
     // Sanitize Standard Fields before adding new record
     if (isset($_POST['details'])){
     	if (isset($_POST['details']['standard_name'])){
@@ -539,7 +540,7 @@ function was_add_standard(){
     	}
     	if (isset($_POST['details']['parent_id'])){
     		$parent_id = sanitize_text_field($_POST['details']['parent_id']);
-    		$standard['parent_id'] = $parent_id;	
+    		$standard['parent_id'] = $parent_id;
     	}
     	if (isset($_POST['details']['standard_url'])){
     		$standard_url = sanitize_url($_POST['details']['standard_url']);
@@ -562,22 +563,32 @@ function was_add_standard(){
     		$standard['url'] = $url;	
     	}
     }
+		
+		if (isset($_POST['type'])){
+			$typ = sanitize_text_field($_POST['type']);
+		}
     
     if (array_key_exists("standard_title", $standard)){
+				$_max_pos = $wpdb->get_var("SELECT MAX(pos) FROM ".$wpdb->prefix."oer_sub_standards WHERE parent_id = '".$standard['parent_id']."'");
+				$pos = $_max_pos + 1;
         $success = $wpdb->insert(
             $wpdb->prefix."oer_sub_standards",
             array(
                 "parent_id" => $standard['parent_id'],
                 "standard_title" => $standard['standard_title'],
-                "url" => $standard['standard_url']
+                "url" => $standard['standard_url'],
+								"pos" => $pos
             ),
             array(
                 "%s",
                 "%s",
-                "%s"
+								"%s",
+                "%d"
             )
         );
     } elseif (array_key_exists("standard_notation", $standard)) {
+				$_max_pos = $wpdb->get_var("SELECT MAX(pos) FROM ".$wpdb->prefix."oer_standard_notation WHERE parent_id = '".$standard['parent_id']."'");
+				$pos = $_max_pos + 1;
         $success = $wpdb->insert(
             $wpdb->prefix."oer_standard_notation",
             array(
@@ -585,33 +596,39 @@ function was_add_standard(){
                 "standard_notation" => $standard['standard_notation'],
                 "description" => $standard['description'],
                 "comment" => $standard['comment'],
-                "url" => $standard['url']
+                "url" => $standard['url'],
+								"pos" => $pos
             ),
             array(
                 "%s",
                 "%s",
                 "%s",
                 "%s",
-                "%s"
+								"%s",
+                "%d"
             )
         );
     } elseif (array_key_exists("standard_name", $standard)){
+				//$_max_pos = $wpdb->get_var("SELECT MAX(pos) FROM ".$wpdb->prefix."oer_core_standards WHERE parent_id = '".$standard['parent_id']."'");
+				//$pos = $_max_pos + 1;
         $success = $wpdb->insert(
             $wpdb->prefix."oer_core_standards",
             array(
                 "standard_name" => $standard['standard_name'],
-                "standard_url" => $standard['standard_url']
+                "standard_url" => $standard['standard_url'],
+								//"pos" => $pos
             ),
             array(
                 "%s",
-                "%s"
+								"%s",
+                "%d"
             )
         );
     }
 
     $lastid = $wpdb->insert_id;
-
-    echo json_encode(array("success"=>$success, "id" => $lastid));
+		
+    echo json_encode(array("success"=>$success, "id" => $lastid, "pos" => $pos));
 
     die();
 }
@@ -623,27 +640,96 @@ function was_load_admin_standards(){
 	die();
 }
 
+add_action('wp_ajax_delete_core_standard', 'was_delete_core_standard');
+function was_delete_core_standard(){
+    global $wpdb;
+    $standard_id = null;
+		$std_value = null;
+		$ret = array();
+    if (isset($_POST['standard_id'])){
+        $standard_id = sanitize_text_field($_POST['standard_id']);
+    }
+		if (isset($_POST['standard_value'])){
+        $std_value = sanitize_text_field($_POST['standard_value']);
+    }
+    if ($standard_id){
+				$_child_count = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_sub_standards WHERE parent_id = '".$std_value."'");
+				if($_child_count == 0){
+	        $ret['status'] = $wpdb->delete(
+	            $wpdb->prefix."oer_core_standards",
+	            array("id" => $standard_id)
+	        );
+					$ret['textstatus'] = $ret['status']?'success':'failed';
+				}else{
+					$ret['status'] = 'failed';
+					$ret['textstatus'] = 'has_children';
+				}
+    }
+    echo json_encode($ret);
+    die();
+}
+
 add_action('wp_ajax_delete_standard', 'was_delete_standard');
 function was_delete_standard(){
     global $wpdb;
     $standard_id = null;
-    $success = null;
-
+		$std_value = null;
+    $ret = array();
     if (isset($_POST['standard_id'])){
         $standard_id = sanitize_text_field($_POST['standard_id']);
     }
-
-    if ($standard_id){
-        $success = $wpdb->delete(
-            $wpdb->prefix."oer_standard_notation",
-            array("id" => $standard_id)
-        );
+		if (isset($_POST['standard_value'])){
+        $std_value = sanitize_text_field($_POST['standard_value']);
     }
-
-    echo $success;
-
+    if ($standard_id){
+				$_child_count = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_standard_notation WHERE parent_id = '".$std_value."'" );
+				if($_child_count == 0){
+	        $ret['status'] = $wpdb->delete(
+	            $wpdb->prefix."oer_standard_notation",
+	            array("id" => $standard_id)
+	        );
+					$ret['textstatus'] = $ret['status']?'success':'failed';
+				}else{
+					$ret['status'] = 'failed';
+					$ret['textstatus'] = 'has_children';
+				}
+    }
+    echo json_encode($ret);
     die();
 }
+
+add_action('wp_ajax_delete_sub_standard', 'was_delete_sub_standard');
+function was_delete_sub_standard(){
+    global $wpdb;
+    $standard_id = null;
+		$std_value = null;
+    $ret = array();
+    if (isset($_POST['standard_id'])){
+        $standard_id = sanitize_text_field($_POST['standard_id']);
+    }
+		if (isset($_POST['standard_value'])){
+        $std_value = sanitize_text_field($_POST['standard_value']);
+    }
+    if ($standard_id){
+    		$_child_count_1 = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_sub_standards WHERE parent_id = '".$std_value."'" );
+				$_child_count_2 = $wpdb->get_var("SELECT COUNT(id) FROM ".$wpdb->prefix."oer_standard_notation WHERE parent_id = '".$std_value."'" );
+				$_child_count = $_child_count_1 + $_child_count_2;
+				$ret['children'] = $_child_count; 
+		    if($_child_count == 0){
+					$ret['status'] = $wpdb->delete(
+            $wpdb->prefix."oer_sub_standards",
+            array("id" => $standard_id)
+        	);
+					$ret['textstatus'] = $ret['status']?'success':'failed';
+				}else{
+					$ret['status'] = 'failed';
+					$ret['textstatus'] = 'has_children';
+				}
+    }
+    echo json_encode($ret);
+    die();
+}
+
 
 add_action("wp_ajax_update_standard_position", "was_update_standard_position");
 function was_update_standard_position(){
@@ -686,4 +772,17 @@ function was_update_standard_position(){
 
     die();
 }
+
+function was_preloader_func() {
+    ?>
+		<div class="was_preloader_wrapper" style="display:none;">
+				<div class="was_preloader_wrapper_table">
+					<div class="was_preloader_wrapper_cell">
+						<div class="was_lds_ring"><div></div><div></div><div></div><div></div></div>
+					</div>
+				</div>
+		</div>
+		<?php
+}
+add_action( 'admin_footer', 'was_preloader_func' );
 ?>
