@@ -295,7 +295,9 @@ label.was-core-standard{
 .was-plugin-row tr th { display:none; }
 .was-plugin-row label { margin-bottom:0; }
 .was-plugin-row label[for='was_standard_slug'] { display:block; }
-.was-plugin-footer { padding-top:5px; border-top:1px solid #cdcdcd; }
+.was-plugin-body { margin-bottom:30px; }
+.was-plugin-footer { padding-top:5px; border-top:1px solid #cdcdcd; position:absolute; width:98%; bottom:50px; font-size:0.9em; }
+.was-plugin-footer .plugin-info .info-end { float:right;  }
 .search-standards-list ul{ margin-left:15px; }
 .search-standards-list li input[type=checkbox] { margin-top:0 !important; margin-right:3px; }
 

@@ -961,7 +961,7 @@ if (!function_exists('was_show_setup_settings')){
     function was_show_setup_settings() {
             global $message, $type;
             ?>
-    <div class="plugin-body">
+    <div class="plugin-body was-plugin-body">
         <div class="was-plugin-row">
             <div class="oer-row">
                 <?php _e("These are the settings of WP Academic Standards.", WAS_SLUG); ?>
