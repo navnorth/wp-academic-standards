@@ -1,14 +1,17 @@
 <?php
 /*
- Plugin Name:  WP Academic Standards
- Plugin URI:   https://www.navigationnorth.com
- Description:  Wordpress Academic Standards
- Version:      0.2.3
- Author:       Navigation North
- Author URI:   https://www.navigationnorth.com
- Text Domain:  wp-academic-standards
- License:      GPL3
- License URI:  https://www.gnu.org/licenses/gpl-3.0.html
+ Plugin Name:  		WP Academic Standards
+ Plugin URI:   		https://www.navigationnorth.com
+ Description:  		Wordpress Academic Standards
+ Version:      		0.2.4
+ Requires at least: 4.4
+ Requires PHP:      7.0
+ Tested up to: 		6.0.2
+ Author:       		Navigation North
+ Author URI:   		https://www.navigationnorth.com
+ Text Domain:  		wp-academic-standards
+ License:      		GPL3
+ License URI:  		https://www.gnu.org/licenses/gpl-3.0.html
 
  Copyright (C) 2019 Navigation North
 
@@ -35,7 +38,7 @@ define( 'WAS_SLUG','wp-academic-standards' );
 define( 'WAS_FILE',__FILE__);
 define( 'WAS_PLUGIN_NAME', 'WP Academic Standards' );
 define( 'WAS_ADMIN_PLUGIN_NAME', 'WP Academic Standards');
-define( 'WAS_VERSION', '0.2.3' );
+define( 'WAS_VERSION', '0.2.4' );
 
 global $_oer_prefix, $message, $type;
 $_oer_prefix = "oer_";
