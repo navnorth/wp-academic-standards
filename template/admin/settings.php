@@ -14,7 +14,7 @@ if (!current_user_can('manage_options')) {
     <?php was_show_setup_settings(); ?>
 </div><!-- /.wrap -->
 <div class="was-plugin-footer">
-    <div class="plugin-info"><?php echo WAS_ADMIN_PLUGIN_NAME . " " . WAS_VERSION .""; ?></div>
+    <div class="plugin-info"><?php echo WAS_ADMIN_PLUGIN_NAME; ?> <span class="info-end"><?php echo WAS_VERSION; ?></span></div>
     <div class="clear"></div>
 </div>
 <?php was_display_loader(); ?>

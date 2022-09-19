@@ -295,7 +295,9 @@ label.was-core-standard{
 .was-plugin-row tr th { display:none; }
 .was-plugin-row label { margin-bottom:0; }
 .was-plugin-row label[for='was_standard_slug'] { display:block; }
-.was-plugin-footer { padding-top:5px; border-top:1px solid #cdcdcd; }
+.was-plugin-body { margin-bottom:30px; }
+.was-plugin-footer { padding-top:5px; border-top:1px solid #cdcdcd; position:absolute; width:98%; bottom:50px; font-size:0.9em; }
+.was-plugin-footer .plugin-info .info-end { float:right;  }
 .search-standards-list ul{ margin-left:15px; }
 .search-standards-list li input[type=checkbox] { margin-top:0 !important; margin-right:3px; }
 
@@ -330,3 +332,5 @@ li.was_sbstndard a.was_stndrd_prefix { margin-right: 5px;}
 .was_preloader_wrapper {position: fixed;top: 0px;left: 0px;width: 100%;min-width: 100%;height: 100%;min-height: 100%;background-color: rgba(0,0,0,0.5);z-index: 9990;}
 .was_preloader_wrapper_table {display: table;max-width: 75px;height: 100%;min-height: 100%;margin: 0px auto;padding: 20px 0px;}
 .was_preloader_wrapper_cell {display: table-cell;vertical-align: middle;}
+#importAcademicStandards { margin-bottom:30px; }
+.oer-import-row .hidden { display:none; }
